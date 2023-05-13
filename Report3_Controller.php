@@ -318,15 +318,55 @@ while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
     $vLines[] = $vTableData;
 }
 
-$result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
-$row = sql_fetch_assoc($result);
-$smarty->assign("color3", $row['color3']);
-$smarty->assign("date1", $date1);
-$smarty->assign("months", $months);
-$smarty->assign("month", $month);
-$smarty->assign("year", $year);
-$smarty->assign("vGroups", $vGroups);
-$smarty->assign("iGroupId", $iGroupId);
+if ($_REQUEST['xsl'] == 1) {
+    $xsl = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>\r\n";
+    $xsl .= "<table cellspacing=\"0\" cellpadding=\"3\" border=\"1\">\r\n<tr><td colspan=\"5\"><h1>Табель</h1></td></tr>\r\n";
+    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">Учреждение:</td><td>" . $vGroups['g' . $iGroupId]['SchoolName'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">Структурное подразделение:</td><td>" . $vGroups['g' . $iGroupId]['DepartmentName'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">ОКПО:</td><td>" . $vGroups['g' . $iGroupId]['SchoolOKPO'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">№ п/п</td>\r\n";
+    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">Фамилия, имя ребенка</td>\r\n";
+    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">Плата по ставке</td>\r\n";
+    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\"><b>Прибыль</b></td></tr>\r\n";
 
-$smarty->assign("lines", $vLines);
-$smarty->assign("dateformate", $dateformate);
+    //$pos = 1;
+
+    //foreach ($lines as $data) {
+    //    if ($pos % 2) {
+    //        $xsl .= "<tr><td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['company_name'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['income'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['expense'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['all'] . "</td></tr>\r\n";
+    //    } else {
+    //        $xsl .= "<tr><td style=\"text-align: center\" align=\"center\">" . $data['company_name'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['income'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['expense'] . "</td>\r\n";
+    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['all'] . "</td></tr>\r\n";
+    //    }
+    //    $pos += 1;
+    //}
+
+    $xsl .= "</table></body></html>";
+
+    $name = 'income_by_companies.xls';
+
+    header("Content-type: application/vnd.ms-excel; charset=utf-8");
+    header("Content-Disposition: attachment; filename=" . $name);
+
+    echo $xsl;
+
+    exit;
+} else {
+    $result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
+    $row = sql_fetch_assoc($result);
+    $smarty->assign("color3", $row['color3']);
+    $smarty->assign("date1", $date1);
+    $smarty->assign("months", $months);
+    $smarty->assign("month", $month);
+    $smarty->assign("year", $year);
+    $smarty->assign("vGroups", $vGroups);
+    $smarty->assign("iGroupId", $iGroupId);
+
+    $smarty->assign("lines", $vLines);
+    $smarty->assign("dateformate", $dateformate);
+}

@@ -86,6 +86,7 @@
 
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
       <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=380" title="Настройки"></a>
+      <a class="header__user-item header__user-item_img" href="#" onclick="document.getElementById('xsl_ex').value='1'; document.getElementById('report_form').submit(); return false"><img src="images/xsl.gif" title="Экспорт в Excel"></a>
     </span>
         Табели
 </div>
@@ -164,7 +165,7 @@
                     <div class="fields__row fields__row--info fields__row--simple" id="submain_td{$smarty.foreach.rows.iteration}" style="background-color: rgb(255, 255, 255); width: 2692.59px; height: 25px !important;"
                         onmouseover="highlightTr('submain_td',{$smarty.foreach.rows.iteration}, 1)"
                         onmouseout="highlightTr('submain_td',{$smarty.foreach.rows.iteration}, 0)">
-                        <div class="fields__cell_ number__max_width-table" style="width: 200px; cursor: pointer; white-space: nowrap; background-color: rgb(255, 255, 255); min-width: 264px; height: 25px !important;">
+                        <div class="fields__cell_ number__max_width-table" style="text-align:left;width: 200px; cursor: pointer; white-space: nowrap; background-color: rgb(255, 255, 255); min-width: 264px; height: 25px !important;">
                             <div style="width:200px; height: 25px !important;">
                                 <div class="fields__simple-text fields__value">
                                 <a  href="view_line2.php?table=530&amp;line={$data.StudentId}&amp;back_url=" target="_blank">
@@ -203,3 +204,4 @@
 </main>
 <input type=hidden name="_date1" value="{$date1}">
 <input type=hidden name="_date2" value="{$date2}">
+<input type=hidden name="xsl" id="xsl_ex" value="0"/>
