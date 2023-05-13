@@ -7,30 +7,6 @@
     <script type="text/javascript" src="include/jqplot/plugins/jqplot.enhancedLegendRenderer.js"></script>
     <link rel="stylesheet" type="text/css" href="include/jqplot/jquery.jqplot.css"/>
     <script type="text/javascript">
-        $(function () {
-            $('.datepicker').datepicker({
-                dateFormat: 'MM yy',
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-
-                onClose: function (dateText, inst) {
-                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    $(this).val($.datepicker.formatDate('MM yy', new Date(year, month, 1)));
-                }
-            });
-
-            $(".monthPicker").focus(function () {
-                $(".ui-datepicker-calendar").hide();
-                $("#ui-datepicker-div").position({
-                    my: "center top",
-                    at: "center bottom",
-                    of: $(this)
-                });
-            });
-        });
-
         function highlightTr(tdName, trId, hlMode) {
             if (hlMode) hlColor = "{/literal}{$color3}{literal}";
             else hlColor = "#ffffff";
@@ -95,6 +71,12 @@
             border-right: 1px dashed #B3BFC9;
             text-align: center;
         }
+        .fields__cell_ {
+    padding: 5px 5px 5px 5px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    }
     </style>
 
 {/literal}
@@ -160,21 +142,30 @@
         <div id="inner_block" class="fields__wrap" style="overflow: auto hidden;">
             <div class="fields__table fields__table--stable" id="fields_content_table" tabindex="-1" style="opacity: 1; overflow: hidden; min-width: -webkit-fill-available; height: 25px !important;">
                 <div class="fields__row fields__row--header" id="f_row" style="min-width: -webkit-fill-available; display: table-row; z-index: 0; height: 25px !important;">
-                    <div class="fields__cell fields__cell--header"  style="width: 264px; max-width: 264px; min-width: 264px; height: 25px !important;">
+                    <div class="fields__cell_ fields__cell--header"  style="width: 264px; max-width: 264px; min-width: 264px; height: 25px !important;">
                         <b>ФИО</b>
                     </div>
                     {foreach $dateformate as $ondate}
-                    <div class="fields__cell fields__cell--header" style="width: 50px; max-width: 100px; min-width: 50px; height: 25px !important;">
+                    <div class="fields__cell_ fields__cell--header" style="width: 50px; max-width: 100px; min-width: 50px; height: 25px !important;">
                         <b>{$ondate}</b>
                     </div>
                     {/foreach}
+                    <div class="fields__cell_ fields__cell--header" style="width: 50px; max-width: 100px; min-width: 50px; height: 25px !important;">
+                        <b>Пропущено</b>
+                    </div>
+                    <div class="fields__cell_ fields__cell--header" style="width: 130px; max-width: 130px; min-width: 50px; height: 25px !important;">
+                        <b>Пропущено к оплате</b>
+                    </div>
+                    <div class="fields__cell_ fields__cell--header" style="width: 130px; max-width: 130px; min-width: 50px; height: 25px !important;">
+                        <b>Всего к оплате</b>
+                    </div>
                 </div>
                 {foreach from=$lines item=data name="rows"}
                     <div class="fields__row fields__row--info fields__row--simple" id="submain_td{$smarty.foreach.rows.iteration}" style="background-color: rgb(255, 255, 255); width: 2692.59px; height: 25px !important;"
                         onmouseover="highlightTr('submain_td',{$smarty.foreach.rows.iteration}, 1)"
                         onmouseout="highlightTr('submain_td',{$smarty.foreach.rows.iteration}, 0)">
-                        <div class="fields__cell number__max_width-table" style="width: 200px; cursor: pointer; white-space: nowrap; background-color: rgb(255, 255, 255); min-width: 264px; height: 25px !important;">
-                            <div class="fields__cell-inner" style="width:200px; height: 25px !important;">
+                        <div class="fields__cell_ number__max_width-table" style="width: 200px; cursor: pointer; white-space: nowrap; background-color: rgb(255, 255, 255); min-width: 264px; height: 25px !important;">
+                            <div style="width:200px; height: 25px !important;">
                                 <div class="fields__simple-text fields__value">
                                 <a  href="view_line2.php?table=530&amp;line={$data.StudentId}&amp;back_url=" target="_blank">
                                 {$data.StudentFIO}
@@ -183,29 +174,27 @@
                             </div>
                         </div>
                         {foreach $dateformate as $ondate}
-                            {if 1==0}
-                                {if $data.MaxChildrenInGroup <= $data.ChildrenInGroup + $data.WorkingOff[$ondate]}
-                            <div class="fields__cell" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important; background-color: rgba(0, 0, 0, 0);">
-                                <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
-                                    <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;color:red;">{$data.ChildrenInGroup + $data.WorkingOff[$ondate]} из {$data.MaxChildrenInGroup}</div>
+                            <div class="fields__cell_" style="text-align: center !important; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important;background-color: {$data.DayColor[$ondate]};">
+                                <div style="min-width:100%; height: 25px !important;">
+                                    <div class="fields__value" style="text-align: center !important;overflow: hidden; padding-right: 0px;background-color: {$data.DayColor[$ondate]};">{$data.DayData[$ondate]}</div>
                                 </div>
                             </div>
-
-                                {else}
-                            <div class="fields__cell" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important; background-color: rgba(0, 0, 0, 0);">
-                                <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
-                                    <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;">{$data.ChildrenInGroup + $data.WorkingOff[$ondate]} из {$data.MaxChildrenInGroup}</div>
-                                </div>
-                            </div>
-                                {/if}
-                            {else}
-                            <div class="fields__cell" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important; background-color: rgba(0, 0, 0, 0);">
-                                <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
-                                    <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;"></div>
-                                </div>
-                            </div>
-                            {/if}
                         {/foreach}
+                        <div class="fields__cell_" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important;">
+                            <div style="min-width:100%; height: 25px !important;">
+                                <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;">{$data.Skipped}</div>
+                            </div>
+                        </div>
+                        <div class="fields__cell_" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important;">
+                            <div style="min-width:100%; height: 25px !important;">
+                                <div class="fields__value" style="text-align: center !important;overflow: hidden; padding-right: 0px;">{$data.SkippedPay}</div>
+                            </div>
+                        </div>
+                        <div class="fields__cell_" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important;">
+                            <div style="min-width:100%; height: 25px !important;">
+                                <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;">{$data.TotalPay}</div>
+                            </div>
+                        </div>
                     </div>
                 {/foreach}
             </div>

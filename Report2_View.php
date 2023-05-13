@@ -6,7 +6,7 @@
     <script type="text/javascript" src="include/jqplot/plugins/jqplot.cursor.min.js"></script>
     <script type="text/javascript" src="include/jqplot/plugins/jqplot.enhancedLegendRenderer.js"></script>
     <link rel="stylesheet" type="text/css" href="include/jqplot/jquery.jqplot.css"/>
-    <script type="text/javascript">    
+    <script type="text/javascript">
         $(function () {
             $('.datepicker').datepicker({
                 showOn: "button",
@@ -86,7 +86,7 @@
 
 <div class="title">
     <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
-      
+
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
       <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=380" title="Настройки"></a>
     </span>
@@ -97,8 +97,8 @@
         <tr>
             <td>
         <span class="input_element">
-          Период с <input type="text" name="date1" id="date1" value="{$date1}" size="10" class="datepicker form-control form-control-160"/> 
-          по <input type="text" name="date2" id="date2" value="{$date2}" size="10" class="datepicker form-control form-control-160"/> 
+          Период с <input type="text" name="date1" id="date1" value="{$date1}" size="10" class="datepicker form-control form-control-160"/>
+          по <input type="text" name="date2" id="date2" value="{$date2}" size="10" class="datepicker form-control form-control-160"/>
         </span>
 
                 <div style="clear: both"></div>
@@ -118,10 +118,10 @@
                 <div class="fields__row fields__row--header" id="f_row" style="min-width: -webkit-fill-available; display: table-row; z-index: 0; height: 25px !important;">
                     <div class="fields__cell fields__cell--header"  style="width: 264px; max-width: 264px; min-width: 264px; height: 25px !important;">
                         <b>Группа</b>
-                    </div>                                       
+                    </div>
                     {foreach $dateformate as $ondate}
                     <div class="fields__cell fields__cell--header" style="width: 50px; max-width: 100px; min-width: 50px; height: 25px !important;">
-                        <b>{$ondate}</b>                                                                                                                                           
+                        <b>{$ondate}</b>
                     </div>
                     {/foreach}
                 </div>
@@ -145,25 +145,25 @@
                                 <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
                                     <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;color:red;">{$data.ChildrenInGroup + $data.WorkingOff[$ondate]} из {$data.MaxChildrenInGroup}</div>
                                 </div>
-                            </div>                          
-                                    
-                                {else}                              
+                            </div>
+
+                                {else}
                             <div class="fields__cell" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important; background-color: rgba(0, 0, 0, 0);">
                                 <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
                                     <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;">{$data.ChildrenInGroup + $data.WorkingOff[$ondate]} из {$data.MaxChildrenInGroup}</div>
                                 </div>
-                            </div>                              
+                            </div>
                                 {/if}
                             {else}
                             <div class="fields__cell" style="text-align: center; white-space: nowrap; cursor: pointer; width: 50px; min-width: 50px;  height: 25px !important; background-color: rgba(0, 0, 0, 0);">
                                 <div class="fields__cell-inner" style="min-width:100%; height: 25px !important;">
                                     <div class="fields__value" style="text-align: center;overflow: hidden; padding-right: 0px;"></div>
                                 </div>
-                            </div> 
+                            </div>
                             {/if}
                         {/foreach}
                     </div>
-                {/foreach}      
+                {/foreach}
             </div>
         </div>
     </div>

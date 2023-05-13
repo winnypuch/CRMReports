@@ -25,7 +25,7 @@ $sqlQuery = "SELECT ClienCards.f9750 as fio
                     WHERE
                         GradesClass.f16290 = 'На счет Сергею'
                     GROUP BY
-                        GradesClass.f14680) AS GradesClassData 
+                        GradesClass.f14680) AS GradesClassData
             ON Students.f11460 = GradesClassData.std_id
         LEFT JOIN (
                     SELECT
@@ -40,16 +40,16 @@ $sqlQuery = "SELECT ClienCards.f9750 as fio
                         GradesClass.f14700 = 'н'
                         AND GradesClass.f16290 = 'На счет Сергею'
                     GROUP BY
-                        GradesClass.f14680) AS WorkingOutData 
-            ON Students.f11460 = WorkingOutData.std_id              
+                        GradesClass.f14680) AS WorkingOutData
+            ON Students.f11460 = WorkingOutData.std_id
 
         LEFT JOIN ".DATA_TABLE.get_table_id(650)." AS Parents
-            ON Students.f11460 = Parents.f10820               
-     WHERE 
+            ON Students.f11460 = Parents.f10820
+     WHERE
          WhereToPay.f10990 = 'На счет Сергею'
          AND ((Students.f11580 <='".$date_now."' AND Students.f11590 IS NULL)
             OR (Students.f11580 <='".$date_now."' AND Students.f11590 = '".$date_zero."')
-            OR (Students.f11580 <='".$date_now."' AND Students.f11590 >= '".$date_now."'))   
+            OR (Students.f11580 <='".$date_now."' AND Students.f11590 >= '".$date_now."'))
          AND Students.`status` = 0
      GROUP BY
          Students.f11460
@@ -63,11 +63,11 @@ while ($row = sql_fetch_assoc($result)) {
     $data['was'] = $row['was'];
     $data['WorkingOut'] = $row['WorkingOut'];
     $data['omissions'] = $row['omissions'];
-    $data['Column3'] = $row['WorkingOut']." из ".$row['omissions'];        
+    $data['Column3'] = $row['WorkingOut']." из ".$row['omissions'];
     $data['Column4'] = $row['was'] + $row['WorkingOut'];
     $data['Column5'] = form_local_number($row['wasSum'] + $row['WorkingOutSum'], '2/10');
-    $data['wasSum'] = form_local_number($row['wasSum'], '2/10');        
-    $data['WorkingOutSum'] = form_local_number($row['WorkingOutSum'], '2/10');                
+    $data['wasSum'] = form_local_number($row['wasSum'], '2/10');
+    $data['WorkingOutSum'] = form_local_number($row['WorkingOutSum'], '2/10');
     $data['Column6'] = form_local_number($row['ParentSum'], '2/10');
     $data['Column7'] = form_local_number($row['ParentSum'] - $row['wasSum'] - $row['WorkingOutSum'], '2/10');
     $lines[] = $data;
@@ -98,7 +98,7 @@ $sqlQuery2 = "SELECT ClienCards.f9750 as fio
                     WHERE
                         GradesClass.f16290 = 'На счет Сергею'
                     GROUP BY
-                        GradesClass.f14680) AS GradesClassData 
+                        GradesClass.f14680) AS GradesClassData
             ON Students.f11460 = GradesClassData.std_id
         LEFT JOIN (
                     SELECT
@@ -113,16 +113,16 @@ $sqlQuery2 = "SELECT ClienCards.f9750 as fio
                         GradesClass.f14700 = 'н'
                         AND GradesClass.f16290 = 'На счет Сергею'
                     GROUP BY
-                        GradesClass.f14680) AS WorkingOutData 
-            ON Students.f11460 = WorkingOutData.std_id              
+                        GradesClass.f14680) AS WorkingOutData
+            ON Students.f11460 = WorkingOutData.std_id
 
         LEFT JOIN ".DATA_TABLE.get_table_id(650)." AS Parents
-            ON Students.f11460 = Parents.f10820               
-     WHERE 
+            ON Students.f11460 = Parents.f10820
+     WHERE
          WhereToPay.f10990 = 'На счет Сергею'
          AND Students.f11590 < '".$date_now."'
          AND Students.f11590 != '".$date_zero."'
-         AND Students.f11590 IS NOT NULL 
+         AND Students.f11590 IS NOT NULL
          AND Students.`status` = 0
      GROUP BY
          Students.f11460
@@ -130,7 +130,7 @@ $sqlQuery2 = "SELECT ClienCards.f9750 as fio
     HAVING
         (ParentSum - wasSum - WorkingOutSum) < 0
     ORDER BY fio";
-    
+
 $result2 = sql_query($sqlQuery2);
 
 while ($row = sql_fetch_assoc($result2)) {
@@ -138,11 +138,11 @@ while ($row = sql_fetch_assoc($result2)) {
     $data['was'] = $row['was'];
     $data['WorkingOut'] = $row['WorkingOut'];
     $data['omissions'] = $row['omissions'];
-    $data['Column3'] = $row['WorkingOut']." из ".$row['omissions'];        
+    $data['Column3'] = $row['WorkingOut']." из ".$row['omissions'];
     $data['Column4'] = $row['was'] + $row['WorkingOut'];
     $data['Column5'] = form_local_number($row['wasSum'] + $row['WorkingOutSum'], '2/10');
-    $data['wasSum'] = form_local_number($row['wasSum'], '2/10');        
-    $data['WorkingOutSum'] = form_local_number($row['WorkingOutSum'], '2/10');                
+    $data['wasSum'] = form_local_number($row['wasSum'], '2/10');
+    $data['WorkingOutSum'] = form_local_number($row['WorkingOutSum'], '2/10');
     $data['Column6'] = form_local_number($row['ParentSum'], '2/10');
     $data['Column7'] = form_local_number($row['ParentSum'] - $row['wasSum'] - $row['WorkingOutSum'], '2/10');
     $lines2[] = $data;
