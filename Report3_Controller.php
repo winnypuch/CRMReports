@@ -36,9 +36,44 @@ foreach ($daterange as $dater) {
 }
 
 //print_r($dateformate);
+//методисты 2
+//педагоги таблица  520
+//педагоги 790 f9660 ФИО педагога сокр.
+//группы 700
+//“Педагог в табеле” f11160 или “Педагог ФАКТ” f11180
+
 //f11150 Подразделение f11310 Стоимость за занятие f11320 Стоимость за месяц
 //f9450 Подразделение f9580 Название школы
 //f9530 Название школы f9540 ОКПО
+//f13570 Время занятий
+
+$iUserId = 40;//$user['id'];
+$sFioTeacher = "";
+if (
+    $result = sql_select_field(
+        USERS_TABLE,
+        "id",
+        "id='" . $iUserId . "' and group_id=790"
+    )
+) {
+    if ($row = sql_fetch_assoc($result)) {
+        $sSqlQueryTeacher = "SELECT
+           Teacher.f9660 AS fiosearch
+         FROM
+            " . DATA_TABLE . get_table_id(520) . " AS Teacher
+         WHERE
+            Teacher.f9630= '" . $iUserId . "'
+             AND Teacher.status = 0";
+        $vTeacherData = sql_query($sSqlQueryTeacher);
+
+        while ($vTeacherRow = sql_fetch_assoc($vTeacherData)) {
+            $sFioTeacher = $vTeacherRow['fiosearch'];
+            echo $sFioTeacher;
+        }
+    }
+}
+
+
 $sSqlQueryGroup = "SELECT DISTINCT
     Groups.id AS GroupId
     , Groups.f11090 AS GroupName
@@ -47,6 +82,8 @@ $sSqlQueryGroup = "SELECT DISTINCT
     , if(Departments.f9450 IS NULL, '', Departments.f9450) AS DepartmentName
     , if(Schools.f9530 IS NULL, '', Schools.f9530) AS SchoolName
     , if(Schools.f9540 IS NULL, '', Schools.f9540) AS SchoolOKPO
+    , if(DaysWeek.f10330 IS NULL, '', DaysWeek.f10330) AS DayWeek
+    , if(Schedule.f13570 IS NULL, '', Schedule.f13570) AS ClassTime
     FROM
         " . DATA_TABLE . get_table_id(720) . " AS Students
         INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
@@ -55,12 +92,20 @@ $sSqlQueryGroup = "SELECT DISTINCT
             ON Groups.f11150 = Departments.id
         LEFT JOIN " . DATA_TABLE . get_table_id(510) . " AS Schools
             ON Departments.f9580 = Schools.id
+        LEFT JOIN " . DATA_TABLE . get_table_id(790) . " AS Schedule
+            ON Schedule.f13550 = Groups.id
+        LEFT JOIN " . DATA_TABLE . get_table_id(600) . " AS DaysWeek
+            ON Schedule.f13560 = DaysWeek.id
     WHERE
     ((Groups.f11240 <'" . $sDateNext . "' AND Groups.f11240 <>'" . $date_zero . "' AND (Groups.f11270 IS NULL OR Groups.f11270 = '" . $date_zero . "'))
         OR (Groups.f11240 <'" . $sDateNext . "' AND Groups.f11240 <>'" . $date_zero . "' AND Groups.f11270 >= '" . $sDateFirst . "' AND Groups.f11270 <> '" . $date_zero . "' AND NOT Groups.f11270 IS NULL))
-        AND Groups.status = 0
-    ORDER BY
-    GroupName";
+        AND Groups.status = 0";
+//проверка грыппы на пользователя педагога
+if($sFioTeacher != ""){
+    $sSqlQueryGroup = $sSqlQueryGroup . " AND (Groups.f11160='".$sFioTeacher."' OR Groups.f11180='".$sFioTeacher."')";
+}
+
+$sSqlQueryGroup = $sSqlQueryGroup . " ORDER BY GroupName";
 
 $vGroupData = sql_query($sSqlQueryGroup);
 $vGroups = [];
@@ -76,6 +121,11 @@ while ($vGroupRow = sql_fetch_assoc($vGroupData)) {
     $vTableData['DepartmentName'] = $vGroupRow['DepartmentName'];
     $vTableData['SchoolName'] = $vGroupRow['SchoolName'];
     $vTableData['SchoolOKPO'] = $vGroupRow['SchoolOKPO'];
+    $vTableData['DayWeek'] = $vGroupRow['DayWeek'];
+    $vTableData['ClassTime'] = $vGroupRow['ClassTime'];
+    $vTableData['Skipped'] = 0; //Пропущено
+    $vTableData['SkippedPay'] = 0; //Пропущено оплата
+    $vTableData['TotalPay'] = 0; //Всего к оплате
     $vGroups['g'.$vGroupRow['GroupId']] = $vTableData;
 }
 
@@ -271,16 +321,21 @@ while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
             case "":
                 $sDayColor = "#419544"; //green
                 $vTableData['TotalPay']++;
+                $vGroups['g' . $iGroupId]['TotalPay']++;
                 break;
             case "но":
                 $sDayColor = "#f1749e"; //red
                 $vTableData['Skipped']++;
+                $vGroups['g' . $iGroupId]['Skipped']++;
                 $vTableData['SkippedPay']++;
+                $vGroups['g' . $iGroupId]['SkippedPay']++;
                 $vTableData['TotalPay']++;
+                $vGroups['g' . $iGroupId]['TotalPay']++;
                 break;
             case "нн":
                 $sDayColor = "#fdd87d"; //yellow
                 $vTableData['Skipped']++;
+                $vGroups['g' . $iGroupId]['Skipped']++;
                 break;
             case "?":
                 $sDayColor = "#4baaf5"; //blue
@@ -290,6 +345,7 @@ while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
         $vTableData['PayByRate'] = "";
         $iCostPerLesson = $vGroups['g' . $iGroupId]['CostPerLesson'];
         $iCostPerMonth = $vGroups['g' . $iGroupId]['CostPerMonth'];
+
         if (($iCostPerLesson > 0 && $iCostPerMonth > 0) || ($iCostPerLesson == 0 && $iCostPerMonth == 0))
             $vTableData['PayByRate'] = "";
         if ($iCostPerLesson > 0)
@@ -306,13 +362,15 @@ while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
         //“зачислен с dd.mm.yyyy” и “отчислен с dd.mm.yyyy”,
         if ($vStudentRow['EnrollmentDate'] != "") {
             if ($vTableData['Reson'] != "")
-                $vTableData['Reson'] += ", ";
-            $vTableData['Reson'] += $vStudentRow['EnrollmentDate']->format('d.m.Y');
+                $vTableData['Reson'] = $vTableData['Reson'] . ", ";
+            $dEnrollmentDate = new DateTime($vStudentRow['EnrollmentDate']);
+            $vTableData['Reson'] = $vTableData['Reson']."зачислен с ". $dEnrollmentDate->format('d.m.Y');
         }
         if ($vStudentRow['DeductionsDate'] != "") {
             if ($vTableData['Reson'] != "")
-                $vTableData['Reson'] += ", ";
-            $vTableData['Reson'] += $vStudentRow['DeductionsDate']->format('d.m.Y');
+                $vTableData['Reson'] = $vTableData['Reson'] . ", ";
+            $dDeductionsDate = new DateTime($vStudentRow['DeductionsDate']);
+            $vTableData['Reson'] = $vTableData['Reson'] . "отчислен с " .$dDeductionsDate->format('d.m.Y');
         }
     }
     $vLines[] = $vTableData;
@@ -320,35 +378,58 @@ while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
 
 if ($_REQUEST['xsl'] == 1) {
     $xsl = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>\r\n";
-    $xsl .= "<table cellspacing=\"0\" cellpadding=\"3\" border=\"1\">\r\n<tr><td colspan=\"5\"><h1>Табель</h1></td></tr>\r\n";
-    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">Учреждение:</td><td>" . $vGroups['g' . $iGroupId]['SchoolName'] . "</td></tr>\r\n";
-    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">Структурное подразделение:</td><td>" . $vGroups['g' . $iGroupId]['DepartmentName'] . "</td></tr>\r\n";
-    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">ОКПО:</td><td>" . $vGroups['g' . $iGroupId]['SchoolOKPO'] . "</td></tr>\r\n";
-    $xsl .= "<tr><td width=\"150\" style=\"text-align: center\" align=\"center\">№ п/п</td>\r\n";
-    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">Фамилия, имя ребенка</td>\r\n";
-    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">Плата по ставке</td>\r\n";
-    $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\"><b>Прибыль</b></td></tr>\r\n";
+    $xsl .= "<table cellspacing=\"0\" cellpadding=\"3\" border=\"1\">\r\n<tr><td></td><td></td><td colspan=\"5\"><h1>Табель</h1></td></tr>\r\n";
+    $xsl .= "<tr><td></td><td></td><td colspan=\"5\"><h1>УЧЕТА ПОСЕЩАЕМОСТИ ДЕТЕЙ</h1></td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"rigth\">за</td><td>".$months[$month]."</td><td>" . $year . "</td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"center\">Учреждение:</td><td>" . $vGroups['g' . $iGroupId]['SchoolName'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"center\">Структурное подразделение:</td><td>" . $vGroups['g' . $iGroupId]['DepartmentName'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"center\">Вид расчета:</td><td></td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"center\">ОКПО:</td><td>" . $vGroups['g' . $iGroupId]['SchoolOKPO'] . "</td></tr>\r\n";
+    $xsl .= "<tr><td></td><td width=\"150\" style=\"text-align: center\" align=\"center\">Режим работы:</td><td>" . $vGroups['g' . $iGroupId]['DayWeek'] . " ". $vGroups['g' . $iGroupId]['ClassTime'] ."</td></tr>\r\n";
+    $xsl .= "<tr><td width=\"50\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">№ п/п</td>\r\n";
+    $xsl .= "<td width=\"600\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">Фамилия, имя ребенка</td>\r\n";
+    $xsl .= "<td width=\"300\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">Номер счета</td>\r\n";
+    $xsl .= "<td width=\"200\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">Плата по ставке</td>\r\n";
+    $xsl .= "<td width=\"3100\" colspan=\"31\" style=\"text-align: center\" align=\"center\">Дни посещения</td>\r\n";
+    $xsl .= "<td width=\"300\" colspan=\"2\" style=\"text-align: center\" align=\"center\">Пропущено дней</td>\r\n";
+    $xsl .= "<td width=\"150\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">Дни по-\r\nсещения, подлежа-\r\nщие оплате</td>\r\n";
+    $xsl .= "<td width=\"400\" rowspan=\"2\" style=\"text-align: center\" align=\"center\">Причины непосещения (основание)</td>\r\n";
+    $xsl .= "</tr><tr>\r\n";
+    for ($i = 1; $i < 32; $i++) {
+        $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">".$i."</td>\r\n";
+    }
 
-    //$pos = 1;
-
-    //foreach ($lines as $data) {
-    //    if ($pos % 2) {
-    //        $xsl .= "<tr><td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['company_name'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['income'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['expense'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"background-color: #d0d0d0; text-align: center\" bgcolor=\"#d0d0d0\" align=\"center\">" . $data['all'] . "</td></tr>\r\n";
-    //    } else {
-    //        $xsl .= "<tr><td style=\"text-align: center\" align=\"center\">" . $data['company_name'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['income'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['expense'] . "</td>\r\n";
-    //        $xsl .= "<td style=\"text-align: center\" align=\"center\">" . $data['all'] . "</td></tr>\r\n";
-    //    }
-    //    $pos += 1;
-    //}
-
+    $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">всего</td>\r\n";
+    $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">в том числе засчи- тыва- емых</td>\r\n";
+    $xsl .= "</tr>\r\n";
+    $iPos = 0;
+    foreach ($vLines as $aData) {
+        $iPos++;
+        $xsl .= "<tr><td width=\"50\" style=\"text-align: center\" align=\"center\">". $iPos ."</td>\r\n";
+        $xsl .= "<td width=\"600\" style=\"text-align: left\" align=\"left\">". $aData['StudentFIO']."</td>\r\n";
+        $xsl .= "<td width=\"300\" style=\"text-align: center\" align=\"center\">" . $aData['AccountNumber'] . "</td>\r\n";
+        $xsl .= "<td width=\"200\" style=\"text-align: center\" align=\"center\">" . $aData['PayByRate'] . "</td>\r\n";
+        for ($i = 1; $i < 32; $i++) {
+            if(array_key_exists($i, $aData['DayData']))
+                $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">" . $aData['DayData'][$i] . "</td>\r\n";
+            else
+                $xsl .= "<td width=\"100\" style=\"text-align: center\" align=\"center\">в</td>\r\n";
+        }
+        $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">".$aData['Skipped']."</td>\r\n";
+        $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">" . $aData['SkippedPay'] . "</td>\r\n";
+        $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">" . $aData['TotalPay'] . "</td>\r\n";
+        $xsl .= "<td width=\"400\" style=\"text-align: left\" align=\"left\">" . $aData['Reson'] . "</td>\r\n";
+        $xsl .= "</tr>\r\n";
+    }
+    $xsl .= "<tr>\r\n";
+    $xsl .= "<td colspan=\"35\"></td>\r\n";
+    $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">" . $aData['Skipped'] . "</td>\r\n";
+    $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">" . $aData['SkippedPay'] . "</td>\r\n";
+    $xsl .= "<td width=\"150\" style=\"text-align: center\" align=\"center\">" . $aData['TotalPay'] . "</td>\r\n";
+    $xsl .= "</tr>\r\n";
     $xsl .= "</table></body></html>";
 
-    $name = 'income_by_companies.xls';
+    $name = "Table".$iGroupId."_".$month."_".$year.".xls";
 
     header("Content-type: application/vnd.ms-excel; charset=utf-8");
     header("Content-Disposition: attachment; filename=" . $name);

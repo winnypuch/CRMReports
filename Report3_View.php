@@ -85,8 +85,8 @@
     <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
 
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
-      <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=380" title="Настройки"></a>
-      <a class="header__user-item header__user-item_img" href="#" onclick="document.getElementById('xsl_ex').value='1'; document.getElementById('report_form').submit(); return false"><img src="images/xsl.gif" title="Экспорт в Excel"></a>
+      <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=390" title="Настройки"></a>
+      <a class="header__user-item header__user-item_img" href="#" onclick="document.getElementById('xsl_ex').value='1'; document.getElementById('report_form').submit(); document.getElementById('xsl_ex').value='0';return false"><img src="images/xsl.gif" title="Экспорт в Excel"></a>
     </span>
         Табели
 </div>
