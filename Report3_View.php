@@ -118,6 +118,10 @@
                 </select>
                 <div style="clear: both"></div>
             </td>
+            <td>&nbsp;&nbsp;
+                <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
+                       onclick="document.getElementById('report_form').submit(); return false"/>
+            </td>
             <td>&nbsp;&nbsp;Группа&nbsp;&nbsp;
                 <select name="iGroupId" style="width:300px; padding: 5px 5px 5px 5px">
                     {foreach from=$vGroups item=data name="rows"}
@@ -129,10 +133,6 @@
                     {/foreach}
                 </select>
                 <div style="clear: both"></div>
-            </td>
-            <td>&nbsp;&nbsp;
-                <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
-                       onclick="document.getElementById('report_form').submit(); return false"/>
             </td>
         </tr>
     </table>
