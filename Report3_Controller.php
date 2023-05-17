@@ -310,45 +310,48 @@ function GetData($ddateformate, &$vGroups, $iGroupId, $sDateFirst, $sDateNext, $
                                                 } else {
                                                     $sDayResult = "";
                                                 }
-                                            } elseif($vRowWasData["Was"] == "н") { //Если не был
-                                                if ($vRowWasData["WorkingOff"] == $sDateZero) { //Если не отработка
+                                            } elseif($vRowWasData["Was"] == "н" && $vRowWasData["WorkingOff"] == $sDateZero) { //Если не был на занятии
+                                                // Проверка в таблице отработки
+                                                //f15980 ДатаП|ГруппаП|ФИО f16030 ДатаО|ГруппаО|ФИО
+                                                $sSqlQueryWorkingOff = "SELECT
+                                                        if(WorkingOff.f16030 IS NULL, '', WorkingOff.f16030) AS GroupCodeO
+                                                    FROM
+                                                    " . DATA_TABLE . get_table_id(820) . " AS WorkingOff
+                                                    WHERE
+                                                        WorkingOff.f15980 = '" . $sGroupCode . "'
+                                                        AND WorkingOff.status = 0";
+                                                // Проверка Был на занятии
+                                                if ($vWorkingOffData = sql_query($sSqlQueryWorkingOff)) {
+                                                    if ($vRowWorkingOffData = sql_fetch_assoc($vWorkingOffData)) {
+                                                        $sSqlQueryWas2 = "SELECT
+                                                            if(GradesClass.f14670 IS NULL, '', GradesClass.f14670) AS Trial
+                                                        FROM
+                                                        " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                                                        WHERE
+                                                            GradesClass.f15990 = '" . $vRowWorkingOffData['GroupCodeO'] . "'
+                                                            AND (GradesClass.f14700 = '' OR GradesClass.f14700 IS NULL)
+                                                            AND GradesClass.f14710 <> ''
+                                                            AND GradesClass.f14710 IS NOT NULL
+                                                            AND GradesClass.f14710 <> '". $sDateZero."'
+                                                            AND GradesClass.status = 0";
+                                                        // Проверка Был на занятии
+                                                        if ($vWasData2 = sql_query($sSqlQueryWas2)) {
+                                                            if ($vRowWasData2 = sql_fetch_assoc($vWasData2)) {
+                                                                if ($vRowWasData["Trial"] == "пробное") {
+                                                                    $sDayResult = "нн";
+                                                                } else {
+                                                                    $sDayResult = "";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                if ($sDayResult == "?") { //Если не отработка
+
                                                     if ($vRowWasData["Trial"] == "пробное") {
                                                         $sDayResult = "нн";
                                                     } else {
                                                         $sDayResult = "но";
-                                                    }
-                                                } else {
-                                                    //f15980 ДатаП|ГруппаП|ФИО f16030 ДатаО|ГруппаО|ФИО
-                                                    $sSqlQueryWorkingOff = "SELECT
-                                                            if(WorkingOff.f16030 IS NULL, '', WorkingOff.f16030) AS GroupCodeO
-                                                        FROM
-                                                        " . DATA_TABLE . get_table_id(820) . " AS WorkingOff
-                                                        WHERE
-                                                            WorkingOff.f15980 = '" . $sGroupCode . "'
-                                                            AND WorkingOff.status = 0";
-                                                    // Проверка Был на занятии
-                                                    if ($vWorkingOffData = sql_query($sSqlQueryWorkingOff)) {
-                                                        if ($vRowWorkingOffData = sql_fetch_assoc($vWorkingOffData)) {
-                                                            $sSqlQueryWas2 = "SELECT
-                                                                if(GradesClass.f14670 IS NULL, '', GradesClass.f14670) AS Trial
-                                                            FROM
-                                                            " . DATA_TABLE . get_table_id(810) . " AS GradesClass
-                                                            WHERE
-                                                                GradesClass.f15990 = '" . $vRowWorkingOffData['GroupCodeO'] . "'
-                                                                AND (GradesClass.f14700 = '' OR GradesClass.f14700 IS NULL)
-                                                                AND (GradesClass.f14710 <> '' OR GradesClass.f14710 IS NOT NULL)
-                                                                AND GradesClass.status = 0";
-                                                            // Проверка Был на занятии
-                                                            if ($vWasData2 = sql_query($sSqlQueryWas2)) {
-                                                                if ($vRowWasData2 = sql_fetch_assoc($vWasData2)) {
-                                                                    if ($vRowWasData["Trial"] == "пробное") {
-                                                                        $sDayResult = "нн";
-                                                                    } else {
-                                                                        $sDayResult = "";
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
                                                     }
                                                 }
                                             }
