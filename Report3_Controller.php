@@ -319,6 +319,9 @@ function GetData($ddateformate, &$vGroups, $iGroupId, $sDateFirst, $sDateNext, $
                                                     " . DATA_TABLE . get_table_id(820) . " AS WorkingOff
                                                     WHERE
                                                         WorkingOff.f15980 = '" . $sGroupCode . "'
+                                                        AND WorkingOff.f15070 <> ''
+                                                        AND WorkingOff.f15070 IS NOT NULL
+                                                        AND WorkingOff.f15070 <> '" . $sDateZero . "'
                                                         AND WorkingOff.status = 0";
                                                 // Проверка Был на занятии
                                                 if ($vWorkingOffData = sql_query($sSqlQueryWorkingOff)) {
