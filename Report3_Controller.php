@@ -311,7 +311,6 @@ function GetData($ddateformate, &$vGroups, $iGroupId, $sDateFirst, $sDateNext, $
                                                     $sDayResult = "";
                                                 }
                                             } elseif($vRowWasData["Was"] == "н" && $vRowWasData["WorkingOff"] == $sDateZero) { //Если не был на занятии
-                                                // Проверка в таблице отработки
                                                 //f15980 ДатаП|ГруппаП|ФИО f16030 ДатаО|ГруппаО|ФИО
                                                 $sSqlQueryWorkingOff = "SELECT
                                                         if(WorkingOff.f16030 IS NULL, '', WorkingOff.f16030) AS GroupCodeO
@@ -323,9 +322,9 @@ function GetData($ddateformate, &$vGroups, $iGroupId, $sDateFirst, $sDateNext, $
                                                         AND WorkingOff.f15070 IS NOT NULL
                                                         AND WorkingOff.f15070 <> '" . $sDateZero . "'
                                                         AND WorkingOff.status = 0";
-                                                // Проверка Был на занятии
+                                                // Проверка в таблице отработки ищем по всем записям
                                                 if ($vWorkingOffData = sql_query($sSqlQueryWorkingOff)) {
-                                                    if ($vRowWorkingOffData = sql_fetch_assoc($vWorkingOffData)) {
+                                                    while ($vRowWorkingOffData = sql_fetch_assoc($vWorkingOffData)) {
                                                         $sSqlQueryWas2 = "SELECT
                                                             if(GradesClass.f14670 IS NULL, '', GradesClass.f14670) AS Trial
                                                         FROM
