@@ -64,11 +64,11 @@ if (
          WHERE
             Teacher.f9630= '" . $iUserId . "'
              AND Teacher.status = 0";
-        $vTeacherData = sql_query($sSqlQueryTeacher);
+        $vClassesData = sql_query($sSqlQueryTeacher);
 
-        while ($vTeacherRow = sql_fetch_assoc($vTeacherData)) {
+        while ($vClassesRow = sql_fetch_assoc($vClassesData)) {
             //$sFioTeacher = $vTeacherRow['fiosearch'];
-            $iTeacherId = $vTeacherRow['id'];
+            $iTeacherId = $vClassesRow['id'];
         }
     }
 }

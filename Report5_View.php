@@ -86,7 +86,41 @@
 </span>
     ЗП Педагоги
 </div>
-
+<div class="top">
+    <table style="margin: 0px auto;">
+        <tr>
+            <td>Год&nbsp;&nbsp;
+                {$yearArray = range(2022, 2030)}
+                <select name="year" style="width:50px; padding: 5px 5px 5px 5px">
+                    {foreach $yearArray as $selyear}
+                        {if $selyear== $year}
+                            <option selected value="{$selyear}">{$selyear}</option>
+                        {else}
+                            <option value="{$selyear}">{$selyear}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+                <div style="clear: both"></div>
+            </td>
+            <td>&nbsp;&nbsp;Месяц&nbsp;&nbsp;
+                <select name="month" style="width:100px; padding: 5px 5px 5px 5px">
+                    {section name=nummonth loop=12}
+                        {if $smarty.section.nummonth.iteration== $month}
+                            <option selected value="{$smarty.section.nummonth.iteration}">{$months[$smarty.section.nummonth.iteration]}</option>
+                        {else}
+                            <option value="{$smarty.section.nummonth.iteration}">{$months[$smarty.section.nummonth.iteration]}</option>
+                        {/if}
+                    {/section}
+                </select>
+                <div style="clear: both"></div>
+            </td>
+            <td>&nbsp;&nbsp;
+                <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
+                       onclick="document.getElementById('report_form').submit(); return false"/>
+            </td>
+        </tr>
+    </table>
+</div>
 
 
 <div class="mainTable">
@@ -98,61 +132,58 @@
 
                     <tr class="" style="height: 20px; background-color: #2196F3">
                         <td class="sticky-col first-col" width="50%" style="width:300px !important;border-top-color: #fff; border-left: none"
-                            dir="ltr"
                             rowspan="2">Педагог</td>
-                        <td class="s2" style="width:75px;border-top-color: #fff; border-left: none"
+                        <td style="width:75px;border-top-color: #fff; border-left: none"
                             rowspan="2">Кол-во занятий</td>
-                        <td class="s3" style="border-right: none;  border-top-color: #fff"
+                        <td style="border-right: none;  border-top-color: #fff"
                             colspan="5">Очно</td>
-                        <td class="s4" style="border-right: none;  border-top-color: #fff"
+                        <td style="border-right: none;  border-top-color: #fff"
                             colspan="8">Онлайн</td>
-                        <td class="s5" style="border-right: none;  border-top-color: #fff"
+                        <td style="border-right: none;  border-top-color: #fff"
                             rowspan="2">Личные расходы</td>
-                        <td class="s5" style="border-right: none;  border-top-color: #fff"
+                        <td style="border-right: none;  border-top-color: #fff"
                             rowspan="2">Подработка</td>
-                        <td class="s6" style="border-right: none;  border-top-color: #fff"
+                        <td style="border-right: none;  border-top-color: #fff"
                             rowspan="2">ЗП ИТОГО план</td>
-                        <td class="s7"/>
+                        <td rowspan="2"/>
                     </tr>
-                    <tr sclass="" style="height: 120px; background-color: #2196F3">
-                        <td class="s8" style="width:83px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=2 чел.</td>
-                        <td class="s8" style="width:75px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;2 чел.</td>
-                        <td class="s8" style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;2 чел.</td>
-                        <td class="s8" style="width:61px;border-right: none;  border-top-color: #fff">Индивид</td>
-                        <td class="s8" style="width:40px;border-right: none;  border-top-color: #fff">ЗП</td>
-                        <td class="s9" style="width:94px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=1.5 чел. Сад</td>
-                        <td class="s9" style="width:86px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;1.5 Сад</td>
-                        <td class="s9" style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;1.5 Сад</td>
-                        <td class="s9" style="width:94px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=2.5 чел. Школа</td>
-                        <td class="s9" style="width:86px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;2.5 чел. Школа</td>
-                        <td class="s9" style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;2.5 чел. Школа</td>
-                        <td class="s9" style="width:61px;border-right: none;  border-top-color: #fff">Индивид</td>
-                        <td class="s9" style="width:40px;border-right: none;  border-top-color: #fff">ЗП</td>
-                        <td class="s7" style="width:59px;border-right: none;  border-top-color: #fff"/>
+                    <tr style="height: 120px; background-color: #2196F3">
+                        <td style="width:83px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=2 чел.</td>
+                        <td style="width:75px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;2 чел.</td>
+                        <td style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;2 чел.</td>
+                        <td style="width:61px;border-right: none;  border-top-color: #fff">Индивид</td>
+                        <td style="width:40px;border-right: none;  border-top-color: #fff">ЗП</td>
+                        <td style="width:94px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=1.5 чел. Сад</td>
+                        <td style="width:86px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;1.5 Сад</td>
+                        <td style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;1.5 Сад</td>
+                        <td style="width:94px;border-right: none;  border-top-color: #fff">Кол-во занятий &lt;=2.5 чел. Школа</td>
+                        <td style="width:86px;border-right: none;  border-top-color: #fff">Кол-во занятий &gt;2.5 чел. Школа</td>
+                        <td style="width:89px;border-right: none;  border-top-color: #fff">Кол-во человек на занятиях, где &gt;2.5 чел. Школа</td>
+                        <td style="width:61px;border-right: none;  border-top-color: #fff">Индивид</td>
+                        <td style="width:40px;border-right: none;  border-top-color: #fff">ЗП</td>
+                        <td style="width:59px;border-right: none;  border-top-color: #fff"/>
                     </tr>
                     <tr style="height: 20px">
                         <td class="sticky-col first-col">Шишкина Ксения</td>
-                        <td class="s11">7</td>
-                        <td class="s3">0</td>
-                        <td class="s3">4</td>
-                        <td class="s3">19</td>
-                        <td class="s3">0</td>
-                        <td class="s3">6 612</td>
-                        <td class="s4">0</td>
-                        <td class="s4">1</td>
-                        <td class="s4">3</td>
-                        <td class="s4">2</td>
-                        <td class="s4">0</td>
-                        <td class="s4">0</td>
-                        <td class="s4">0</td>
-                        <td class="s4">3 306</td>
-                        <td class="s12">0</td>
-                        <td class="s12">0</td>
-                        <td class="s13">9 918</td>
-                        <td class="s14"
-                            dir="ltr">
-                            <a target="_blank"
-                               href="https://ru.wikipedia.org/wiki/%D0%9D%D0%B0%D1%83%D1%87%D0%BD%D0%B0%D1%8F_%D1%84%D0%B0%D0%BD%D1%82%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0">выплатить</a>
+                        <td>7</td>
+                        <td>0</td>
+                        <td>4</td>
+                        <td>19</td>
+                        <td>0</td>
+                        <td>6 612</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>3 306</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>9 918</td>
+                        <td>
+                            <a target="_blank" href="">выплатить</a>
                         </td>
                     </tr>
                 </tbody>
