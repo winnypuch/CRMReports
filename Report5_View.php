@@ -145,6 +145,8 @@
                             rowspan="2">Подработка</td>
                         <td style="border-right: none;  border-top-color: #fff"
                             rowspan="2">ЗП ИТОГО план</td>
+                        <td style="border-right: none;  border-top-color: #fff"
+                            rowspan="2">ЗП ИТОГО факт</td>
                         <td rowspan="2"/>
                     </tr>
                     <tr style="height: 120px; background-color: #2196F3">
@@ -163,29 +165,32 @@
                         <td style="width:40px;border-right: none;  border-top-color: #fff">ЗП</td>
                         <td style="width:59px;border-right: none;  border-top-color: #fff"/>
                     </tr>
-                    <tr style="height: 20px">
-                        <td class="sticky-col first-col">Шишкина Ксения</td>
-                        <td>7</td>
-                        <td>0</td>
-                        <td>4</td>
-                        <td>19</td>
-                        <td>0</td>
-                        <td>6 612</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td>3</td>
-                        <td>2</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>3 306</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>9 918</td>
-                        <td>
-                            <a target="_blank" href="">выплатить</a>
-                        </td>
-                    </tr>
+                    {foreach from=$lines item=data name="rows"}
+                        <tr style="height: 20px">
+                            <td class="sticky-col first-col">{$data.A}</td>
+                            <td>{$data.B}</td>
+                            <td>{$data.D}</td>
+                            <td>{$data.E}</td>
+                            <td>{$data.F}</td>
+                            <td>{$data.H}</td>
+                            <td>{$data.I}</td>
+                            <td>{$data.J}</td>
+                            <td>{$data.K}</td>
+                            <td>{$data.L}</td>
+                            <td>{$data.M}</td>
+                            <td>{$data.N}</td>
+                            <td>{$data.O}</td>
+                            <td>{$data.Q}</td>
+                            <td>{$data.R}</td>
+                            <td>{$data.S}</td>
+                            <td>{$data.T}</td>
+                            <td>{$data.Y}</td>
+                            <td>{$data.Z}</td>
+                            <td>
+                                <a target="_blank" href="">выплатить</a>
+                            </td>
+                        </tr>
+                    {/foreach}
                 </tbody>
             </table>
 </div>
