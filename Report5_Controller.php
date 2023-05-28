@@ -1,8 +1,8 @@
 <?php
 $months = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
 if ($_REQUEST['year'] && $_REQUEST['month']) {
-    $month = $_REQUEST['month'];
-    $year = $_REQUEST['year'];
+    $month = intval($_REQUEST['month']);
+    $year = intval($_REQUEST['year']);
 } else {
     $month = date("m");
     $year = date("Y");
@@ -15,6 +15,7 @@ $dDateNext = new DateTime($sDateFirst);
 $dDateNext->modify('1 month');
 $sDateNext = $dDateNext->format('Y-m-d 00:00:00');
 $vLines = [];
+$sDateNow = date('Y-m-d 00:00:00');
 //методисты 2
 //педагоги таблица  520
 //педагоги 790 f9660 ФИО педагога сокр.
@@ -34,6 +35,18 @@ $iTeacherId = 0;
 //f10740 (J+M)* число из таблицы Педагоги поле “Ставка мин. онлайн” тянем по полю ФИО педагога сокр.
 //f10710 L* число из таблицы Педагоги поле “Ставка онлайн дошк.” тянем по полю ФИО педагога сокр. дошкольный
 //f10720 O* число из таблицы Педагоги поле “Ставка онлайн. шк.” тянем по полю ФИО педагога сокр.
+//print_r($_REQUEST);
+//Если нужно добавить данные в таблицу
+if ($_REQUEST['update_data'] == 1 && intval($_REQUEST['update_sum']) > 0 && intval($_REQUEST['update_teacherid']) >0) {
+    //Расходы Декарт 940
+    //f17420 Дата
+    //f17480 Кому (ФИО)
+    //f17450 Сумма
+    //f17470 Статья
+    //f17430 Пользователь
+    //echo $_REQUEST['update_sum'] ."-". $_REQUEST['update_teacherid'] ."-". $_REQUEST['csrf'];
+    data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
+}
 
 $sTeachersSqlQuery = "SELECT
                     Users.Id AS UserId
@@ -50,9 +63,19 @@ $sTeachersSqlQuery = "SELECT
                 " . USERS_TABLE . " AS Users
                     INNER JOIN " . DATA_TABLE . get_table_id(520) . " AS Teachers
                         ON Users.id = Teachers.f9630
-                WHERE
-                    group_id = 790
+
                     ";//AND arc = 0
+                //WHERE
+                //    group_id = 790
+$iEmployeesTable = 1;
+//Если юзер преподователь
+if ($vUserRes = sql_select_field(USERS_TABLE, "id", "id='" . $iUserId . "' and group_id=790")) {
+    if ($$vUserRow = sql_fetch_assoc($vUserRes)) {
+        $sTeachersSqlQuery = $sTeachersSqlQuery . " WHERE Users.Id = ".$iUserId;
+        $iEmployeesTable = 0;
+    }
+}
+
 //Преподователи
 if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
     while ($vTeachersRow = sql_fetch_assoc($vTeachersRes)) {
@@ -153,7 +176,7 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
                     AND ExpensesTeachers.status = 0";
         if ($vExpensesTeachersRes = sql_query($sExpensesTeachersSqlQuery)) {
             while ($vExpensesTeachersRow = sql_fetch_assoc($vExpensesTeachersRes)) {
-                $iSCol = $vExpensesTeachersRow['Sum'];
+                $iSCol = intval($vExpensesTeachersRow['Sum']);
             }
         }
         $iTCol = 0;
@@ -172,7 +195,7 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
                     AND PartTimeJob.status = 0";
         if ($vPartTimeJobRes = sql_query($sPartTimeJobSqlQuery)) {
             while ($vPartTimeRow = sql_fetch_assoc($vPartTimeJobRes)) {
-                $iTCol = $vPartTimeRow['Sum'];
+                $iTCol = intval($vPartTimeRow['Sum']);
             }
         }
 
@@ -194,20 +217,113 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
                     AND ExspansesDecart.status = 0";
         if ($vExspansesDecartRes = sql_query($sExspansesDecartSqlQuery)) {
             while ($vExspansesDecartRow = sql_fetch_assoc($vExspansesDecartRes)) {
-                $iZCol = $vExspansesDecartRow['Sum'];
+                $iZCol = intval($vExspansesDecartRow['Sum']);
             }
         }
 
         $iICol = $iDCol * $vTeachersRow['RateMinYea'] + $iECol * $vTeachersRow['RateYea'] + $iHCol * $vTeachersRow['RateMinInd'];
         $iRCol = ($iJCol + $iMCol) * $vTeachersRow['RateMinOnline'] + $iLCol * $vTeachersRow['RateOnlinePreSchool'] + $iOCol * $vTeachersRow['RateOnlineSchool'] + $iQCol * $vTeachersRow['RateMinInd'];
         $iYCol = $iICol + $iRCol + $iSCol + $iTCol;
-        $iBCol = $iDCol + $iECol + $iJCol + $iKCol + $iMCol + $iNCol + $iQCol+ $iHCol;
-        $vLines[] = array("A"=>$vTeachersRow['TeacherFIO'], "B"=>$iBCol, "D"=>$iDCol,"E"=>$iECol,"F"=>$iFCol,"H"=>$iHCol,"I"=>$iICol,"J"=>$iJCol,"K"=>$iKCol,"L"=>$iLCol,"M"=>$iMCol,"N"=>$iNCol,"O"=>$iOCol,"Q"=>$iQCol,"R"=>$iRCol,"S"=>$iSCol,"T"=>$iTCol,"Y"=>$iYCol,"Z"=>$iZCol);
+        $iBCol = $iDCol + $iECol + $iJCol + $iKCol + $iMCol + $iNCol + $iQCol + $iHCol;
+        if($iYCol > 0)
+            $vLines[] = array("TeacherId" => $vTeachersRow['TeacherId'],  "A"=>$vTeachersRow['TeacherFIO'], "B"=>$iBCol, "D"=>$iDCol,"E"=>$iECol,"F"=>$iFCol,"H"=>$iHCol,"I"=>$iICol,"J"=>$iJCol,"K"=>$iKCol,"L"=>$iLCol,"M"=>$iMCol,"N"=>$iNCol,"O"=>$iOCol,"Q"=>$iQCol,"R"=>$iRCol,"S"=>$iSCol,"T"=>$iTCol,"Y"=>$iYCol,"Z"=>$iZCol);
     }
 }
+$vLines2 = [];
+// Таблица сотрудников
+if($iEmployeesTable == 1){
+    //Сотрудники 890
+    //ФИО сотрудника сокр f15620
+    //ЗП фикс в мес f15630
+    //Дата от f15640
+    //Дата до f15650
+    //Пользователь f15740
+    $sEmployeesSqlQuery = "SELECT
+                    IFNULL(Teachers.Id, 0) AS EmployeesId
+                    , Employees.f15620 AS EmployeesFIO
+                    , Employees.f15630 AS EmployeesSum
+                FROM
+                    " . DATA_TABLE . get_table_id(890) . " AS Employees
+                    LEFT JOIN " . DATA_TABLE . get_table_id(520) . " AS Teachers
+                                            ON Employees.f15740 = Teachers.f9630
+                WHERE
+                ((Employees.f15640 <'" . $sDateNext . "' AND Employees.f15640 <>'" . $sDateZero . "' AND (Employees.f15650 IS NULL OR Employees.f15650 = '" . $sDateZero . "'))
+                    OR (Employees.f15640 <'" . $sDateNext . "' AND Employees.f15640 <>'" . $sDateZero . "' AND Employees.f15650 >= '" . $sDateFirst . "' AND Employees.f15650 <> '" . $sDateZero . "' AND NOT Employees.f15650 IS NULL))
+                    AND Employees.status = 0";
 
+    if ($vEmployeesRes = sql_query($sEmployeesSqlQuery)) {
+        while ($vEmployeesRow = sql_fetch_assoc($vEmployeesRes)) {
 
+            $iECol = intval($vEmployeesRow['EmployeesSum']);
 
+            $iBCol = 0;
+            //Расходы педагоги 900
+            //f15700 Дата
+            //f15720 ФИО педагога
+            //f15710 Сумма
+            $sExpensesTeachersSqlQuery = "SELECT
+                    IFNULL(SUM(ExpensesTeachers.f15710),0) AS Sum
+                FROM
+                    " . DATA_TABLE . get_table_id(900) . " AS ExpensesTeachers
+                WHERE
+                    ExpensesTeachers.f15720 = " . $vEmployeesRow['EmployeesId'] . "
+                    AND ExpensesTeachers.f15700 >= '" . $sDateFirst . "'
+                    AND ExpensesTeachers.f15700 <'" . $sDateNext . "'
+                    AND ExpensesTeachers.status = 0";
+            if ($vExpensesTeachersRes = sql_query($sExpensesTeachersSqlQuery)) {
+                while ($vExpensesTeachersRow = sql_fetch_assoc($vExpensesTeachersRes)) {
+                    $iBCol = intval($vExpensesTeachersRow['Sum']);
+                }
+            }
+
+            $iDCol = 0;
+            //Подработка 910
+            //f15850 Дата
+            //f15840 ФИО педагога
+            //f15860 К выплате
+            $sPartTimeJobSqlQuery = "SELECT
+                    IFNULL(SUM(PartTimeJob.f15860),0) AS Sum
+                FROM
+                    " . DATA_TABLE . get_table_id(910) . " AS PartTimeJob
+                WHERE
+                    PartTimeJob.f15840 = " . $vEmployeesRow['EmployeesId'] . "
+                    AND PartTimeJob.f15850 >= '" . $sDateFirst . "'
+                    AND PartTimeJob.f15850 <'" . $sDateNext . "'
+                    AND PartTimeJob.status = 0";
+            if ($vPartTimeJobRes = sql_query($sPartTimeJobSqlQuery)) {
+                while ($vPartTimeRow = sql_fetch_assoc($vPartTimeJobRes)) {
+                    $iDCol = intval($vPartTimeRow['Sum']);
+                }
+            }
+            $iFCol = $iBCol + $iDCol + $iECol;
+
+            $iHCol = 0;
+            //Расходы Декарт 940
+            //f17420 Дата
+            //f17480 Кому (ФИО)
+            //f17450 Сумма
+            //f17470 Статья
+            //f17430 Пользователь
+            $sExspansesDecartSqlQuery = "SELECT
+                    IFNULL(SUM(ExspansesDecart.f17450),0) AS Sum
+                FROM
+                    " . DATA_TABLE . get_table_id(940) . " AS ExspansesDecart
+                WHERE
+                    ExspansesDecart.f17480 = " . $vEmployeesRow['EmployeesId'] . "
+                    AND ExspansesDecart.f17420 >= '" . $sDateFirst . "'
+                    AND ExspansesDecart.f17420 <'" . $sDateNext . "'
+                    AND ExspansesDecart.status = 0";
+            if ($vExspansesDecartRes = sql_query($sExspansesDecartSqlQuery)) {
+                while ($vExspansesDecartRow = sql_fetch_assoc($vExspansesDecartRes)) {
+                    $iHCol = intval($vExspansesDecartRow['Sum']);
+                }
+            }
+
+            if($iFCol > 0)
+                $vLines2[] = array("EmployeesId" => $vEmployeesRow['EmployeesId'],  "A"=>$vEmployeesRow['EmployeesFIO'], "B"=>$iBCol, "D"=>$iDCol,"E"=>$iECol,"F"=>$iFCol,"H"=>$iHCol);
+        }
+    }
+}
 
 $result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
 $row = sql_fetch_assoc($result);
@@ -217,3 +333,5 @@ $smarty->assign("months", $months);
 $smarty->assign("month", $month);
 $smarty->assign("year", $year);
 $smarty->assign("lines", $vLines);
+$smarty->assign("lines2", $vLines2);
+$smarty->assign("iEmployeesTable", $iEmployeesTable);
