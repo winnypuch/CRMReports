@@ -126,7 +126,7 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
                     $iInPay = $vClassesRow['ChildrenToPay'] / $iTeacherQty;
                     if($vClassesRow['PlanFormat'] == "очно"){
                         if($vClassesRow['GroupType'] != "инд") {
-                            if($iInPay > 0 && $iInPay <= 2){
+                            if($iInPay >= 0 && $iInPay <= 2){
                                 $iDCol++;
                             } elseif($iInPay > 2){
                                 $iECol++;
@@ -138,14 +138,14 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
                         }
                     }elseif($vClassesRow['PlanFormat'] == "онлайн"){
                         if($vClassesRow['GroupType'] == "сад") {
-                            if($iInPay > 0 && $iInPay <= 1.5){
+                            if($iInPay >= 0 && $iInPay <= 1.5){
                                 $iJCol++;
                             } elseif($iInPay > 1.5){
                                 $iKCol++;
                                 $iLCol = $iLCol + $iInPay;//Считаем сумму по полю Дети к оплате разделить на кол-во педагогов по занятиям в колонке K
                             }
                         }elseif($vClassesRow['GroupType'] == "школа"){
-                            if($iInPay > 0 && $iInPay <= 2.5){
+                            if($iInPay >= 0 && $iInPay <= 2.5){
                                 $iMCol++;
                             } elseif($iInPay > 2.5){
                                 $iNCol++;
@@ -221,7 +221,8 @@ if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
             }
         }
 
-        $iICol = $iDCol * $vTeachersRow['RateMinYea'] + $iECol * $vTeachersRow['RateYea'] + $iHCol * $vTeachersRow['RateMinInd'];
+        $iICol = $iDCol * $vTeachersRow['RateMinYea'] + $iFCol * $vTeachersRow['RateYea'] + $iHCol * $vTeachersRow['RateMinInd'];
+        //echo $iDCol."*".$vTeachersRow['RateMinYea']."+".$iFCol."*".$vTeachersRow['RateYea']."+".$iHCol."*".$vTeachersRow['RateMinInd']."\n";
         $iRCol = ($iJCol + $iMCol) * $vTeachersRow['RateMinOnline'] + $iLCol * $vTeachersRow['RateOnlinePreSchool'] + $iOCol * $vTeachersRow['RateOnlineSchool'] + $iQCol * $vTeachersRow['RateMinInd'];
         $iYCol = $iICol + $iRCol + $iSCol + $iTCol;
         $iBCol = $iDCol + $iECol + $iJCol + $iKCol + $iMCol + $iNCol + $iQCol + $iHCol;

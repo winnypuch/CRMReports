@@ -8,12 +8,12 @@
         }
         function UpdateData(iTeacherId, iSumPlan, iSumFact) {
             sConfirm = "Выплатить?";
-            if (iSumPlan == iSumFact) {
-                sConfirm = "Выплаченная сумма " + iSumFact + " равна запланированной, всё равно выплатить?";
-            } else {
-                if (iSumPlan < iSumFact)
-                sConfirm = "Выплаченная сумма " + iSumFact + " больше запланированной " + iSumPlan + ", всё равно выплатить?";
-            }
+            //if (iSumPlan == iSumFact) {
+            //    sConfirm = "Выплаченная сумма " + iSumFact + " равна запланированной, всё равно выплатить?";
+            //} else {
+            //    if (iSumPlan < iSumFact)
+            //    sConfirm = "Выплаченная сумма " + iSumFact + " больше запланированной " + iSumPlan + ", всё равно выплатить?";
+            //}
 
             href_post = confirm(sConfirm);
             if (href_post) {
@@ -163,8 +163,6 @@
                 <td style="border-right: none;  border-top-color: #fff"
                     rowspan="2">ЗП ИТОГО план</td>
                 <td style="border-right: none;  border-top-color: #fff"
-                    rowspan="2">ЗП ИТОГО факт</td>
-                <td style="border-right: none;  border-top-color: #fff"
                     rowspan="2"></td>
             </tr>
             <tr style="height: 120px; background-color: #2196F3">
@@ -202,7 +200,6 @@
                     <td>{$data.S}</td>
                     <td>{$data.T}</td>
                     <td>{$data.Y}</td>
-                    <td>{$data.Z}</td>
                     <td>
                         <a onclick="return href_post = UpdateData({$data.TeacherId}, {$data.Y}, {$data.Z});" href="#">Выплатить</a>
                     </td>
@@ -227,7 +224,6 @@
                 <td style="border-right: none;  border-top-color: #fff">Подработка</td>
                 <td style="border-right: none;  border-top-color: #fff">Фикс</td>
                 <td style="border-right: none;  border-top-color: #fff">ЗП ИТОГО план</td>
-                <td style="border-right: none;  border-top-color: #fff">ЗП ИТОГО факт</td>
                 <td style="border-right: none;  border-top-color: #fff"></td>
             </tr>
             {foreach from=$lines2 item=data2 name="rows"}
@@ -237,7 +233,6 @@
                     <td>{$data2.D}</td>
                     <td>{$data2.E}</td>
                     <td>{$data2.F}</td>
-                    <td>{$data2.H}</td>
                     <td>
                         <a onclick="return href_post = UpdateData({$data2.EmployeesId}, {$data2.F}, {$data2.H});" href="#">Выплатить</a>
                     </td>
