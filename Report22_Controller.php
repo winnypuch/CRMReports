@@ -1,5 +1,4 @@
 <?php
-require_once ('jpgraph/jpgraph.php');
 $aMonths = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
 if ($_REQUEST['iYear'] && $_REQUEST['sDateBeg'] && $_REQUEST['sDateEnd']) {
     $iYear = intval($_REQUEST['year']);
@@ -110,12 +109,12 @@ while ($vGroupRow = sql_fetch_assoc($vGroupData)) {
 $iReportId = 410; //Id текущего отчёта
 $aReportData = [];
 //Данные для отчётоВ 970
-if ($vResReportData = sql_query("SELECT f17790 FROM " . DATA_TABLE . get_table_id(970) ." WHERE f17780='" . $iReportId . "'")) {
+if ($vResReportData = sql_query("SELECT f17790 FROM " . DATA_TABLE . get_table_id(970) ." WHERE f17780='" . $iReportId . "' AND status='0'")) {
     if ($vRowReportData = sql_fetch_assoc($vResReportData)) {
-        $aReportData = json_decode($vResReportData['f17790']);
+        $aReportData = json_decode($vRowReportData['f17790'], true);
         if(!array_key_exists("iFaultData", $aReportData)){
             $aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
-            data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"'" );
+            data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0'" );
         }
     }
 }
@@ -126,8 +125,8 @@ if(!array_key_exists("iFaultData", $aReportData)){
 }
 //сохраняем данные
 if ($_REQUEST['iFaultData'] && $_REQUEST['iMinQtyClasses'] && $_REQUEST['iMinQtyClassesSubdivision']) {
-    if($aReportData['iFaultData'] != $_REQUEST['iFaultData'] || $aReportData['iMinQtyClasses'] != $_REQUEST['iMinQtyClasses'] || $aReportData['iMinQtyClassesSubdivision'] != $_REQUEST['iMinQtyClassesSubdivision']){
-        data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"'" );
+    if($aReportData['iFaultData'] != floatval($_REQUEST['iFaultData']) || $aReportData['iMinQtyClasses'] != intval($_REQUEST['iMinQtyClasses']) || $aReportData['iMinQtyClassesSubdivision'] != intval($_REQUEST['iMinQtyClassesSubdivision'])){
+        data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0' ");
     }
 }
 
@@ -148,7 +147,7 @@ if (intval($_REQUEST['ChildrenId']) > 0) {
 
         }
     }
-    GenerateReport();
+    GenerateReport($vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData);
     //Расходы Декарт 940
     //f17420 Дата
     //f17480 Кому (ФИО)
@@ -224,9 +223,18 @@ function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aRep
     //$vGroups['g'.$iGroupId]['ProgramAge']
     //header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
     $arData = [$vGroups['g'.$iGroupId]['TeacherFioMin'], "ffff", $vGroups['g'.$iGroupId]['ClassFormat'], $vGroups['g'.$iGroupId]['ProgramAge']];
+    $arData[4] = "от до";
     $arData[5] = "3,54";
     $arData[6] = "4,38";
-    $arLessons['l1'] = ""
+    $arLessons[0] = "Внимание и память";
+    $arLessons[1] = "счёт";
+    $arRows[0] = "yellow";
+    $arRows[0] = "green";
+    $arValuesAvg[0]="94";
+    $arValuesAvg[1]="97";
+    $arValues[0]="75";
+    $arValues[1]="100";
+
     echo madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $arValuesAvg);
     header('Content-Type:text/html; charset=UTF-8');
     header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
@@ -240,9 +248,10 @@ function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aRep
 
 function madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $arValuesAvg) {
 
+    require_once ('jpgraph/jpgraph.php');
+    require_once ('jpgraph/jpgraph_radar.php');
 
-
-    $arMaxValues = array_fill(0,count($arLessons),100);
+    $arMaxValues = array_fill(0,count($arLessons),"100");
 
     $header = '<p>Педагог: '.$arData[0]. '</p>';
     $header .= '<p>Ученик: '.$arData[1]. '</p>';
