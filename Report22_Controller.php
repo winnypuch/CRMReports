@@ -1,19 +1,29 @@
 <?php
-$months = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
-if ($_REQUEST['year'] && $_REQUEST['month']) {
-    $month = intval($_REQUEST['month']);
-    $year = intval($_REQUEST['year']);
+require_once ('jpgraph/jpgraph.php');
+$aMonths = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
+if ($_REQUEST['iYear'] && $_REQUEST['sDateBeg'] && $_REQUEST['sDateEnd']) {
+    $iYear = intval($_REQUEST['year']);
+    $sDateBeg = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateBeg'])));
+    $sDateEnd = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateEnd'])));
 } else {
-    $month = date("m");
-    $year = date("Y");
+    $iYear = date("Y");
+    $sDateBeg = date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), date("d") - 7, date("Y")));
+    $sDateEnd = date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
+}
+if ($_REQUEST['iGroupId']) {
+    $iGroupId = $_REQUEST['iGroupId'];
+} else {
+    $iGroupId = 0;
+}
+if ($_REQUEST['bIsPerfomance']) {
+    $bIsPerfomance = $_REQUEST['bIsPerfomance'];
+} else {
+    $bIsPerfomance = true;
 }
 
-$sDateFirst = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
 $sDateZero = '0000-00-00 00:00:00';
-
-$dDateNext = new DateTime($sDateFirst);
-$dDateNext->modify('1 month');
-$sDateNext = $dDateNext->format('Y-m-d 00:00:00');
+$dDateBeg = new DateTime($sDateBeg);
+$dDateEnd = new DateTime($sDateEnd);
 $vLines = [];
 $sDateNow = date('Y-m-d 00:00:00');
 $iFaultData = 0;
@@ -52,41 +62,32 @@ if ($result = sql_select_field(USERS_TABLE, "id", "id='" . $iUserId . "' and gro
         }
     }
 }
-
+//f11260 - Фиктивная группа
+//f11140 - Программный возраст
+//f13580 - Формат план
 $sSqlQueryGroup = "SELECT DISTINCT
     Groups.id AS GroupId
     , Groups.f11090 AS GroupName
-    , if(Groups.f11310 IS NULL, 0, Groups.f11310) AS CostPerLesson
-    , if(Groups.f11320 IS NULL, 0, Groups.f11320) AS CostPerMonth
-    , if(Departments.f9450 IS NULL, '', Departments.f9450) AS DepartmentName
-    , if(Schools.f9530 IS NULL, '', Schools.f9530) AS SchoolName
-    , if(Schools.f9540 IS NULL, '', Schools.f9540) AS SchoolOKPO
-    , if(Schools.f9550 IS NULL, '', Schools.f9550) AS SchoolDir
-    , if(DaysWeek.f10330 IS NULL, '', DaysWeek.f10330) AS DayWeek
-    , if(Schedule.f13570 IS NULL, '', Schedule.f13570) AS ClassTime
+    , if(Groups.f11140 IS NULL, '', Groups.f11140) AS ProgramAge
+    , if(Schedule.f13580 IS NULL, '', Schedule.f13580) AS ClassFormat
     , if(Teacher.f9660 IS NULL, '', Teacher.f9660) AS TeacherFioMin
     FROM
         " . DATA_TABLE . get_table_id(720) . " AS Students
         INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
             ON Students.f11570 = Groups.id
-        LEFT JOIN " . DATA_TABLE . get_table_id(500) . " AS Departments
-            ON Groups.f11150 = Departments.id
-        LEFT JOIN " . DATA_TABLE . get_table_id(510) . " AS Schools
-            ON Departments.f9580 = Schools.id
         LEFT JOIN " . DATA_TABLE . get_table_id(790) . " AS Schedule
             ON Schedule.f13550 = Groups.id
-        LEFT JOIN " . DATA_TABLE . get_table_id(600) . " AS DaysWeek
-            ON Schedule.f13560 = DaysWeek.id
         LEFT JOIN " . DATA_TABLE . get_table_id(520) . " AS Teacher
             ON Groups.f11160 = Teacher.id
     WHERE
-    ((Groups.f11240 <'" . $sDateNext . "' AND Groups.f11240 <>'" . $sDateZero . "' AND (Groups.f11270 IS NULL OR Groups.f11270 = '" . $sDateZero . "'))
-        OR (Groups.f11240 <'" . $sDateNext . "' AND Groups.f11240 <>'" . $sDateZero . "' AND Groups.f11270 >= '" . $sDateFirst . "' AND Groups.f11270 <> '" . $sDateZero . "' AND NOT Groups.f11270 IS NULL))
+    ((Groups.f11240 <='" . $sDateEnd . "' AND Groups.f11240 <>'" . $sDateZero . "' AND (Groups.f11270 IS NULL OR Groups.f11270 = '" . $sDateZero . "'))
+        OR (Groups.f11240 <='" . $sDateEnd . "' AND Groups.f11240 <>'" . $sDateZero . "' AND Groups.f11270 >= '" . $sDateBeg . "' AND Groups.f11270 <> '" . $sDateZero . "' AND NOT Groups.f11270 IS NULL))
+        AND Groups.f11260 = '0'
         AND Groups.status = 0";
 //проверка грыппы на пользователя педагога
 if ($iTeacherId != 0) {
-    $sSqlQueryGroup = $sSqlQueryGroup . " AND (Groups.f11160='" . $iTeacherId . "' OR Groups.f11180='" . $iTeacherId . "')";
-    $bisAdmin = false;
+    $sSqlQueryGroup = $sSqlQueryGroup . " AND Groups.f11180='" . $iTeacherId . "'";
+    $bIsAdmin = false;
 }
 
 $sSqlQueryGroup = $sSqlQueryGroup . " ORDER BY GroupName";
@@ -100,36 +101,35 @@ while ($vGroupRow = sql_fetch_assoc($vGroupData)) {
     }
     $vTableData['GroupId'] = $vGroupRow['GroupId'];
     $vTableData['GroupName'] = form_display($vGroupRow['GroupName']);
-    $vTableData['CostPerLesson'] = $vGroupRow['CostPerLesson'];
-    $vTableData['CostPerMonth'] = $vGroupRow['CostPerMonth'];
-    $vTableData['DepartmentName'] = $vGroupRow['DepartmentName'];
-    $vTableData['SchoolName'] = $vGroupRow['SchoolName'];
-    $vTableData['SchoolOKPO'] = $vGroupRow['SchoolOKPO'];
-    $vTableData['SchoolDir'] = $vGroupRow['SchoolDir'];
+    $vTableData['ProgramAge'] = form_display($vGroupRow['ProgramAge']);
+    $vTableData['ClassFormat'] = form_display($vGroupRow['ClassFormat']);
     $vTableData['TeacherFioMin'] = $vGroupRow['TeacherFioMin'];
-    $vTableData['DayWeek'] = $vGroupRow['DayWeek'];
-    $vTableData['ClassTime'] = $vGroupRow['ClassTime'];
-    $vTableData['Skipped'] = 0; //Пропущено
-    $vTableData['SkippedPay'] = 0; //Пропущено оплата
-    $vTableData['TotalPay'] = 0; //Всего к оплате
     $vGroups['g'.$vGroupRow['GroupId']] = $vTableData;
 }
 //Работа с таблице параметров отчёта
 $iReportId = 410; //Id текущего отчёта
-$aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
-//Данные для отчётоВ 790
-if ($vResReportData = sql_select_field(790, "f17790", "f17780='" . $iReportId . "'")) {
+$aReportData = [];
+//Данные для отчётоВ 970
+if ($vResReportData = sql_query("SELECT f17790 FROM " . DATA_TABLE . get_table_id(970) ." WHERE f17780='" . $iReportId . "'")) {
     if ($vRowReportData = sql_fetch_assoc($vResReportData)) {
         $aReportData = json_decode($vResReportData['f17790']);
+        if(!array_key_exists("iFaultData", $aReportData)){
+            $aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
+            data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"'" );
+        }
     }
+}
+
+if(!array_key_exists("iFaultData", $aReportData)){
+    $aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
+    data_insert(970, array('status'=>'0', 'f17780'=>$iReportId, 'f17790'=>json_encode($aReportData)));
 }
 //сохраняем данные
 if ($_REQUEST['iFaultData'] && $_REQUEST['iMinQtyClasses'] && $_REQUEST['iMinQtyClassesSubdivision']) {
     if($aReportData['iFaultData'] != $_REQUEST['iFaultData'] || $aReportData['iMinQtyClasses'] != $_REQUEST['iMinQtyClasses'] || $aReportData['iMinQtyClassesSubdivision'] != $_REQUEST['iMinQtyClassesSubdivision']){
-        data_update(790, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"'" );
+        data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"'" );
     }
 }
-
 
 
 //f10700 1) D умножить на число из таблицы Педагоги поле “Ставка мини. очно” тянем по полю ФИО педагога сокр.
@@ -140,7 +140,15 @@ if ($_REQUEST['iFaultData'] && $_REQUEST['iMinQtyClasses'] && $_REQUEST['iMinQty
 //f10720 O* число из таблицы Педагоги поле “Ставка онлайн. шк.” тянем по полю ФИО педагога сокр.
 //print_r($_REQUEST);
 //Если нужно добавить данные в таблицу
-if ($_REQUEST['update_data'] == 1 && intval($_REQUEST['update_sum']) > 0 && intval($_REQUEST['update_teacherid']) >0) {
+if (intval($_REQUEST['ChildrenId']) > 0) {
+    if(intval($_REQUEST['Report']) == 1){
+
+    } else{
+        if(intval($_REQUEST['SendReport']) == 1){
+
+        }
+    }
+    GenerateReport();
     //Расходы Декарт 940
     //f17420 Дата
     //f17480 Кому (ФИО)
@@ -148,189 +156,47 @@ if ($_REQUEST['update_data'] == 1 && intval($_REQUEST['update_sum']) > 0 && intv
     //f17470 Статья
     //f17430 Пользователь
     //echo $_REQUEST['update_sum'] ."-". $_REQUEST['update_teacherid'] ."-". $_REQUEST['csrf'];
-    data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
+    //data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
 }
 
-$sTeachersSqlQuery = "SELECT
-                    Users.Id AS UserId
-                    , Users.fio AS UserFIO
-                    , Teachers.Id AS TeacherId
-                    , Teachers.f9660 AS TeacherFIO
-                    , IFNULL(Teachers.f10700, 0) AS RateMinYea
-                    , IFNULL(Teachers.f10690, 0) AS RateYea
-                    , IFNULL(Teachers.f10750, 0) AS RateMinInd
-                    , IFNULL(Teachers.f10740, 0) AS RateMinOnline
-                    , IFNULL(Teachers.f10710, 0) AS RateOnlinePreSchool
-                    , IFNULL(Teachers.f10720, 0) AS RateOnlineSchool
-                FROM
-                " . USERS_TABLE . " AS Users
-                    INNER JOIN " . DATA_TABLE . get_table_id(520) . " AS Teachers
-                        ON Users.id = Teachers.f9630
 
-                    ";//AND arc = 0
-                //WHERE
-                //    group_id = 790
-$iEmployeesTable = 1;
-//Если юзер преподователь
-if ($vUserRes = sql_select_field(USERS_TABLE, "id", "id='" . $iUserId . "' and group_id=790")) {
-    if ($$vUserRow = sql_fetch_assoc($vUserRes)) {
-        $sTeachersSqlQuery = $sTeachersSqlQuery . " WHERE Users.Id = ".$iUserId;
-
-    }
-}
-
-//Преподователи
-if ($vTeachersRes = sql_query($sTeachersSqlQuery)) {
-    while ($vTeachersRow = sql_fetch_assoc($vTeachersRes)) {
-        $iDCol = 0;
-        $iECol = 0;
-        $iFCol = 0;
-        $iHCol = 0;
-        $iJCol = 0;
-        $iKCol = 0;
-        $iLCol = 0;
-        $iMCol = 0;
-        $iNCol = 0;
-        $iOCol = 0;
-        $iQCol = 0;
-        //780 - таблица  занятия
-        //f13840 Дата|Группа
-        //f12790 ФИО педагога сокр. 1 f12790] => 30
-        //f12850 ФИО педагога сокр. 2
-        // f13470 Оплата занятия
-        // f12750 Дата
-        // f17500 Дети к оплате
-        // f12830 Формат план
-        // f13450 Тип Группы
-        $sClassesSqlQuery = "SELECT
-            Classes.f13840 as DateGroup
-            , IFNULL(Classes.f17500, 0) AS ChildrenToPay
-            , IFNULL(Classes.f12830, '') AS PlanFormat
-            , IFNULL(Classes.f13450, '') AS GroupType
-            , if(Classes.f12790 = 0 OR Classes.f12790 IS NULL, 0, 1) AS Teacher1
-            , if(Classes.f12850 = 0 OR Classes.f12850 IS NULL, 0, 1) AS Teacher2
-         FROM
-            " . DATA_TABLE . get_table_id(780) . " AS Classes
-         WHERE
-            (Classes.f12790 = " . $vTeachersRow['TeacherId'] . "
-            OR Classes.f12850 = " . $vTeachersRow['TeacherId'] . ")
-            AND Classes.f13470 ='Оплата'
-            AND Classes.f12750 >= '" . $sDateFirst . "'
-            AND Classes.f12750 <'" . $sDateNext . "'
-            AND Classes.status = 0";
-        //смотрим занятия
-        if($vClassesData = sql_query($sClassesSqlQuery)){
-            while ($vClassesRow = sql_fetch_assoc($vClassesData)) {
-                //(Поле Дети к оплате разделить на кол-во педагогов) > 0 И
-                //(Поле Дети к оплате разделить на кол-во педагогов) <= 2
-                $iTeacherQty = $vClassesRow['Teacher1'] + $vClassesRow['Teacher2'];
-
-                if($iTeacherQty > 0){
-                    $iInPay = $vClassesRow['ChildrenToPay'] / $iTeacherQty;
-                    if($vClassesRow['PlanFormat'] == "очно"){
-                        if($vClassesRow['GroupType'] != "инд") {
-                            if($iInPay >= 0 && $iInPay <= 2){
-                                $iDCol++;
-                            } elseif($iInPay > 2){
-                                $iECol++;
-                                $iFCol = $iFCol + $iInPay;//Считаем сумму по полю Дети к оплате разделить на кол-во педагогов по занятиям в колонке Е
-                            }
-                        }elseif($vClassesRow['GroupType'] == "инд"){
-                            if($iInPay > 0)
-                                $iHCol++;
-                        }
-                    }elseif($vClassesRow['PlanFormat'] == "онлайн"){
-                        if($vClassesRow['GroupType'] == "сад") {
-                            if($iInPay >= 0 && $iInPay <= 1.5){
-                                $iJCol++;
-                            } elseif($iInPay > 1.5){
-                                $iKCol++;
-                                $iLCol = $iLCol + $iInPay;//Считаем сумму по полю Дети к оплате разделить на кол-во педагогов по занятиям в колонке K
-                            }
-                        }elseif($vClassesRow['GroupType'] == "школа"){
-                            if($iInPay >= 0 && $iInPay <= 2.5){
-                                $iMCol++;
-                            } elseif($iInPay > 2.5){
-                                $iNCol++;
-                                $iOCol = $iOCol + $iInPay;//Считаем сумму по полю Дети к оплате разделить на кол-во педагогов по занятиям в колонке N
-                            }
-                        }elseif($vClassesRow['GroupType'] == "инд"){
-                            if($iInPay > 0)
-                                $iQCol++;
-                        }
-                    }
-                }
+//f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
+$sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
+    , ClienCards.f9750 as ChildrenFIO
+    , Groups.f11090 AS GroupFactName
+FROM
+" . DATA_TABLE . get_table_id(720) . " AS Students
+    INNER JOIN " . DATA_TABLE . get_table_id(530) . " AS ClienCards
+        ON Students.f11460 = ClienCards.id
+    INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
+        ON Students.f11480 = Groups.id
+    WHERE
+        Students.f11480 = '" . $iGroupId . "'
+        AND ((Students.f11580 <='" . $sDateEnd . "' AND Students.f11590 IS NULL AND Students.f11580 <>'" . $sDateZero . "')
+        OR (Students.f11580 <='" . $sDateEnd . "' AND Students.f11590 = '" . $sDateZero . "' AND Students.f11580 <>'" . $sDateZero . "')
+        OR (Students.f11580 <>'" . $sDateZero . "' AND Students.f11580 <='" . $sDateEnd . "' AND Students.f11590 >= '" . $sDateBeg . "' AND Students.f11590 <>'" . $sDateZero . "'))
+        AND Students.status = 0
+    ORDER BY ChildrenFIO";
+if($vStudentsData = sql_query($sSqlQueryStudents)) {
+    while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
+        $iQtyClasses = 0;
+        $iReportState = 0;
+    //810 Оценки на занятии f14680 ФИО ребенка f17280 Формат Факт f17260 Пр. возраст Дата f14820 Был? f14700
+        $sSqlQueryGradesClass = "SELECT IFNULL(COUNT(*), 0) AS QtyClasses FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+            WHERE
+                GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
+                AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
+                AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
+                AND GradesClass.status = 0";
+        if($vResultGradesClass = sql_query($sSqlQueryGradesClass)) {
+            if($vRowGradesClass = sql_fetch_assoc($vResultGradesClass)){
+                //echo $vGroupRow['GroupId']."___".$iWorkingOff."---".$vRowMisses['MissesCount']."---<br>";
+                $iQtyClasses = $vRowGradesClass ['QtyClasses'];
             }
         }
-
-        $iSCol = 0;
-        //Расходы педагоги 900
-        //f15700 Дата
-        //f15720 ФИО педагога
-        //f15710 Сумма
-        $sExpensesTeachersSqlQuery = "SELECT
-                    IFNULL(SUM(ExpensesTeachers.f15710),0) AS Sum
-                FROM
-                    " . DATA_TABLE . get_table_id(900) . " AS ExpensesTeachers
-                WHERE
-                    ExpensesTeachers.f15720 = " . $vTeachersRow['TeacherId'] . "
-                    AND ExpensesTeachers.f15700 >= '" . $sDateFirst . "'
-                    AND ExpensesTeachers.f15700 <'" . $sDateNext . "'
-                    AND ExpensesTeachers.status = 0";
-        if ($vExpensesTeachersRes = sql_query($sExpensesTeachersSqlQuery)) {
-            while ($vExpensesTeachersRow = sql_fetch_assoc($vExpensesTeachersRes)) {
-                $iSCol = intval($vExpensesTeachersRow['Sum']);
-            }
-        }
-        $iTCol = 0;
-        //Подработка 910
-        //f15850 Дата
-        //f15840 ФИО педагога
-        //f15860 К выплате
-        $sPartTimeJobSqlQuery = "SELECT
-                    IFNULL(SUM(PartTimeJob.f15860),0) AS Sum
-                FROM
-                    " . DATA_TABLE . get_table_id(910) . " AS PartTimeJob
-                WHERE
-                    PartTimeJob.f15840 = " . $vTeachersRow['TeacherId'] . "
-                    AND PartTimeJob.f15850 >= '" . $sDateFirst . "'
-                    AND PartTimeJob.f15850 <'" . $sDateNext . "'
-                    AND PartTimeJob.status = 0";
-        if ($vPartTimeJobRes = sql_query($sPartTimeJobSqlQuery)) {
-            while ($vPartTimeRow = sql_fetch_assoc($vPartTimeJobRes)) {
-                $iTCol = intval($vPartTimeRow['Sum']);
-            }
-        }
-
-        $iZCol = 0;
-        //Расходы Декарт 940
-        //f17420 Дата
-        //f17480 Кому (ФИО)
-        //f17450 Сумма
-        //f17470 Статья
-        //f17430 Пользователь
-        $sExspansesDecartSqlQuery = "SELECT
-                    IFNULL(SUM(ExspansesDecart.f17450),0) AS Sum
-                FROM
-                    " . DATA_TABLE . get_table_id(940) . " AS ExspansesDecart
-                WHERE
-                    ExspansesDecart.f17480 = " . $vTeachersRow['TeacherId'] . "
-                    AND ExspansesDecart.f17420 >= '" . $sDateFirst . "'
-                    AND ExspansesDecart.f17420 <'" . $sDateNext . "'
-                    AND ExspansesDecart.status = 0";
-        if ($vExspansesDecartRes = sql_query($sExspansesDecartSqlQuery)) {
-            while ($vExspansesDecartRow = sql_fetch_assoc($vExspansesDecartRes)) {
-                $iZCol = intval($vExspansesDecartRow['Sum']);
-            }
-        }
-
-        $iICol = $iDCol * $vTeachersRow['RateMinYea'] + $iFCol * $vTeachersRow['RateYea'] + $iHCol * $vTeachersRow['RateMinInd'];
-        //echo $iDCol."*".$vTeachersRow['RateMinYea']."+".$iFCol."*".$vTeachersRow['RateYea']."+".$iHCol."*".$vTeachersRow['RateMinInd']."\n";
-        $iRCol = ($iJCol + $iMCol) * $vTeachersRow['RateMinOnline'] + $iLCol * $vTeachersRow['RateOnlinePreSchool'] + $iOCol * $vTeachersRow['RateOnlineSchool'] + $iQCol * $vTeachersRow['RateMinInd'];
-        $iYCol = $iICol + $iRCol + $iSCol + $iTCol;
-        $iBCol = $iDCol + $iECol + $iJCol + $iKCol + $iMCol + $iNCol + $iQCol + $iHCol;
-        if($iYCol > 0)
-            $vLines[] = array("TeacherId" => $vTeachersRow['TeacherId'],  "A"=>$vTeachersRow['TeacherFIO'], "B"=>$iBCol, "D"=>$iDCol,"E"=>$iECol,"F"=>$iFCol,"H"=>$iHCol,"I"=>$iICol,"J"=>$iJCol,"K"=>$iKCol,"L"=>$iLCol,"M"=>$iMCol,"N"=>$iNCol,"O"=>$iOCol,"Q"=>$iQCol,"R"=>$iRCol,"S"=>$iSCol,"T"=>$iTCol,"Y"=>$iYCol,"Z"=>$iZCol);
+        $vLines[] = array("ChildrenId" => $vStudentRow['ChildrenId'], "ChildrenFIO"=> $vStudentRow['ChildrenFIO'], "QtyClasses" => $iQtyClasses, "ReportState" => $iReportState);
     }
 }
 
@@ -339,13 +205,159 @@ $result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
 $row = sql_fetch_assoc($result);
 
 $smarty->assign("color3", $row['color3']);
-$smarty->assign("months", $months);
-$smarty->assign("month", $month);
-$smarty->assign("year", $year);
+$smarty->assign("months", $aMonths);
+$smarty->assign("iYear", $iYear);
+$smarty->assign("sDateBeg", $dDateBeg->format('d.m.Y'));
+$smarty->assign("sDateEnd", $dDateEnd->format('d.m.Y'));
 $smarty->assign("lines", $vLines);
 $smarty->assign("vGroups", $vGroups);
 $smarty->assign("iGroupId", $iGroupId);
 $smarty->assign("bIsAdmin", $bIsAdmin);
+$smarty->assign("bIsPerfomance", $bIsPerfomance);
 $smarty->assign("iFaultData", $aReportData['iFaultData']);
-$smarty->assign("iMinQtyClasses", $aReportData['iMinQtyClasses'];
+$smarty->assign("iMinQtyClasses", $aReportData['iMinQtyClasses']);
 $smarty->assign("iMinQtyClassesSubdivision", $aReportData['iMinQtyClassesSubdivision']);
+
+function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData){
+    //$vGroups['g'.$iGroupId]['TeacherFioMin']
+    //$vGroups['g'.$iGroupId]['ClassFormat']
+    //$vGroups['g'.$iGroupId]['ProgramAge']
+    //header("Content-Type:   application/vnd.ms-excel; charset=utf-8");
+    $arData = [$vGroups['g'.$iGroupId]['TeacherFioMin'], "ffff", $vGroups['g'.$iGroupId]['ClassFormat'], $vGroups['g'.$iGroupId]['ProgramAge']];
+    $arData[5] = "3,54";
+    $arData[6] = "4,38";
+    $arLessons['l1'] = ""
+    echo madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $arValuesAvg);
+    header('Content-Type:text/html; charset=UTF-8');
+    header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: private", false);
+    exit;
+}
+
+
+
+function madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $arValuesAvg) {
+
+
+
+    $arMaxValues = array_fill(0,count($arLessons),100);
+
+    $header = '<p>Педагог: '.$arData[0]. '</p>';
+    $header .= '<p>Ученик: '.$arData[1]. '</p>';
+    $header .= '<p>Формат занятий: '.$arData[2]. '</p>';
+    $header .= '<p>Программный возраст: '.$arData[3]. '</p>';
+    $header .= '<p>Период обучения: '.$arData[4]. '</p>';
+
+    if($bIsPerfomance) {
+        $header .= '<p>Успеваемость (5-бальная шкала): '.$arData[5]. '</p>';
+        $header .= '<p>Средняя успеваемость: '.$arData[6]. '</p>';
+    }
+
+    $theader = '<html><head>
+    <style type="text/css">
+     body {font-size: 120%; font-family: Verdana, Arial, Helvetica, sans-serif; color: #333366;}
+     .green {background-color: #cee2d3;}
+     .yellow {background-color: #FAF3D2;}
+     td.center {text-align: center;}
+     td.left {text-align: left;}
+    </style>
+  </head><body>'.$header.'<div><table border="1" cellpadding="0" cellspacing="0">
+    <tbody><tr height="20" style="">
+     <td height="20" class="center" width="40%" style="">Тема</td>
+     <td class="center" width="20%" style="">Максимальный уровень</td>
+     <td class="center" width="20%" style="">Среднее по возрасту**</td>
+     <td class="center" width="20%" style="">Уровень ребенка*</td>
+    </tr>';
+
+    foreach ($arRows as $key => $value) {
+      $tbody .= '<tr height="20" class="'.$value.'" style="">
+      <td height="20" class="left" style="">'.$arLessons[$key].'</td>
+      <td class="center" style="">'.$arMaxValues[$key].'</td>
+      <td class="center" style="">'.$arValuesAvg[$key].'</td>
+      <td class="center" style="">'.$arValues[$key].'</td>
+      </tr>
+      ';
+    }
+
+    $tfooter = '</tbody></table></div><br><div>
+   <table border="0" cellpadding="0" cellspacing="0">
+   <tr height="20" style="">
+        <td width="30%">*Уровень ребенка</td>
+        <td width="70%">- способность ребенка справляться с заданиями на занятии. Определяется на основании заметок педагога, которые фиксируются в течении занятия. Если ребенка не было на занятии, то такие задания не учитывались в </td>
+    </tr>
+    <tr>
+    <td width="30%">**Среднее по возрасту</td>
+    <td width="70%">- Средняя способность детей данного возраста справляться с заданиями на занятии</td>
+    </tr>
+   </table></div><br><div>
+   <table border="0" cellpadding="0" cellspacing="0">
+   <tr height="20" style="">
+        <td class="green" width="30%">&nbsp;</td>
+        <td width="70%">-  ребенок справляется с заданиями отлично</td>
+    </tr>
+    <tr>
+        <td class="yellow" width="30%">&nbsp;</td>
+        <td width="70%">- Средняя способность детей данного возраста справляться с заданиями на занятии</td>
+    </tr>
+   </table>
+    </div>
+   </body>
+   </html>';
+
+    return $theader.$tbody.$tfooter;
+
+    // Create the basic rtadar graph
+    $graph = new RadarGraph(300,200);
+
+    // Set background color and shadow
+    $graph->SetColor("white");
+    $graph->SetShadow();
+
+    // Position the graph
+    $graph->SetCenter(0.4,0.55);
+
+    // Setup the axis formatting
+    $graph->axis->SetFont(FF_FONT1,FS_BOLD);
+    $graph->axis->SetWeight(2);
+
+    // Setup the grid lines
+    $graph->grid->SetLineStyle("longdashed");
+    $graph->grid->SetColor("navy");
+    $graph->grid->Show();
+    $graph->HideTickMarks();
+
+    // Setup graph titles
+    $graph->title->Set("ДИАГРАММА УСВОЕНИЯ МАТЕРИАЛОВ НА ЗАНЯТИЯХ");
+    $graph->title->SetFont(FF_FONT1,FS_BOLD);
+    $graph->SetTitles($arLessons);
+    // Create the first radar plot
+    $plot = new RadarPlot($arMaxValues);
+    $plot->SetLegend("Максимально возможный");
+    $plot->SetColor("red","lightred");
+    $plot->SetFill(false);
+    $plot->SetLineWeight(1);
+
+    // Create perosnal level area
+    $plot2 = new RadarPlot($arValues);
+    $plot2->SetLegend("Уровень ребенка");
+    $plot2->SetColor("green","lightgreen");
+    $plot2->SetLineWeight(2);
+
+    // Create the average levels area
+    $plot3 = new RadarPlot($arValues);
+    $plot3->SetLegend("Средний уровень по возрасту");
+    $plot3->SetColor("blue","lightblue");
+    $plot->SetFill(false);
+    $plot->SetLineWeight(1);
+
+    // Add the plots to the graph
+    $graph->Add($plot3);
+    $graph->Add($plot2);
+    $graph->Add($plot);
+
+    // And output the graph
+    $graph->Stroke();
+
+}

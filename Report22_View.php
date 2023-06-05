@@ -1,24 +1,23 @@
 {literal}
 
     <script type="text/javascript">
-
-            var $start = $('#dDateBeg'),
-                $end = $('#dDateEnd');
+        $(function () {
+            var $start = $('#sDateBeg'),
+                $end = $('#sDateEnd');
 
             $start.datepicker({
-                onSelect: function (fd, date) {
-                    $end.data('datepicker')
-                        .update('minDate', date);
-
-                    $end.focus();
+                maxDate: '+ 3 month',
+                onSelect: function (selectedDate) {
+                    $end.datepicker('option', 'minDate', selectedDate);
                 }
-            })
+            });
             $end.datepicker({
-                onSelect: function (fd, date) {
-                    $start.data('datepicker')
-                        .update('maxDate', date)
+                maxDate: '+ 3 month',
+                onSelect: function (selectedDate) {
+                    $start.datepicker('option', 'maxDate', selectedDate);
                 }
-            })
+            });
+        });
             //$('.datepicker').datepicker({
             //    showOn: "button",
             //    showAlways: true,
@@ -33,46 +32,33 @@
             else hlColor = "#ffffff";
             document.getElementById(tdName + trId).style.background = hlColor;
         }
-        function Report(iChildrenId) {
-            sConfirm = "Выплатить?";
-            //if (iSumPlan == iSumFact) {
-            //    sConfirm = "Выплаченная сумма " + iSumFact + " равна запланированной, всё равно выплатить?";
-            //} else {
-            //    if (iSumPlan < iSumFact)
-            //    sConfirm = "Выплаченная сумма " + iSumFact + " больше запланированной " + iSumPlan + ", всё равно выплатить?";
-            //}
+        function Report(iChildrenId, iReportState) {
+            sConfirm = "Открыть отчёт?";
 
             href_post = confirm(sConfirm);
             if (href_post) {
-                document.getElementById('update_data').value = '1';
-                document.getElementById('update_sum').value = iSumPlan;
-                document.getElementById('update_teacherid').value = iTeacherId;
+                document.getElementById('Report').value = '1';
+                document.getElementById('ChildrenId').value = iChildrenId;
                 document.getElementById('report_form').submit();
-                document.getElementById('update_data').value = '0';
+                document.getElementById('Report').value = '0';
             }
             return href_post;
         }
-        function SendReport(iChildrenId) {
-            sConfirm = "Выплатить?";
-            //if (iSumPlan == iSumFact) {
-            //    sConfirm = "Выплаченная сумма " + iSumFact + " равна запланированной, всё равно выплатить?";
-            //} else {
-            //    if (iSumPlan < iSumFact)
-            //    sConfirm = "Выплаченная сумма " + iSumFact + " больше запланированной " + iSumPlan + ", всё равно выплатить?";
-            //}
+        function SendReport(iChildrenId, iReportState) {
+            sConfirm = "Отправить отчёт?";
 
             href_post = confirm(sConfirm);
             if (href_post) {
-                document.getElementById('update_data').value = '1';
-                document.getElementById('update_sum').value = iSumPlan;
-                document.getElementById('update_teacherid').value = iTeacherId;
+                document.getElementById('SendReport').value = '1';
+                document.getElementById('ChildrenId').value = iChildrenId;
                 document.getElementById('report_form').submit();
-                document.getElementById('update_data').value = '0';
+                document.getElementById('SendReport').value = '0';
             }
             return href_post;
         }
         function SubmitData() {
-            document.getElementById('update_data').value = '0';
+            document.getElementById('Report').value = '0';
+            document.getElementById('SendReport').value = '0';
             document.getElementById('report_form').submit();
             return false;
         }
@@ -147,7 +133,7 @@
 <div class="title">
 <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
-      <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=400" title="Настройки"></a>
+      <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=410" title="Настройки"></a>
 </span>
     ЗП Педагоги
 </div>
@@ -156,9 +142,9 @@
         <tr>
             <td><label for="year">Год:</label>
                 {$yearArray = range(2022, 2030)}
-                <select name="year" style="width:50px; padding: 5px 5px 5px 5px">
+                <select name="iYear" style="width:50px; padding: 5px 5px 5px 5px">
                     {foreach $yearArray as $selyear}
-                        {if $selyear== $year}
+                        {if $selyear== $iYear}
                             <option selected value="{$selyear}">{$selyear}</option>
                         {else}
                             <option value="{$selyear}">{$selyear}</option>
@@ -167,8 +153,8 @@
                 </select>
                 <div style="clear: both"></div>
             </td>
-            <td><label for="dDateBeg">Дата от:</label><input type="text" name="dDateBeg" id="dDateBeg" value="{$dDateBeg}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
-            <td><label for="dDateEnd">Дата до:</label><input type="text" name="dDateEnd" id="dDateEnd" value="{$dDateEnd}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
+            <td>&nbsp;&nbsp;Дата от:&nbsp;&nbsp;<input type="text" name="sDateBeg" id="sDateBeg" value="{$sDateBeg}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
+            <td>&nbsp;&nbsp;Дата до:&nbsp;&nbsp;<input type="text" name="sDateEnd" id="sDateEnd" value="{$sDateEnd}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
             <td>&nbsp;&nbsp;
                 <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
                        onclick="return SubmitData();"/>
@@ -186,28 +172,37 @@
                 <div style="clear: both"></div>
             </td>
         </tr>
-        {if $bisAdmin}
+    </table>
+</div>
+<div class="top input_element">
+    <table style="margin: 0px auto;">
+        {if $bIsAdmin}
         <tr>
-            <td>*Погрешность:</td>
-            <td><input type="text" name="FaultData" id="FaultData" value="{$iFaultData}"/></td>
+            <td>*Погрешность:&nbsp;&nbsp;</td>
+            <td><input type="number" name="FaultData" id="FaultData" value="{$iFaultData}"/></td>
         </tr>
         <tr>
-            <td>*Минимальное кол-во занятий:</td>
-            <td><input type="text" name="iMinQtyClasses" id="iMinQtyClasses" value="{$iMinQtyClasses}"/></td>
+            <td>*Минимальное кол-во занятий:&nbsp;&nbsp;</td>
+            <td><input type="number" name="iMinQtyClasses" id="iMinQtyClasses" value="{$iMinQtyClasses}"/></td>
         </tr>
         <tr>
-            <td>*Минимальное кол-во занятий по подразделу:</td>
-            <td><input type="text" name="iMinQtyClassesSubdivision" id="iMinQtyClassesSubdivision" value="{$iMinQtyClassesSubdivision}"/></td>
+            <td>*Минимальное кол-во занятий по подразделу:&nbsp;&nbsp;</td>
+            <td><input type="number" name="iMinQtyClassesSubdivision" id="iMinQtyClassesSubdivision" value="{$iMinQtyClassesSubdivision}"/></td>
         </tr>
         {/if}
         <tr>
-            <td><label for="bPerfomance">Добавить успеваемость в отчет:  </label></td>
-            <td><input type="checkbox" name="bPerfomance" id="bPerfomance" value="0"/></td>
+            <td>Добавить успеваемость в отчет:&nbsp;&nbsp;</td>
+            <td>
+                       {if $bIsPerfomance}
+                        <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance" checked/>
+                        {else}
+                        <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance"/>
+                       {/if}
+           </td>
         </tr>
 
     </table>
 </div>
-
 
 <div class="mainTable">
     <table
@@ -223,14 +218,20 @@
             {foreach from=$lines item=data name="rows"}
                 <tr style="height: 20px">
                     <td class="sticky-col first-col">{$data.ChildrenFIO}</td>
-                    <td>{$data.NumberLesson}</td>
-                    <td><a onclick="return Report({$data.ChildrenId});" href="#">Отчёт</a></td>
-                    <td><a onclick="return SendReport({$data.ChildrenId});" href="#">Отправить отчёт</a></td>
+                    <td>{$data.QtyClasses}</td>
+                    {if $data.QtyClasses >= $iMinQtyClasses }
+                        <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Отчёт</a></td>
+                        <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить отчёт</a></td>
+                    {else}
+                        <td></td>
+                        <td></td>
+                    {/if}
                 </tr>
             {/foreach}
         </tbody>
     </table>
 </div>
 <input type=hidden name="Report" id="Report" value="0"/>
+<input type=hidden name="ChildrenId" id="ChildrenId" value="0"/>
 <input type=hidden name="SendReport" id="SendReport" value="0"/>
 <input type=hidden name=csrf value='{$csrf}'/>
