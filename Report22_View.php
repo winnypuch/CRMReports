@@ -225,6 +225,7 @@
                 <td style="border-right: none;  border-top-color: #fff">Отправить отчёт</td>
             </tr>
             {$bIsReportAll = false}
+            {$sAllReport= "0"}
             {foreach from=$lines item=data name="rows"}
                 <tr style="height: 20px">
                     <td class="sticky-col first-col">{$data.ChildrenFIO}</td>
@@ -233,6 +234,7 @@
                         <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Отчёт</a></td>
                         <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить</a></td>
                         {$bIsReportAll = true}
+                        {$sAllReport= $sAllReport.";".$data.ChildrenId}
                     {else}
                         <td></td>
                         <td></td>
@@ -252,4 +254,7 @@
 <input type=hidden name="ChildrenId" id="ChildrenId" value="0"/>
 <input type=hidden name="SendReport" id="SendReport" value="0"/>
 <input type=hidden name="SendAllReport" id="SendAllReport" value="0"/>
+{if $bIsReportAll }
+<input type=hidden name="SendAllReportData" id="SendAllReportData" value="{$sAllReport}"/>
+{/if}
 <input type=hidden name=csrf value='{$csrf}'/>

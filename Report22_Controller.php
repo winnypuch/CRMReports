@@ -132,7 +132,7 @@ if (array_key_exists('iFaultData', $_REQUEST) && array_key_exists('iMinQtyClasse
     if(floatval($aReportData['iFaultData']) != floatval($_REQUEST['iFaultData']) || intval($aReportData['iMinQtyClasses']) != intval($_REQUEST['iMinQtyClasses']) || intval($aReportData['iMinQtyClassesSubdivision']) != intval($_REQUEST['iMinQtyClassesSubdivision'])){
         if($bdebug) echo $iReportId."--5<br>";
         $aReportData = ["iFaultData"=> floatval($_REQUEST['iFaultData']), "iMinQtyClasses" => intval($_REQUEST['iMinQtyClasses']), "iMinQtyClassesSubdivision" => intval($_REQUEST['iMinQtyClassesSubdivision'])];
-        data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0' ");
+        data_update(970, array('f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0' ");
     }
 }
 
@@ -145,55 +145,15 @@ if (array_key_exists('iFaultData', $_REQUEST) && array_key_exists('iMinQtyClasse
 //f10720 O* число из таблицы Педагоги поле “Ставка онлайн. шк.” тянем по полю ФИО педагога сокр.
 //print_r($_REQUEST);
 //Если нужно добавить данные в таблицу
-if (intval($_REQUEST['ChildrenId']) > 0) {
-    //Отчёты для отправки 980
-    // Уникальное поле f17840
-    // Id ученика f17850
-    // id группы f17860
-    // Дата от f17870
-    // Дата до f17880
-    // Погрешность f17890
-    // Минимальное кол-во занятий f17900
-    // Минимальное кол-во занятий по подразделу f17910
-    // Добавить успеваемость в отчет f17920
-    // Отчёт f17930
-    // Состояние отчёта f17940
-    // Кто изменил f17990
-    $sSqlReportState = "SELECT Id AS ReportStateId, f17840 AS UniqueId, f17930 AS Report, f17940 AS ReportState
-            FROM " . DATA_TABLE . get_table_id(980) ."
-            WHERE
-                f17850='" . intval($_REQUEST['ChildrenId']) . "'
-                AND f17860='" . $iGroupId . "'
-                AND f17870='" . $sDateBeg . "'
-                AND f17880='" . $sDateEnd . "'
-                AND f17890='" . floatval($aReportData['iFaultData']) . "'
-                AND f17900='" . intval($aReportData['iMinQtyClasses']) . "'
-                AND f17910='" . intval($aReportData['iMinQtyClassesSubdivision'])  . "'
-                AND f17920='" . ($bIsPerfomance ? "1", "0") . "'
-                AND status='0'";
-    $iReportStateId = 0;
-    $iReportState = -1;
-    //0 - Отчёт сформирован
-    //1 - Отчёт сформирован и помечен к отправке
-    //2 - Отчёт отправлен
-    $sReportUniqueId = "";
-    $aReportGen=[];
-    if ($vResReportState = sql_query($sSqlReportState)) {
-        if ($vRowReportState = sql_fetch_assoc($vResReportState)) {
-            $iReportStateId = $vRowReportState[''];
-            $aReportGen = json_decode($vRowReportState['Report'], true);
-            if($bdebug) echo "vResReportState--1<br>";
-        }
-    }
-    if(intval($_REQUEST['Report']) == 1){
+if (intval($_REQUEST['ChildrenId']) > 0 && (intval($_REQUEST['Report']) == 1 || intval($_REQUEST['SendReport']) == 1)) {
 
+    if(intval($_REQUEST['Report']) == 1){
+        $aResData = SetState($iUserId, 0, $vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
     } else{
         if(intval($_REQUEST['SendReport']) == 1){
-            header("Location: https://lemnews.info");
-            die();
+            $aResData = SetState($iUserId, 1, $vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
         }
     }
-    $aResData = GenerateReport($vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
     $vJsonData = json_encode($aResData);
     if($bdebug) echo var_dump($vJsonData);
     $aData = json_decode($vJsonData, true);
@@ -214,7 +174,13 @@ if (intval($_REQUEST['ChildrenId']) > 0) {
     //echo $_REQUEST['update_sum'] ."-". $_REQUEST['update_teacherid'] ."-". $_REQUEST['csrf'];
     //data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
 }
-
+if (intval($_REQUEST['SendAllReport']) > 0 && $_REQUEST['SendAllReportData']) {
+    $aChildReport = explode(";", $_REQUEST['SendAllReportData']);
+    foreach($aChildReport as $key => $value){
+        if(intval($value) > 0)
+            SetState($iUserId, 1, $vGroups, $iGroupId, intval($value), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+    }
+}
 
 //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
 $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
@@ -657,4 +623,78 @@ function madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $ar
     // And output the graph
     $graph->Stroke();
 
+}
+//iSetReportState 0 - Отчёт сформирован
+//1 - Отчёт сформирован и помечен к отправке
+//2 - Отчёт отправлен
+function SetState($iUserId, $iSetReportState, $vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug){
+        //Отчёты для отправки 980
+    // Уникальное поле f17840
+    // Id ученика f17850
+    // id группы f17860
+    // Дата от f17870
+    // Дата до f17880
+    // Погрешность f17890
+    // Минимальное кол-во занятий f17900
+    // Минимальное кол-во занятий по подразделу f17910
+    // Добавить успеваемость в отчет f17920
+    // Отчёт f17930
+    // Состояние отчёта f17940
+    // Кто изменил f17990
+    $sSqlReportState = "SELECT Id AS ReportStateId, f17840 AS UniqueId, f17930 AS Report, f17940 AS ReportState
+            FROM " . DATA_TABLE . get_table_id(980) ."
+            WHERE
+                f17850='" . $iChildrenId . "'
+                AND f17860='" . $iGroupId . "'
+                AND f17870='" . $sDateBeg . "'
+                AND f17880='" . $sDateEnd . "'
+                AND f17890='" . floatval($aReportData['iFaultData']) . "'
+                AND f17900='" . intval($aReportData['iMinQtyClasses']) . "'
+                AND f17910='" . intval($aReportData['iMinQtyClassesSubdivision'])  . "'
+                AND f17920='" . ($bIsPerfomance ? "1": "0") . "'
+                AND status='0'";
+    $iReportStateId = 0;
+    $iReportState = -1;
+    $sReportUniqueId = "";
+    $aReportGen=[];
+    if ($vResReportState = sql_query($sSqlReportState)) {
+        if ($vRowReportState = sql_fetch_assoc($vResReportState)) {
+            $iReportStateId = $vRowReportState['ReportStateId'];
+            $sReportUniqueId = $vRowReportState['UniqueId'];
+            $iReportState = $vRowReportState['ReportState'];
+            $aReportGen = json_decode($vRowReportState['Report'], true);
+            if($bdebug) echo "vResReportState--1<br>";
+        }
+    }
+
+    if($iReportStateId == 0){
+        $aReportGen = GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+        $sReportUniqueId=hash('crc32', $iGroupId."-".$iChildrenId."-".$sDateBeg."-".$sDateEnd);
+         data_insert(980, array('status'=>'0', 'f17840'=>$sReportUniqueId, 'f17850'=>$iChildrenId, 'f17860'=>$iGroupId, 'f17870'=>$sDateBeg, 'f17880'=>$sDateEnd, 'f17890'=>floatval($aReportData['iFaultData']),'f17900'=>intval($aReportData['iMinQtyClasses']),'f17910'=>intval($aReportData['iMinQtyClassesSubdivision']),'f17920'=>($bIsPerfomance ? "1": "0"),'f17930'=>json_encode($aReportGen), 'f17940'=>$iSetReportState, 'f17990'=>$iUserId ));
+        $sSqlReportState = "SELECT Id AS ReportStateId
+                FROM " . DATA_TABLE . get_table_id(980) ."
+                WHERE
+                    f17850='" . $iChildrenId . "'
+                    AND f17860='" . $iGroupId . "'
+                    AND f17870='" . $sDateBeg . "'
+                    AND f17880='" . $sDateEnd . "'
+                    AND f17890='" . floatval($aReportData['iFaultData']) . "'
+                    AND f17900='" . intval($aReportData['iMinQtyClasses']) . "'
+                    AND f17910='" . intval($aReportData['iMinQtyClassesSubdivision'])  . "'
+                    AND f17920='" . ($bIsPerfomance ? "1": "0") . "'
+                    AND status='0'";
+        if ($vResReportState = sql_query($sSqlReportState)) {
+            if ($vRowReportState = sql_fetch_assoc($vResReportState)) {
+                $iReportStateId = $vRowReportState['ReportStateId'];
+                $sReportUniqueId=hash('crc32', $iGroupId."-".$iChildrenId."-".$sDateBeg."-".$sDateEnd.$iReportStateId);
+                data_update(980, array( 'f17840'=>$sReportUniqueId, 'f17990'=>$iUserId), "`Id`='",$iReportStateId,"' AND status ='0' ");
+                if($bdebug) echo "vResReportState--2__".$sReportUniqueId."<br>";
+            }
+        }
+    } else{
+        if($iSetReportState > 0)
+            data_update(980, array( 'f17940'=>$iSetReportState, 'f17990'=>$iUserId), "`Id`='",$iReportStateId,"' AND status ='0' ");
+        if($bdebug) echo "vResReportState--3__".$iReportStateId."<br>";
+    }
+    return $aReportGen;
 }
