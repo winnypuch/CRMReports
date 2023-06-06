@@ -1,5 +1,5 @@
 <?php
-$bdebug = true;
+$bdebug = false;
 if($bdebug) "<pre>".var_dump($_REQUEST)."</pre><br>";
 $aMonths = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
 if ($_REQUEST['sDateBeg'] && $_REQUEST['sDateEnd']) {
@@ -463,7 +463,7 @@ function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aRep
 
             if($vResultBalSumD = sql_query($sSqlQueryBalSumD)) {
                 if($vRowBalSumD = sql_fetch_assoc($vResultBalSumD)){
-                    echo $vRowBalSumD ['ResClasses']."___".$vRowBalSumD ['QtyClasses']."---<br>";
+                    if($bdebug) echo $vRowBalSumD ['ResClasses']."___".$vRowBalSumD ['QtyClasses']."---<br>";
                     if($vRowBalSumD ['QtyClasses'] != 0)
                         $iQtyClassesBalSumD = $vRowBalSumD ['ResClasses'] / $vRowBalSumD ['QtyClasses'];
                 }

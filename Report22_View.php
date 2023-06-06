@@ -234,7 +234,7 @@
                         <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Отчёт</a></td>
                         <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить</a></td>
                         {$bIsReportAll = true}
-                        {$sAllReport= $sAllReport.";".$data.ChildrenId}
+                     {$sAllReport= "`$sAllReport`;`$data.ChildrenId`"}
                     {else}
                         <td></td>
                         <td></td>
