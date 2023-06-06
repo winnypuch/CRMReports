@@ -1,22 +1,22 @@
 <?php
+$bdebug = true;
+if($bdebug) "<pre>".var_dump($_REQUEST)."</pre><br>";
 $aMonths = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
-if ($_REQUEST['iYear'] && $_REQUEST['sDateBeg'] && $_REQUEST['sDateEnd']) {
+if ($_REQUEST['sDateBeg'] && $_REQUEST['sDateEnd']) {
     $iYear = intval($_REQUEST['year']);
     $sDateBeg = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateBeg'])));
     $sDateEnd = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateEnd'])));
 } else {
     $iYear = date("Y");
-    $sDateBeg = date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), date("d") - 7, date("Y")));
+    $sDateBeg = date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), 1, date("Y")));
     $sDateEnd = date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
 }
 if ($_REQUEST['iGroupId']) {
     $iGroupId = $_REQUEST['iGroupId'];
+    $bIsPerfomance = array_key_exists('bIsPerfomance', $_REQUEST) ? true: false;
+
 } else {
     $iGroupId = 0;
-}
-if ($_REQUEST['bIsPerfomance']) {
-    $bIsPerfomance = $_REQUEST['bIsPerfomance'];
-} else {
     $bIsPerfomance = true;
 }
 
@@ -112,7 +112,9 @@ $aReportData = [];
 if ($vResReportData = sql_query("SELECT f17790 FROM " . DATA_TABLE . get_table_id(970) ." WHERE f17780='" . $iReportId . "' AND status='0'")) {
     if ($vRowReportData = sql_fetch_assoc($vResReportData)) {
         $aReportData = json_decode($vRowReportData['f17790'], true);
+        if($bdebug) echo $iReportId."--1<br>";
         if(!array_key_exists("iFaultData", $aReportData)){
+            if($bdebug) echo $iReportId."--2<br>";
             $aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
             data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0'" );
         }
@@ -120,12 +122,16 @@ if ($vResReportData = sql_query("SELECT f17790 FROM " . DATA_TABLE . get_table_i
 }
 
 if(!array_key_exists("iFaultData", $aReportData)){
+    if($bdebug) echo $iReportId."--3<br>";
     $aReportData = ["iFaultData"=> 2.00, "iMinQtyClasses" => 10, "iMinQtyClassesSubdivision" => 3];
     data_insert(970, array('status'=>'0', 'f17780'=>$iReportId, 'f17790'=>json_encode($aReportData)));
 }
 //сохраняем данные
-if ($_REQUEST['iFaultData'] && $_REQUEST['iMinQtyClasses'] && $_REQUEST['iMinQtyClassesSubdivision']) {
-    if($aReportData['iFaultData'] != floatval($_REQUEST['iFaultData']) || $aReportData['iMinQtyClasses'] != intval($_REQUEST['iMinQtyClasses']) || $aReportData['iMinQtyClassesSubdivision'] != intval($_REQUEST['iMinQtyClassesSubdivision'])){
+if (array_key_exists('iFaultData', $_REQUEST) && array_key_exists('iMinQtyClasses', $_REQUEST) && array_key_exists('iMinQtyClassesSubdivision', $_REQUEST)) {
+    if($bdebug) echo $iReportId."--4<br>";
+    if(floatval($aReportData['iFaultData']) != floatval($_REQUEST['iFaultData']) || intval($aReportData['iMinQtyClasses']) != intval($_REQUEST['iMinQtyClasses']) || intval($aReportData['iMinQtyClassesSubdivision']) != intval($_REQUEST['iMinQtyClassesSubdivision'])){
+        if($bdebug) echo $iReportId."--5<br>";
+        $aReportData = ["iFaultData"=> floatval($_REQUEST['iFaultData']), "iMinQtyClasses" => intval($_REQUEST['iMinQtyClasses']), "iMinQtyClassesSubdivision" => intval($_REQUEST['iMinQtyClassesSubdivision'])];
         data_update(970, array('status'=>'0', 'f17790'=>json_encode($aReportData)), "`f17780`='",$iReportId,"' AND status ='0' ");
     }
 }
@@ -140,14 +146,65 @@ if ($_REQUEST['iFaultData'] && $_REQUEST['iMinQtyClasses'] && $_REQUEST['iMinQty
 //print_r($_REQUEST);
 //Если нужно добавить данные в таблицу
 if (intval($_REQUEST['ChildrenId']) > 0) {
+    //Отчёты для отправки 980
+    // Уникальное поле f17840
+    // Id ученика f17850
+    // id группы f17860
+    // Дата от f17870
+    // Дата до f17880
+    // Погрешность f17890
+    // Минимальное кол-во занятий f17900
+    // Минимальное кол-во занятий по подразделу f17910
+    // Добавить успеваемость в отчет f17920
+    // Отчёт f17930
+    // Состояние отчёта f17940
+    // Кто изменил f17990
+    $sSqlReportState = "SELECT Id AS ReportStateId, f17840 AS UniqueId, f17930 AS Report, f17940 AS ReportState
+            FROM " . DATA_TABLE . get_table_id(980) ."
+            WHERE
+                f17850='" . intval($_REQUEST['ChildrenId']) . "'
+                AND f17860='" . $iGroupId . "'
+                AND f17870='" . $sDateBeg . "'
+                AND f17880='" . $sDateEnd . "'
+                AND f17890='" . floatval($aReportData['iFaultData']) . "'
+                AND f17900='" . intval($aReportData['iMinQtyClasses']) . "'
+                AND f17910='" . intval($aReportData['iMinQtyClassesSubdivision'])  . "'
+                AND f17920='" . ($bIsPerfomance ? "1", "0") . "'
+                AND status='0'";
+    $iReportStateId = 0;
+    $iReportState = -1;
+    //0 - Отчёт сформирован
+    //1 - Отчёт сформирован и помечен к отправке
+    //2 - Отчёт отправлен
+    $sReportUniqueId = "";
+    $aReportGen=[];
+    if ($vResReportState = sql_query($sSqlReportState)) {
+        if ($vRowReportState = sql_fetch_assoc($vResReportState)) {
+            $iReportStateId = $vRowReportState[''];
+            $aReportGen = json_decode($vRowReportState['Report'], true);
+            if($bdebug) echo "vResReportState--1<br>";
+        }
+    }
     if(intval($_REQUEST['Report']) == 1){
 
     } else{
         if(intval($_REQUEST['SendReport']) == 1){
-
+            header("Location: https://lemnews.info");
+            die();
         }
     }
-    GenerateReport($vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData);
+    $aResData = GenerateReport($vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+    $vJsonData = json_encode($aResData);
+    if($bdebug) echo var_dump($vJsonData);
+    $aData = json_decode($vJsonData, true);
+    echo madeReport($aData['arData'], $aData['bIsPerfomance'], $aData['arRows'], $aData['arLessons'], $aData['arValues'], $aData['arValuesAvg']);
+    header('Content-Type:text/html; charset=UTF-8');
+    header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: private", false);
+    exit;
+
     //Расходы Декарт 940
     //f17420 Дата
     //f17480 Кому (ФИО)
@@ -217,7 +274,7 @@ $smarty->assign("iFaultData", $aReportData['iFaultData']);
 $smarty->assign("iMinQtyClasses", $aReportData['iMinQtyClasses']);
 $smarty->assign("iMinQtyClassesSubdivision", $aReportData['iMinQtyClassesSubdivision']);
 
-function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData){
+function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug){
     //$vGroups['g'.$iGroupId]['TeacherFioMin']
     //$vGroups['g'.$iGroupId]['ClassFormat']
     //$vGroups['g'.$iGroupId]['ProgramAge']
@@ -233,229 +290,246 @@ function GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aRep
     $sSqlQueryGradesClass = "SELECT AllRes.Subsection AS Subsection, SUM(AllRes.QtyClasses) AS QtyClasses FROM
             (
                 SELECT
-                    GradesClass.f17180 AS Subsection, IFNULL(COUNT(GradesClass.f17180), 0) AS QtyClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass1.f17180 AS Subsection, IFNULL(COUNT(GradesClass1.f17180), 0) AS QtyClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass1
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14470 IS NULL, '', GradesClass.f14470) <> ''
-                    AND if(GradesClass.f14480 IS NULL, '', GradesClass.f14480) <> ''
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17180
+                    GradesClass1.f14680 = ".$iChildrenId."
+                    AND GradesClass1.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass1.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass1.f14820 >= '".$sDateBeg."' AND GradesClass1.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass1.f14700 IS NULL, '', GradesClass1.f14700) = ''
+                    AND (if(GradesClass1.f14470 IS NULL, '', GradesClass1.f14470) <> ''
+                    OR if(GradesClass1.f14480 IS NULL, '', GradesClass1.f14480) <> '')
+                    AND GradesClass1.status = 0
+                    AND if(GradesClass1.f17180 IS NULL, '', GradesClass1.f17180) <> ''
+                GROUP BY GradesClass1.f17180
                 UNION ALL
                 SELECT
-                    GradesClass.f17190 AS Subsection, IFNULL(COUNT(GradesClass.f17190), 0) AS QtyClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass2.f17190 AS Subsection, IFNULL(COUNT(GradesClass2.f17190), 0) AS QtyClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass2
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14490 IS NULL, '', GradesClass.f14490) <> ''
-                    AND if(GradesClass.f14500 IS NULL, '', GradesClass.f14500) <> ''
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17190
+                    GradesClass2.f14680 = ".$iChildrenId."
+                    AND GradesClass2.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass2.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass2.f14820 >= '".$sDateBeg."' AND GradesClass2.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass2.f14700 IS NULL, '', GradesClass2.f14700) = ''
+                    AND (if(GradesClass2.f14490 IS NULL, '', GradesClass2.f14490) <> ''
+                    OR if(GradesClass2.f14500 IS NULL, '', GradesClass2.f14500) <> '')
+                    AND if(GradesClass2.f17190 IS NULL, '', GradesClass2.f17190) <> ''
+                    AND GradesClass2.status = 0
+                GROUP BY GradesClass2.f17190
                 UNION ALL
                 SELECT
-                    GradesClass.f17200 AS Subsection, IFNULL(COUNT(GradesClass.f17200), 0) AS QtyClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass3.f17200 AS Subsection, IFNULL(COUNT(GradesClass3.f17200), 0) AS QtyClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass3
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14510 IS NULL, '', GradesClass.f14510) <> ''
-                    AND if(GradesClass.f14520 IS NULL, '', GradesClass.f14520) <> ''
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17200
+                    GradesClass3.f14680 = ".$iChildrenId."
+                    AND GradesClass3.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass3.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass3.f14820 >= '".$sDateBeg."' AND GradesClass3.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass3.f14700 IS NULL, '', GradesClass3.f14700) = ''
+                    AND (if(GradesClass3.f14510 IS NULL, '', GradesClass3.f14510) <> ''
+                    OR if(GradesClass3.f14520 IS NULL, '', GradesClass3.f14520) <> '')
+                    AND if(GradesClass3.f17200 IS NULL, '', GradesClass3.f17200) <> ''
+                    AND GradesClass3.status = 0
+                GROUP BY GradesClass3.f17200
                 UNION ALL
                 SELECT
-                    GradesClass.f17210 AS Subsection, IFNULL(COUNT(GradesClass.f17210), 0) AS QtyClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass4.f17210 AS Subsection, IFNULL(COUNT(GradesClass4.f17210), 0) AS QtyClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass4
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14530 IS NULL, '', GradesClass.f14530) <> ''
-                    AND if(GradesClass.f14540 IS NULL, '', GradesClass.f14540) <> ''
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17210
+                    GradesClass4.f14680 = ".$iChildrenId."
+                    AND GradesClass4.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass4.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass4.f14820 >= '".$sDateBeg."' AND GradesClass4.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass4.f14700 IS NULL, '', GradesClass4.f14700) = ''
+                    AND (if(GradesClass4.f14530 IS NULL, '', GradesClass4.f14530) <> ''
+                    OR if(GradesClass4.f14540 IS NULL, '', GradesClass4.f14540) <> '')
+                    AND if(GradesClass4.f17210 IS NULL, '', GradesClass4.f17210) <> ''
+                    AND GradesClass4.status = 0
+                GROUP BY GradesClass4.f17210
             ) AS AllRes
             GROUP BY Subsection
             HAVING QtyClasses >=".$aReportData['iMinQtyClassesSubdivision'];
+    //if($bdebug) echo $sSqlQueryGradesClass;
+    $iKey = 0;
+    $iAllQtyClassesBalSumC =0;
+    $iAllQtyClassesBalSumD =0;
     if($vResultGradesClass = sql_query($sSqlQueryGradesClass)) {
-        if($vRowGradesClass = sql_fetch_assoc($vResultGradesClass)){
+        while($vRowGradesClass = sql_fetch_assoc($vResultGradesClass)){
             //echo $vGroupRow['GroupId']."___".$iWorkingOff."---".$vRowMisses['MissesCount']."---<br>";
             $iQtyClasses = $vRowGradesClass ['QtyClasses'];
 
-            $sSqlQueryBalSumC = "SELECT AllRes.Subsection AS Subsection, SUM(AllRes.QtyClasses) AS QtyClasses, SUM(AllRes.QtyClasses) AS ResClasses FROM
+            $sSqlQueryBalSumC = "SELECT AllRes.Subsection AS Subsection, SUM(AllRes.QtyClasses) AS QtyClasses, SUM(AllRes.ResClasses) AS ResClasses FROM
             (
                 SELECT
-                    GradesClass.f17180 AS Subsection, IFNULL(COUNT(GradesClass.f17180), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14630), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass1.f17180 AS Subsection, IFNULL(COUNT(GradesClass1.f17180), 0) AS QtyClasses, IFNULL(SUM(GradesClass1.f14630), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass1
                 WHERE
-                    GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14470 IS NULL, '', GradesClass.f14470) <> ''
-                    AND if(GradesClass.f14480 IS NULL, '', GradesClass.f14480) <> ''
-                    AND if(GradesClass.f17180 IS NULL, '', GradesClass.f17180) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17180
+                    GradesClass1.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass1.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass1.f14820 >= '".$sDateBeg."' AND GradesClass1.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass1.f14700 IS NULL, '', GradesClass1.f14700) = ''
+                    AND (if(GradesClass1.f14470 IS NULL, '', GradesClass1.f14470) <> ''
+                    OR if(GradesClass1.f14480 IS NULL, '', GradesClass1.f14480) <> '')
+                    AND if(GradesClass1.f17180 IS NULL, '', GradesClass1.f17180) = '".$vRowGradesClass['Subsection']."'
+                    AND GradesClass1.status = 0
+                GROUP BY GradesClass1.f17180
                 UNION ALL
                 SELECT
-                    GradesClass.f17190 AS Subsection, IFNULL(COUNT(GradesClass.f17190), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14640), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass2.f17190 AS Subsection, IFNULL(COUNT(GradesClass2.f17190), 0) AS QtyClasses, IFNULL(SUM(GradesClass2.f14640), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass2
                 WHERE
-                    GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14490 IS NULL, '', GradesClass.f14490) <> ''
-                    AND if(GradesClass.f14500 IS NULL, '', GradesClass.f14500) <> ''
-                    AND if(GradesClass.f17190 IS NULL, '', GradesClass.f17190) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17190
+                    GradesClass2.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass2.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass2.f14820 >= '".$sDateBeg."' AND GradesClass2.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass2.f14700 IS NULL, '', GradesClass2.f14700) = ''
+                    AND (if(GradesClass2.f14490 IS NULL, '', GradesClass2.f14490) <> ''
+                    OR if(GradesClass2.f14500 IS NULL, '', GradesClass2.f14500) <> '')
+                    AND if(GradesClass2.f17190 IS NULL, '', GradesClass2.f17190) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass2.status = 0
+                GROUP BY GradesClass2.f17190
                 UNION ALL
                 SELECT
-                    GradesClass.f17200 AS Subsection, IFNULL(COUNT(GradesClass.f17200), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14650), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass3.f17200 AS Subsection, IFNULL(COUNT(GradesClass3.f17200), 0) AS QtyClasses, IFNULL(SUM(GradesClass3.f14650), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass3
                 WHERE
-                    GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14510 IS NULL, '', GradesClass.f14510) <> ''
-                    AND if(GradesClass.f14520 IS NULL, '', GradesClass.f14520) <> ''
-                    AND if(GradesClass.f17200 IS NULL, '', GradesClass.f17200) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17200
+                    GradesClass3.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass3.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass3.f14820 >= '".$sDateBeg."' AND GradesClass3.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass3.f14700 IS NULL, '', GradesClass3.f14700) = ''
+                    AND (if(GradesClass3.f14510 IS NULL, '', GradesClass3.f14510) <> ''
+                    OR if(GradesClass3.f14520 IS NULL, '', GradesClass3.f14520) <> '')
+                    AND if(GradesClass3.f17200 IS NULL, '', GradesClass3.f17200) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass3.status = 0
+                GROUP BY GradesClass3.f17200
                 UNION ALL
                 SELECT
-                    GradesClass.f17210 AS Subsection, IFNULL(COUNT(GradesClass.f17210), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14660), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass4.f17210 AS Subsection, IFNULL(COUNT(GradesClass4.f17210), 0) AS QtyClasses, IFNULL(SUM(GradesClass4.f14660), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass4
                 WHERE
-                    GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14530 IS NULL, '', GradesClass.f14530) <> ''
-                    AND if(GradesClass.f14540 IS NULL, '', GradesClass.f14540) <> ''
-                    AND if(GradesClass.f17210 IS NULL, '', GradesClass.f17210) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17210
+                    GradesClass4.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass4.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass4.f14820 >= '".$sDateBeg."' AND GradesClass4.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass4.f14700 IS NULL, '', GradesClass4.f14700) = ''
+                    AND (if(GradesClass4.f14530 IS NULL, '', GradesClass4.f14530) <> ''
+                    OR if(GradesClass4.f14540 IS NULL, '', GradesClass4.f14540) <> '')
+                    AND if(GradesClass4.f17210 IS NULL, '', GradesClass4.f17210) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass4.status = 0
+                GROUP BY GradesClass4.f17210
             ) AS AllRes
             GROUP BY Subsection";
+            //if($bdebug) echo $sSqlQueryBalSumC."<br>";
+            $iQtyClassesBalSumC = 0;
+
             if($vResultBalSumC = sql_query($sSqlQueryBalSumC)) {
                 if($vRowBalSumC = sql_fetch_assoc($vResultBalSumC)){
                     //echo $vGroupRow['GroupId']."___".$iWorkingOff."---".$vRowMisses['MissesCount']."---<br>";
-                    $iQtyClassesBalSumD = $vRowGradesClass ['QtyClasses'];
+                    if($vRowBalSumC ['QtyClasses'] != 0)
+                        $iQtyClassesBalSumC = $vRowBalSumC ['ResClasses'] / $vRowBalSumC ['QtyClasses'];
                 }
             }
-            $sSqlQueryBalSumD = "SELECT AllRes.Subsection AS Subsection, SUM(AllRes.QtyClasses) AS QtyClasses, SUM(AllRes.QtyClasses) AS ResClasses FROM
+            $sSqlQueryBalSumD = "SELECT AllRes.Subsection AS Subsection, SUM(AllRes.QtyClasses) AS QtyClasses, SUM(AllRes.ResClasses) AS ResClasses FROM
             (
                 SELECT
-                    GradesClass.f17180 AS Subsection, IFNULL(COUNT(GradesClass.f17180), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14630), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass1.f17180 AS Subsection, IFNULL(COUNT(GradesClass1.f17180), 0) AS QtyClasses, IFNULL(SUM(GradesClass1.f14630), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass1
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14470 IS NULL, '', GradesClass.f14470) <> ''
-                    AND if(GradesClass.f14480 IS NULL, '', GradesClass.f14480) <> ''
-                    AND if(GradesClass.f17180 IS NULL, '', GradesClass.f17180) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17180
+                    GradesClass1.f14680 = ".$iChildrenId."
+                    AND GradesClass1.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass1.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass1.f14820 >= '".$sDateBeg."' AND GradesClass1.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass1.f14700 IS NULL, '', GradesClass1.f14700) = ''
+                    AND (if(GradesClass1.f14470 IS NULL, '', GradesClass1.f14470) <> ''
+                    OR if(GradesClass1.f14480 IS NULL, '', GradesClass1.f14480) <> '')
+                    AND if(GradesClass1.f17180 IS NULL, '', GradesClass1.f17180) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass1.status = 0
+                GROUP BY GradesClass1.f17180
                 UNION ALL
                 SELECT
-                    GradesClass.f17190 AS Subsection, IFNULL(COUNT(GradesClass.f17190), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14640), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass2.f17190 AS Subsection, IFNULL(COUNT(GradesClass2.f17190), 0) AS QtyClasses, IFNULL(SUM(GradesClass2.f14640), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass2
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14490 IS NULL, '', GradesClass.f14490) <> ''
-                    AND if(GradesClass.f14500 IS NULL, '', GradesClass.f14500) <> ''
-                    AND if(GradesClass.f17190 IS NULL, '', GradesClass.f17190) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17190
+                    GradesClass2.f14680 = ".$iChildrenId."
+                    AND GradesClass2.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass2.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass2.f14820 >= '".$sDateBeg."' AND GradesClass2.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass2.f14700 IS NULL, '', GradesClass2.f14700) = ''
+                    AND (if(GradesClass2.f14490 IS NULL, '', GradesClass2.f14490) <> ''
+                    OR if(GradesClass2.f14500 IS NULL, '', GradesClass2.f14500) <> '')
+                    AND if(GradesClass2.f17190 IS NULL, '', GradesClass2.f17190) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass2.status = 0
+                GROUP BY GradesClass2.f17190
                 UNION ALL
                 SELECT
-                    GradesClass.f17200 AS Subsection, IFNULL(COUNT(GradesClass.f17200), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14650), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass3.f17200 AS Subsection, IFNULL(COUNT(GradesClass3.f17200), 0) AS QtyClasses, IFNULL(SUM(GradesClass3.f14650), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass3
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14510 IS NULL, '', GradesClass.f14510) <> ''
-                    AND if(GradesClass.f14520 IS NULL, '', GradesClass.f14520) <> ''
-                    AND if(GradesClass.f17200 IS NULL, '', GradesClass.f17200) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17200
+                    GradesClass3.f14680 = ".$iChildrenId."
+                    AND GradesClass3.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass3.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass3.f14820 >= '".$sDateBeg."' AND GradesClass3.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass3.f14700 IS NULL, '', GradesClass3.f14700) = ''
+                    AND (if(GradesClass3.f14510 IS NULL, '', GradesClass3.f14510) <> ''
+                    OR if(GradesClass3.f14520 IS NULL, '', GradesClass3.f14520) <> '')
+                    AND if(GradesClass3.f17200 IS NULL, '', GradesClass3.f17200) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass3.status = 0
+                GROUP BY GradesClass3.f17200
                 UNION ALL
                 SELECT
-                    GradesClass.f17210 AS Subsection, IFNULL(COUNT(GradesClass.f17210), 0) AS QtyClasses, IFNULL(SUM(GradesClass.f14660), 0) AS ResClasses
-                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
+                    GradesClass4.f17210 AS Subsection, IFNULL(COUNT(GradesClass4.f17210), 0) AS QtyClasses, IFNULL(SUM(GradesClass4.f14660), 0) AS ResClasses
+                FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass4
                 WHERE
-                    GradesClass.f14680 = ".$vStudentRow['ChildrenId']."
-                    AND GradesClass.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
-                    AND GradesClass.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
-                    AND GradesClass.f14820 >= '".$sDateBeg."' AND GradesClass.f14820 <= '".$sDateEnd."'
-                    AND if(GradesClass.f14700 IS NULL, '', GradesClass.f14700) = ''
-                    AND if(GradesClass.f14530 IS NULL, '', GradesClass.f14530) <> ''
-                    AND if(GradesClass.f14540 IS NULL, '', GradesClass.f14540) <> ''
-                    AND if(GradesClass.f17210 IS NULL, '', GradesClass.f17210) = '".$vRowGradesClass ['Subsection']."'
-                    AND GradesClass.status = 0
-                GROUP BY GradesClass.f17210
+                    GradesClass4.f14680 = ".$iChildrenId."
+                    AND GradesClass4.f17280 ='".$vGroups['g'.$iGroupId]['ClassFormat']."'
+                    AND GradesClass4.f17260 ='".$vGroups['g'.$iGroupId]['ProgramAge']."'
+                    AND GradesClass4.f14820 >= '".$sDateBeg."' AND GradesClass4.f14820 <= '".$sDateEnd."'
+                    AND if(GradesClass4.f14700 IS NULL, '', GradesClass4.f14700) = ''
+                    AND (if(GradesClass4.f14530 IS NULL, '', GradesClass4.f14530) <> ''
+                    OR if(GradesClass4.f14540 IS NULL, '', GradesClass4.f14540) <> '')
+                    AND if(GradesClass4.f17210 IS NULL, '', GradesClass4.f17210) = '".$vRowGradesClass ['Subsection']."'
+                    AND GradesClass4.status = 0
+                GROUP BY GradesClass4.f17210
             ) AS AllRes
             GROUP BY Subsection";
+            //if($bdebug) echo $sSqlQueryBalSumD."<br>";
+            $iQtyClassesBalSumD = 0;
+
             if($vResultBalSumD = sql_query($sSqlQueryBalSumD)) {
                 if($vRowBalSumD = sql_fetch_assoc($vResultBalSumD)){
-                    //echo $vGroupRow['GroupId']."___".$iWorkingOff."---".$vRowMisses['MissesCount']."---<br>";
-                    $iQtyClassesBalSumD = $vRowGradesClass ['QtyClasses'];
+                    echo $vRowBalSumD ['ResClasses']."___".$vRowBalSumD ['QtyClasses']."---<br>";
+                    if($vRowBalSumD ['QtyClasses'] != 0)
+                        $iQtyClassesBalSumD = $vRowBalSumD ['ResClasses'] / $vRowBalSumD ['QtyClasses'];
                 }
             }
-
+            $arLessons[$iKey] = $vRowGradesClass['Subsection'];
+            $arValuesAvg[$iKey] = round($iQtyClassesBalSumC * 100);
+            $arValues[$iKey] = round($iQtyClassesBalSumD * 100);
+            //echo $iQtyClassesBalSumC . "---". $iQtyClassesBalSumD ."---". $aReportData["iFaultData"];
+            $arRows[$iKey] = ($arValues[$iKey] >= $arValuesAvg[$iKey] - $aReportData["iFaultData"]) ? "green" : "yellow";
+            $iAllQtyClassesBalSumC+=$iQtyClassesBalSumC;
+            $iAllQtyClassesBalSumD+=$iQtyClassesBalSumD;
+            $iKey++;
 
         }
     }
+    $sChildrenFIO ="";
+    if ($vResReportData = sql_query("SELECT ClienCards.f9750 as ChildrenFIO FROM " . DATA_TABLE . get_table_id(530) . " AS ClienCards WHERE ClienCards.id = '" . $iChildrenId . "'")) {
+        if ($vRowReportData = sql_fetch_assoc($vResReportData)) {
+            $sChildrenFIO = $vRowReportData['ChildrenFIO'];
+        }
+    }
 
-
-
-    $arData = [$vGroups['g'.$iGroupId]['TeacherFioMin'], "ffff", $vGroups['g'.$iGroupId]['ClassFormat'], $vGroups['g'.$iGroupId]['ProgramAge']];
-    $arData[4] = "от до";
-    $arData[5] = "3,54";
-    $arData[6] = "4,38";
-    $arLessons[0] = "Внимание и память";
-    $arLessons[1] = "счёт";
-    $arRows[0] = "yellow";
-    $arRows[0] = "green";
-    $arValuesAvg[0]="94";
-    $arValuesAvg[1]="97";
-    $arValues[0]="75";
-    $arValues[1]="100";
-
-    echo madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $arValuesAvg);
-    header('Content-Type:text/html; charset=UTF-8');
-    header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Cache-Control: private", false);
-    exit;
+    $arData = [$vGroups['g'.$iGroupId]['TeacherFioMin'], $sChildrenFIO, $vGroups['g'.$iGroupId]['ClassFormat'], $vGroups['g'.$iGroupId]['ProgramAge']];
+    $arData[4] = "от ".$dDateBeg->format('d.m.Y')." до ".$dDateEnd->format('d.m.Y');
+    if($iKey > 0) {
+        $arData[5] = form_local_number(($iAllQtyClassesBalSumD/$iKey) * 3 + 2, '2/10');
+        $arData[6] = form_local_number(($iAllQtyClassesBalSumC/$iKey) * 3 + 2, '2/10');
+    } else{
+        $arData[5] = 0;
+        $arData[6] = 0;
+    }
+    return ["arData" => $arData, "bIsPerfomance" => $bIsPerfomance, "arRows" => $arRows, "arLessons"=>$arLessons, "arValues"=>$arValues, "arValuesAvg" => $arValuesAvg];
 }
 
 
@@ -497,9 +571,9 @@ function madeReport($arData, $bIsPerfomance, $arRows, $arLessons, $arValues, $ar
     foreach ($arRows as $key => $value) {
       $tbody .= '<tr height="20" class="'.$value.'" style="">
       <td height="20" class="left" style="">'.$arLessons[$key].'</td>
-      <td class="center" style="">'.$arMaxValues[$key].'</td>
-      <td class="center" style="">'.$arValuesAvg[$key].'</td>
-      <td class="center" style="">'.$arValues[$key].'</td>
+      <td class="center" style="">'.$arMaxValues[$key].'%</td>
+      <td class="center" style="">'.$arValuesAvg[$key].'%</td>
+      <td class="center" style="">'.$arValues[$key].'%</td>
       </tr>
       ';
     }

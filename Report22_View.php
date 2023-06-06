@@ -18,14 +18,6 @@
                 }
             });
         });
-            //$('.datepicker').datepicker({
-            //    showOn: "button",
-            //    showAlways: true,
-            //    buttonImage: "images/calbtn.png",
-            //    buttonImageOnly: true,
-            //    buttonText: "Calendar",
-            //    showAnim: (('\v' == 'v') ? "" : "show")  // в ie не включаем анимацию, тормозит
-            //})
 
         function highlightTr(tdName, trId, hlMode) {
             if (hlMode) hlColor = "{/literal}{$color3}{literal}";
@@ -37,6 +29,7 @@
 
             href_post = confirm(sConfirm);
             if (href_post) {
+                document.getElementById('SendReport').value = '0';
                 document.getElementById('Report').value = '1';
                 document.getElementById('ChildrenId').value = iChildrenId;
                 document.getElementById('report_form').submit();
@@ -49,6 +42,7 @@
 
             href_post = confirm(sConfirm);
             if (href_post) {
+                document.getElementById('Report').value = '0';
                 document.getElementById('SendReport').value = '1';
                 document.getElementById('ChildrenId').value = iChildrenId;
                 document.getElementById('report_form').submit();
@@ -56,9 +50,24 @@
             }
             return href_post;
         }
+        function SendAllReport() {
+            sConfirm = "Отправить всем?";
+
+            href_post = confirm(sConfirm);
+            if (href_post) {
+                document.getElementById('Report').value = '0';
+                document.getElementById('SendReport').value = '0';
+                document.getElementById('ChildrenId').value = '0';
+                document.getElementById('SendAllReport').value = '1';
+                document.getElementById('report_form').submit();
+                document.getElementById('SendAllReport').value = '0';
+            }
+            return href_post;
+        }
         function SubmitData() {
             document.getElementById('Report').value = '0';
             document.getElementById('SendReport').value = '0';
+            document.getElementById('ChildrenId').value = '0'
             document.getElementById('report_form').submit();
             return false;
         }
@@ -135,12 +144,12 @@
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
       <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=410" title="Настройки"></a>
 </span>
-    ЗП Педагоги
+    Отчёты
 </div>
 <div class="top input_element">
     <table style="margin: 0px auto;">
         <tr>
-            <td><label for="year">Год:</label>
+            <!--<td><label for="year">Год:</label>
                 {$yearArray = range(2022, 2030)}
                 <select name="iYear" style="width:50px; padding: 5px 5px 5px 5px">
                     {foreach $yearArray as $selyear}
@@ -152,7 +161,7 @@
                     {/foreach}
                 </select>
                 <div style="clear: both"></div>
-            </td>
+            </td>-->
             <td>&nbsp;&nbsp;Дата от:&nbsp;&nbsp;<input type="text" name="sDateBeg" id="sDateBeg" value="{$sDateBeg}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
             <td>&nbsp;&nbsp;Дата до:&nbsp;&nbsp;<input type="text" name="sDateEnd" id="sDateEnd" value="{$sDateEnd}" size="10" class="datepicker form-control form-control-160"/><div style="clear: both"></div></td>
             <td>&nbsp;&nbsp;
@@ -179,7 +188,7 @@
         {if $bIsAdmin}
         <tr>
             <td>*Погрешность:&nbsp;&nbsp;</td>
-            <td><input type="number" name="FaultData" id="FaultData" value="{$iFaultData}"/></td>
+            <td><input type="number" name="iFaultData" id="iFaultData" value="{$iFaultData}"/></td>
         </tr>
         <tr>
             <td>*Минимальное кол-во занятий:&nbsp;&nbsp;</td>
@@ -193,11 +202,11 @@
         <tr>
             <td>Добавить успеваемость в отчет:&nbsp;&nbsp;</td>
             <td>
-                       {if $bIsPerfomance}
-                        <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance" checked/>
-                        {else}
-                        <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance"/>
-                       {/if}
+                {if $bIsPerfomance}
+                <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance" checked value="1"/>
+                {else}
+                <input type="checkbox" name="bIsPerfomance" id="bIsPerfomance"  value="0"/>
+                {/if}
            </td>
         </tr>
 
@@ -215,23 +224,32 @@
                 <td style="border-right: none;  border-top-color: #fff">Отчет</td>
                 <td style="border-right: none;  border-top-color: #fff">Отправить отчёт</td>
             </tr>
+            {$bIsReportAll = false}
             {foreach from=$lines item=data name="rows"}
                 <tr style="height: 20px">
                     <td class="sticky-col first-col">{$data.ChildrenFIO}</td>
                     <td>{$data.QtyClasses}</td>
                     {if $data.QtyClasses >= $iMinQtyClasses }
                         <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Отчёт</a></td>
-                        <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить отчёт</a></td>
+                        <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить</a></td>
+                        {$bIsReportAll = true}
                     {else}
                         <td></td>
                         <td></td>
                     {/if}
                 </tr>
             {/foreach}
+            {if $bIsReportAll }
+            <tr style="height: 20px">
+                <td colspan="3"></td>
+                <td><a onclick="return SendAllReport();" href="#">Отправить всем</a></td>
+            </tr>
+            {/if}
         </tbody>
     </table>
 </div>
 <input type=hidden name="Report" id="Report" value="0"/>
 <input type=hidden name="ChildrenId" id="ChildrenId" value="0"/>
 <input type=hidden name="SendReport" id="SendReport" value="0"/>
+<input type=hidden name="SendAllReport" id="SendAllReport" value="0"/>
 <input type=hidden name=csrf value='{$csrf}'/>
