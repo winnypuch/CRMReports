@@ -154,31 +154,31 @@ if (intval($_REQUEST['ChildrenId']) > 0 && (intval($_REQUEST['Report']) == 1 || 
             $aResData = SetState($iUserId, 1, $vGroups, $iGroupId, intval($_REQUEST['ChildrenId']), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
         }
     }
-    $vJsonData = json_encode($aResData);
-    if($bdebug) echo var_dump($vJsonData);
-    $aData = json_decode($vJsonData, true);
-    echo madeReport($aData['arData'], $aData['bIsPerfomance'], $aData['arRows'], $aData['arLessons'], $aData['arValues'], $aData['arValuesAvg']);
-    header('Content-Type:text/html; charset=UTF-8');
-    header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Cache-Control: private", false);
-    exit;
-
-    //Расходы Декарт 940
-    //f17420 Дата
-    //f17480 Кому (ФИО)
-    //f17450 Сумма
-    //f17470 Статья
-    //f17430 Пользователь
-    //echo $_REQUEST['update_sum'] ."-". $_REQUEST['update_teacherid'] ."-". $_REQUEST['csrf'];
-    //data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
-}
-if (intval($_REQUEST['SendAllReport']) > 0 && $_REQUEST['SendAllReportData']) {
-    $aChildReport = explode(";", $_REQUEST['SendAllReportData']);
-    foreach($aChildReport as $key => $value){
-        if(intval($value) > 0)
-            SetState($iUserId, 1, $vGroups, $iGroupId, intval($value), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+    //$vJsonData = json_encode($aResData);
+    //if($bdebug) echo var_dump($vJsonData);
+    //$aData = json_decode($vJsonData, true);
+    //echo madeReport($aData['arData'], $aData['bIsPerfomance'], $aData['arRows'], $aData['arLessons'], $aData['arValues'], $aData['arValuesAvg']);
+    //header('Content-Type:text/html; charset=UTF-8');
+    //header("Content-Disposition: attachment; filename=Report.html"); //File name extension was wrong
+    //header("Expires: 0");
+    //header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    //header("Cache-Control: private", false);
+    //exit;
+} else {
+    if (intval($_REQUEST['SendAllReport']) > 0 && $_REQUEST['SendAllReportData']) {
+        $aChildReport = explode(";", $_REQUEST['SendAllReportData']);
+        foreach($aChildReport as $key => $value){
+            if(intval($value) > 0)
+                SetState($iUserId, 1, $vGroups, $iGroupId, intval($value), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+        }
+    } else {
+        if (intval($_REQUEST['CreateAllReport']) > 0 && $_REQUEST['SendAllReportData']) {
+            $aChildReport = explode(";", $_REQUEST['SendAllReportData']);
+            foreach($aChildReport as $key => $value){
+                if(intval($value) > 0)
+                    SetState($iUserId, 0, $vGroups, $iGroupId, intval($value), $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
+            }
+        }
     }
 }
 
@@ -202,7 +202,6 @@ FROM
 if($vStudentsData = sql_query($sSqlQueryStudents)) {
     while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
         $iQtyClasses = 0;
-        $iReportState = 0;
     //810 Оценки на занятии f14680 ФИО ребенка f17280 Формат Факт f17260 Пр. возраст Дата f14820 Был? f14700
         $sSqlQueryGradesClass = "SELECT IFNULL(COUNT(*), 0) AS QtyClasses FROM " . DATA_TABLE . get_table_id(810) . " AS GradesClass
             WHERE
@@ -218,7 +217,32 @@ if($vStudentsData = sql_query($sSqlQueryStudents)) {
                 $iQtyClasses = $vRowGradesClass ['QtyClasses'];
             }
         }
-        $vLines[] = array("ChildrenId" => $vStudentRow['ChildrenId'], "ChildrenFIO"=> $vStudentRow['ChildrenFIO'], "QtyClasses" => $iQtyClasses, "ReportState" => $iReportState);
+        $sSqlReportState = "SELECT Id AS ReportStateId, f17840 AS UniqueId, f17940 AS ReportState
+            FROM " . DATA_TABLE . get_table_id(980) ."
+            WHERE
+                f17850='" . $vStudentRow['ChildrenId'] . "'
+                AND f17860='" . $iGroupId . "'
+                AND f17870='" . $sDateBeg . "'
+                AND f17880='" . $sDateEnd . "'
+                AND f17890='" . floatval($aReportData['iFaultData']) . "'
+                AND f17900='" . intval($aReportData['iMinQtyClasses']) . "'
+                AND f17910='" . intval($aReportData['iMinQtyClassesSubdivision'])  . "'
+                AND f17920='" . ($bIsPerfomance ? "1": "0") . "'
+                AND status='0'";
+        $iReportStateId = 0;
+        $iReportState = -1;
+        $sReportUniqueId = "";
+        if ($vResReportState = sql_query($sSqlReportState)) {
+            if ($vRowReportState = sql_fetch_assoc($vResReportState)) {
+                $iReportStateId = $vRowReportState['ReportStateId'];
+                $sReportUniqueId = $vRowReportState['UniqueId'];
+                $iReportState = $vRowReportState['ReportState'];
+                if($bdebug) echo "vResReportState1--1<br>";
+            }
+        }
+
+
+        $vLines[] = array("ChildrenId" => $vStudentRow['ChildrenId'], "ChildrenFIO"=> $vStudentRow['ChildrenFIO'], "QtyClasses" => $iQtyClasses, "ReportState" => $iReportState, "ReportStateId" => $iReportStateId, "ReportUniqueId" => $sReportUniqueId);
     }
 }
 

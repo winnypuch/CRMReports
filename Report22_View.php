@@ -25,7 +25,7 @@
             document.getElementById(tdName + trId).style.background = hlColor;
         }
         function Report(iChildrenId, iReportState) {
-            sConfirm = "Открыть отчёт?";
+            sConfirm = "Создать отчёт?";
 
             href_post = confirm(sConfirm);
             if (href_post) {
@@ -64,6 +64,24 @@
             }
             return href_post;
         }
+
+        function CreateAllReport() {
+            sConfirm = "Создать всё?";
+
+            href_post = confirm(sConfirm);
+            if (href_post) {
+                document.getElementById('Report').value = '0';
+                document.getElementById('SendReport').value = '0';
+                document.getElementById('ChildrenId').value = '0';
+                document.getElementById('SendAllReport').value = '0';
+                document.getElementById('CreateAllReport').value = '1';
+                document.getElementById('report_form').submit();
+                document.getElementById('CreateAllReport').value = '0';
+            }
+            return href_post;
+        }
+
+
         function SubmitData() {
             document.getElementById('Report').value = '0';
             document.getElementById('SendReport').value = '0';
@@ -221,30 +239,60 @@
             <tr class="" style="height: 20px; background-color: #2196F3">
                 <td class="sticky-col first-col">ФИО ребенка</td>
                 <td style="width:75px;border-top-color: #fff; border-left: none">Кол-во занятий</td>
-                <td style="border-right: none;  border-top-color: #fff">Отчет</td>
+                <td style="border-right: none;  border-top-color: #fff">Отчёт</td>
                 <td style="border-right: none;  border-top-color: #fff">Отправить отчёт</td>
+                <td style="border-right: none;  border-top-color: #fff">Состояние отправки</td>
             </tr>
             {$bIsReportAll = false}
+            {$bIsCreateAll = false}
             {$sAllReport= "0"}
             {foreach from=$lines item=data name="rows"}
                 <tr style="height: 20px">
                     <td class="sticky-col first-col">{$data.ChildrenFIO}</td>
                     <td>{$data.QtyClasses}</td>
                     {if $data.QtyClasses >= $iMinQtyClasses }
-                        <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Отчёт</a></td>
-                        <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить</a></td>
-                        {$bIsReportAll = true}
-                     {$sAllReport= "`$sAllReport`;`$data.ChildrenId`"}
+
+                        {if $data.ReportState >= 0 }
+                            <td><a href="http://91.239.26.167/report_childprogress.php?id={$data.ReportUniqueId}" target="_blank">Отчёт</a></td>
+                            <td><a onclick="return SendReport({$data.ChildrenId}, {$data.ReportState});" href="#">Отправить</a></td>
+                            {if $data.ReportState > 0 }
+                                {if $data.ReportState == 1 }
+                                <td>Готов к отправке</td>
+                                {else}
+                                <td>Отправлен</td>
+                                {/if}
+                            {else}
+                                <td></td>
+                            {/if}
+                            {$bIsReportAll = true}
+                        {else}
+                            <td><a onclick="return Report({$data.ChildrenId}, {$data.ReportState});" href="#">Создать</a></td>
+                            <td></td>
+                            <td></td>
+                            {$bIsCreateAll = true}
+                        {/if}
+                        {$sAllReport= "`$sAllReport`;`$data.ChildrenId`"}
                     {else}
+                        <td></td>
                         <td></td>
                         <td></td>
                     {/if}
                 </tr>
             {/foreach}
-            {if $bIsReportAll }
+            {if $bIsReportAll || $bIsCreateAll}
             <tr style="height: 20px">
-                <td colspan="3"></td>
+                <td colspan="2"></td>
+                {if $bIsCreateAll}
+                <td><a onclick="return CreateAllReport();" href="#">Создать всё</a></td>
+                {else}
+                <td></td>
+                {/if}
+                {if $bIsReportAll}
                 <td><a onclick="return SendAllReport();" href="#">Отправить всем</a></td>
+                {else}
+                <td></td>
+                {/if}
+                <td></td>
             </tr>
             {/if}
         </tbody>
@@ -254,7 +302,8 @@
 <input type=hidden name="ChildrenId" id="ChildrenId" value="0"/>
 <input type=hidden name="SendReport" id="SendReport" value="0"/>
 <input type=hidden name="SendAllReport" id="SendAllReport" value="0"/>
-{if $bIsReportAll }
+<input type=hidden name="CreateAllReport" id="CreateAllReport" value="0"/>
+{if $bIsReportAll || $bIsCreateAll}
 <input type=hidden name="SendAllReportData" id="SendAllReportData" value="{$sAllReport}"/>
 {/if}
 <input type=hidden name=csrf value='{$csrf}'/>
