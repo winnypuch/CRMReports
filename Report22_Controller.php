@@ -694,7 +694,27 @@ function SetState($iUserId, $iSetReportState, $vGroups, $iGroupId, $iChildrenId,
     if($iReportStateId == 0){
         $aReportGen = GenerateReport($vGroups, $iGroupId, $iChildrenId, $bIsPerfomance, $aReportData, $sDateBeg, $sDateEnd, $dDateBeg, $dDateEnd, $bdebug);
         $sReportUniqueId=hash('crc32', $iGroupId."-".$iChildrenId."-".$sDateBeg."-".$sDateEnd);
-         data_insert(980, array('status'=>'0', 'f17840'=>$sReportUniqueId, 'f17850'=>$iChildrenId, 'f17860'=>$iGroupId, 'f17870'=>$sDateBeg, 'f17880'=>$sDateEnd, 'f17890'=>floatval($aReportData['iFaultData']),'f17900'=>intval($aReportData['iMinQtyClasses']),'f17910'=>intval($aReportData['iMinQtyClassesSubdivision']),'f17920'=>($bIsPerfomance ? "1": "0"),'f17930'=>json_encode($aReportGen), 'f17940'=>$iSetReportState, 'f17990'=>$iUserId ));
+        //f17640 Фио родителя | телефон
+        //родители 950 Телефон f17580
+        //Telegram 960 Телефон f17690 Telegram ID f17700
+        //Telegram IDs f18000
+        $sSqlTelegrams = "SELECT Telegrams.f17700 AS TelegramId
+        FROM  " . DATA_TABLE . get_table_id(530) . " AS ClienCards
+            INNER JOIN " . DATA_TABLE . get_table_id(950) ." AS Parents
+                ON ClienCards.f17640 = Parents.Id
+            INNER JOIN " . DATA_TABLE . get_table_id(960) ." AS Telegrams
+                ON Parents.f17580 = Telegrams.f17690
+        WHERE
+            ClienCards.Id='" . $iChildrenId . "'
+            AND Parents.status='0'
+            AND Telegrams.status='0'";
+        $aTelegramIds = [];
+        if ($vResTelegrams = sql_query($sSqlTelegrams)) {
+            while($vRowTelegrams = sql_fetch_assoc($vResTelegrams)) {
+                $aTelegramIds[] = $vRowTelegrams['TelegramId'];
+            }
+        }
+        data_insert(980, array('status'=>'0', 'f17840'=>$sReportUniqueId, 'f17850'=>$iChildrenId, 'f17860'=>$iGroupId, 'f17870'=>$sDateBeg, 'f17880'=>$sDateEnd, 'f17890'=>floatval($aReportData['iFaultData']),'f17900'=>intval($aReportData['iMinQtyClasses']),'f17910'=>intval($aReportData['iMinQtyClassesSubdivision']),'f17920'=>($bIsPerfomance ? "1": "0"),'f17930'=>json_encode($aReportGen), 'f17940'=>$iSetReportState, 'f17990'=>$iUserId, 'f18000'=>json_encode($aTelegramIds) ));
         $sSqlReportState = "SELECT Id AS ReportStateId
                 FROM " . DATA_TABLE . get_table_id(980) ."
                 WHERE
