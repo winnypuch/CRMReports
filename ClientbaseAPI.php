@@ -26,18 +26,18 @@ class ClientbaseAPI
                     $clientbaseURL = 'http://' . $clientbaseURL;
                     break;
             }
-        }        
+        }
 
         $this->apiURL = $clientbaseURL . "api/dev";
         $this->token = $token;
-    }    
-    
-    
+    }
+
+
     /**
      * Получить список пользовательских таблиц
-     * 
+     *
      * @return array
-     */        
+     */
     public function getTablesList(): array
     {
         $rawResult = $this->query("/table");
@@ -51,8 +51,8 @@ class ClientbaseAPI
      * @param $tableId int id таблицы
      * @param $includeFields bool Получить информацию о полях таблицы
      * @return stdClass
-     */    
-    public function getTable(int $tableId, bool $includeFields = false) : stdClass 
+     */
+    public function getTable(int $tableId, bool $includeFields = false) : stdClass
     {
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
@@ -68,14 +68,14 @@ class ClientbaseAPI
 
     /**
      * Получить список записей таблицы
-     * 
+     *
      * @param $tableId int id таблицы
      * @param $offset int Отступ от начала списка
      * @param $limit int Количество элементов
-     * @param $filter mixed Фильтр в виде строки или массива 
+     * @param $filter mixed Фильтр в виде строки или массива
      * @return array
-     */    
-    public function getDataList(int $tableId, int $offset=0, int $limit=0, $filter='') : array 
+     */
+    public function getDataList(int $tableId, int $offset=0, int $limit=0, $filter='') : array
     {
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
@@ -104,21 +104,21 @@ class ClientbaseAPI
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }    
+    }
 
     /**
      * Получить информацию о записи в таблице
-     * 
+     *
      * @param $tableId int id таблицы
      * @param $lineId int id записи в таблице
      * @return stdClass
      */
-    public function getData(int $tableId, int $lineId) : stdClass 
+    public function getData(int $tableId, int $lineId) : stdClass
     {
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
         }
-        
+
         if ($lineId <= 0) {
             throw new Exception('Incorrect line id: ' . $lineId);
         }
@@ -127,21 +127,21 @@ class ClientbaseAPI
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }      
+    }
 
     /**
      * Удалить запись из таблицы
-     * 
+     *
      * @param $tableId int id таблицы
      * @param $lineId int id записи в таблице
      *
      */
-    public function deleteData(int $tableId, int $lineId) 
+    public function deleteData(int $tableId, int $lineId)
     {
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
         }
-        
+
         if ($lineId <= 0) {
             throw new Exception('Incorrect line id: ' . $lineId);
         }
@@ -151,11 +151,11 @@ class ClientbaseAPI
 
     /**
      * Перевести массив с данными в формат, подходящий для отправки на сервер
-     * 
+     *
      * @param $data array Массив с данными для добавления/обновления записи в таблице
      * @return stdClass
      */
-    public function bodyFromData(array $data) : stdClass 
+    public function bodyFromData(array $data) : stdClass
     {
         $body = new stdClass();
         $body->data = new stdClass();
@@ -166,9 +166,9 @@ class ClientbaseAPI
 
     /**
      * Добавить строку в таблицу
-     * 
+     *
      * @param $tableId int id таблицы
-     * @param $data array Данные для добавления 
+     * @param $data array Данные для добавления
      * @return stdClass
      */
     public function addData(int $tableId, array $data) : stdClass
@@ -176,9 +176,9 @@ class ClientbaseAPI
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
         }
-                
+
         $body = $this->bodyFromData($data);
-        $body->data->type = "data" . $tableId;   
+        $body->data->type = "data" . $tableId;
         $rawResult = $this->query("/data" . $tableId . "/" . $lineId, "POST", "", $body);
         $result = $this->_rawToResult($rawResult);
 
@@ -187,26 +187,26 @@ class ClientbaseAPI
 
     /**
      * Обновить строку в таблице
-     * 
+     *
      * @param $tableId int id таблицы
      * @param $lineId int id записи в таблице
-     * @param $data array Данные для обновления 
+     * @param $data array Данные для обновления
      * @return stdClass
      */
-    public function updateData(int $tableId, int $lineId, array $data) : stdClass 
+    public function updateData(int $tableId, int $lineId, array $data) : stdClass
     {
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id: ' . $tableId);
         }
-        
+
         if ($lineId <= 0) {
             throw new Exception('Incorrect line id: ' . $lineId);
         }
 
         $body = $this->bodyFromData($data);
         $body->data->type = "data" . $tableId;
-        $body->data->id = $lineId;        
-        $rawResult = $this->query("/data" . $tableId . "/" . $lineId, "PATCH", "", $body);
+        $body->data->id = strval($lineId);
+        $rawResult = $this->query("/data" . $tableId . "/" . $lineId, "PATCH", array(), $body);
         $result = $this->_rawToResult($rawResult);
 
         return $result;
@@ -214,7 +214,7 @@ class ClientbaseAPI
 
     /**
      * Получить список пользователей
-     * 
+     *
      * @return array
      */
     public function getUsersList() : array
@@ -227,11 +227,11 @@ class ClientbaseAPI
 
     /**
      * Получить информацию о пользователе
-     * 
+     *
      * @param $userId id пользователя
      * @return stdClass
      */
-    public function getUser(int $userId) : stdClass 
+    public function getUser(int $userId) : stdClass
     {
         if ($userId <= 0) {
             throw new Exception('Incorrect user id: ' . $userId);
@@ -241,11 +241,11 @@ class ClientbaseAPI
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }    
+    }
 
     /**
      * Получить список групп пользователей
-     * 
+     *
      * @return array
      */
     public function getGroupsList() : array
@@ -254,13 +254,13 @@ class ClientbaseAPI
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }      
+    }
 
     /**
      * Получить информацию о группе пользователей
-     * 
+     *
      * @param $groupId id группы пользователей
-     * @return stdClass     
+     * @return stdClass
      */
     public function getGroup($groupId) : stdClass
     {
@@ -272,11 +272,11 @@ class ClientbaseAPI
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }      
+    }
 
     /**
      * Получить информацию о файле
-     * 
+     *
      * @param $tableId id таблицы
      * @param $fieldId id поля таблицы
      * @param $lineId id записи таблицы
@@ -288,7 +288,7 @@ class ClientbaseAPI
         if ($tableId <= 0) {
             throw new Exception('Incorrect table id:' . $tableId);
         }
-        
+
         if ($lineId <= 0) {
             throw new Exception('Incorrect line id: ' . $lineId);
         }
@@ -296,16 +296,16 @@ class ClientbaseAPI
         if ($fieldId <= 0) {
             throw new Exception('Incorrect field id: ' . $fieldId);
         }
-                
+
         $rawResult = $this->query("/file/" . $tableId . "/" . $fieldId . "/" . $lineId . "/" . $fileName);
         $result = $this->_rawToResult($rawResult);
 
         return $result;
-    }      
+    }
 
     /**
      * Произвольный запрос к API
-     * 
+     *
      * @param $path string адрес запроса
      * @param $method string метод запроса
      * @param $urlQuery array GET-параметры запроса в виде массива
@@ -315,16 +315,16 @@ class ClientbaseAPI
     public function query(string $path, string $method="GET", array $urlQuery = [], $body = null) : stdClass
     {
 
-        if (substr($path, 0, 1) !== '/') $path = '/' . $path;   
-        
+        if (substr($path, 0, 1) !== '/') $path = '/' . $path;
+
         $method = mb_strtoupper($method);
         if (!in_array($method, ['GET', 'POST', 'PATCH', 'DELETE'])) {
             throw new Exception('Incorrect method: ' . $method);
         }
 
         $requestURL = $this->apiURL . $path;
-        
-        if ($urlQuery) {
+
+        if (count($urlQuery) > 0) {
             $urlQueryLine = http_build_query($urlQuery);
             $requestURL .= "?" . $urlQueryLine;
         }
@@ -338,7 +338,7 @@ class ClientbaseAPI
 
         return $result;
     }
-    
+
     /**
      * Преобразование полученных данных в удобный формат
      *
@@ -346,7 +346,7 @@ class ClientbaseAPI
      * @return mixed
      * @throws Exception
      */
-    private function _rawToResult($rawResult) 
+    private function _rawToResult($rawResult)
     {
         $result = [];
 
@@ -371,7 +371,7 @@ class ClientbaseAPI
                 }
 
             }
-        }        
+        }
 
         return $result;
     }
@@ -382,10 +382,10 @@ class ClientbaseAPI
      * @param $rawResult stdObject Данные, полученные по API
      * @return mixed
      * @throws Exception
-     */    
-    private function _simpleData($data) 
+     */
+    private function _simpleData($data)
     {
-        if ($data->meta) {
+        if (property_exists($data, "meta") && $data->meta) {
             foreach ($data->meta as $key => $metaItem) {
                 $data->$key = $metaItem;
             }
@@ -393,7 +393,7 @@ class ClientbaseAPI
 
         return $data;
     }
-    
+
     /**
      * Отправка запроса
      *
@@ -423,7 +423,7 @@ class ClientbaseAPI
                 'Content-Type: application/vnd.api+json',
                 'X-Auth-Token: ' . $this->token
             ];
-            
+
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
             $out = curl_exec($curl);
             curl_close($curl);
@@ -434,5 +434,4 @@ class ClientbaseAPI
             throw new Exception('Can not create connection to ' . $requestURL);
         }
     }
-
 }
