@@ -45,9 +45,9 @@ require_once("src/ClientbaseAPI.php");
 
     }
 
-//test from user $url = "https://api.telegram.org/bot27784843:be6d6f7387304fd375db22c6088ec411";
+//test from user $url = "https://api.telegram.org/bot27784843:";
 
-$url = "https://api.telegram.org/bot5387320064:AAHkEKZdjZoohYssufLH3GDOl8m0r24N9nQ";
+$url = "https://api.telegram.org/bot5387320064:";
 $command = "/sendMessage";
 //test $params = "?chat_id=5246525120&text=tests";
 
