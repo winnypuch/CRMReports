@@ -19,6 +19,7 @@
             });
         });
 
+
         function highlightTr(tdName, trId, hlMode) {
             if (hlMode) hlColor = "{/literal}{$color3}{literal}";
             else hlColor = "#ffffff";
