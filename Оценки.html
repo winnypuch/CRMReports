@@ -1,84 +1,7 @@
-{literal}
-    <script type="text/javascript">
-        $(function () {
-            var $start = $('#sDateT1');
-
-            $start.datepicker({
-                maxDate: '+ 1 month',
-                onSelect: function (selectedDate) {
-					return SubmitData();
-                }
-            });
-        });
-        function CreateAllReport() {
-            sConfirm = "Создать всё?";
-
-            href_post = confirm(sConfirm);
-            if (href_post) {
-                document.getElementById('Report').value = '0';
-                document.getElementById('SendReport').value = '0';
-                document.getElementById('ChildrenId').value = '0';
-                document.getElementById('SendAllReport').value = '0';
-                document.getElementById('CreateAllReport').value = '1';
-                document.getElementById('report_form').submit();
-                document.getElementById('CreateAllReport').value = '0';
-            }
-            return href_post;
-        }
-
-
-        function SubmitData() {
-            //document.getElementById('Report').value = '0';
-            //document.getElementById('SendReport').value = '0';
-            //document.getElementById('ChildrenId').value = '0'
-            document.getElementById('report_form').submit();
-            return false;
-        }
-
-    </script>
+<meta http-equiv="Content-Type"
+      content="text/html; charset=utf-8">
+	<link type="text/css" rel="stylesheet" href="sheet.css">
 <style type="text/css">
-	.title {
-        margin: 20px 0px;
-        font-size: 23px;
-        font-weight: bold;
-    }
-
-    .top {
-        border-top: 1px solid #E3E3E3;
-        border-bottom: 1px solid #E3E3E3;
-        background-color: #F5F5F5;
-        text-align: center;
-        padding: 15px 52px;
-    }
-
-    .top table {
-        margin: 0px;
-        padding: 0px;
-        border: none;
-        border-collapse: collapse;
-    }
-
-    .top td {
-        border: none;
-        padding: 0px;
-        margin: 0px;
-    }
-
-    span.input_element {
-        white-space: nowrap;
-        padding: 0px 35px 0px 0px;
-        line-height: 32px;
-        float: left;
-    }
-
-    .mainTable {
-        overflow: auto;
-        position: relative;
-    }
-    .mainTable table {
-        position: relative;
-        overflow: auto;
-        }
 	.ritz .waffle a {
 		color: inherit;
 	}
@@ -290,7 +213,6 @@
 	.ritz .waffle .s7 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		border-left: 1px SOLID #000000;
 		background-color: #ffffff;
 		text-align: center;
 		font-weight: bold;
@@ -739,7 +661,6 @@
 	.ritz .waffle .s27 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		border-left: 1px SOLID #000000;
 		background-color: #ffffff;
 		text-align: center;
 		color: #000000;
@@ -1111,7 +1032,6 @@
 	.ritz .waffle .s0 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		border-left: 1px SOLID #000000;
 		background-color: #ffffff;
 		text-align: center;
 		font-weight: bold;
@@ -1191,7 +1111,6 @@
 	.ritz .waffle .s9 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		border-left: 1px SOLID #000000;
 		background-color: #ffffff;
 		text-align: center;
 		font-weight: bold;
@@ -1311,39 +1230,9 @@
 		padding: 2px 3px 2px 3px;
 	}
 </style>
-{/literal}
-
-<div class="title">
-<span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
-      <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
-      <a class="header__user-item header__user-item_img header__user-item--settings" href="edit_report.php?report=420" title="Настройки"></a>
-</span>
-    Отчёт педагогов
-</div>
-<div class="top input_element">
-    <table style="margin: 0px auto;">
-        <tr>
-            <td>&nbsp;&nbsp;
-                <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
-                       onclick="return SubmitData();"/>
-			&nbsp;&nbsp;
-            </td>
-			<td>
-				<input type="file" id="upload1" name="Foto1" class="no_print btn btn-default btn-sm" title="Добавить фото 1"/>
-			</td>
-			<td>
-				<input type="file" id="upload2" name="Foto2" class="no_print btn btn-default btn-sm" title="Добавить фото 2"/>
-			</td>
-            <td>
-				&nbsp;&nbsp;
-				<input type="submit" value="Загрузить" class="no_print btn btn-default btn-sm" onclick="return SubmitData();"/>
-            </td>
-        </tr>
-    </table>
-</div>
-		<div class="ritz  mainTable"
+		<div class="ritz grid-container"
 		     dir="ltr">
-			<table class="waffle mainTable"
+			<table class="waffle"
 			       cellspacing="0"
 			       cellpadding="0">
 					<tr style="height:0px;">
@@ -1380,65 +1269,43 @@
 						<th id="685479336R0"
 						    style="height: 28px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 28px">1</div>
 						</th>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="2">Название группы</td>
 						<td class="s1"
 						    dir="ltr"
-						    colspan="2" id="sGroupname" >
-                <select name="iGroupId" onchange="return  SubmitData();">
-                    {foreach from=$vGroups item=data name="rows"}
-                        {if $data.GroupId == $iGroupId}
-                            <option selected value="{$data.GroupId}">{$data.GroupName}</option>
-                        {else}
-                            <option value="{$data.GroupId}">{$data.GroupName}</option>
-                        {/if}
-                    {/foreach}
-                </select>
+						    colspan="2">
+							<span class="s2"
+							      style="background-color: #e8eaed; color: #000000; width: 37.0px; max-width: 37.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Кр2_6г_пт_15:30</span>
 						</td>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="2">Кабинет</td>
 						<td class="s1"
 						    dir="ltr"
-						    colspan="2">{$sCabinetH1}</td>
+						    colspan="2">спорт зал</td>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="2">Формат план</td>
 						<td class="s3"
-						    dir="ltr">{$sFormatPlanL1}</td>
+						    dir="ltr">очно</td>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="2">Формат факт</td>
 						<td class="s1"
-						    dir="ltr">
-							{if $bIsAdmin}
-								<select name="sFormatFactO1">
-									{$vForms = ['очно', 'онлайн']}
-									{foreach $vForms as $vForm}
-										{if $vForm == $sFormatPlanL1}
-											<option selected value="{$vForm}">{$vForm}</option>
-										{else}
-											<option value="{$vForm}">{$vForm}</option>
-										{/if}
-									{/foreach}
-								</select>
-							{else}
-								<input type=hidden name="sFormatFactO1" id="sFormatFactO1" value="{$sFormatPlanL1}"/>
-							{/if}
-						</td>
+						    dir="ltr">очно</td>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="4">Информация по занятию</td>
 						<td class="s4"
-						    colspan="2">{$sDateT1}
-						<!--<input type="text" name="sDateT1" id="sDateT1" value="{$sDateT1}" size="10" class="datepicker form-control form-control-160"/>-->
-						</td>
+						    colspan="2">05.04.2023</td>
 						<td class="s4"
-						    colspan="2">{$sWeekDayV1}</td>
+						    colspan="2">Среда</td>
 						<td class="s1"
-						    colspan="2">{$sDateTimeX1}</td>
+						    colspan="2">15:30-16:30</td>
 						<td class="s5"
 						    dir="ltr"/>
 						<td class="s6"
@@ -1450,6 +1317,8 @@
 						<th id="685479336R1"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">2</div>
 						</th>
 						<td class="s7"
 						    dir="ltr"
@@ -1494,6 +1363,8 @@
 						<th id="685479336R2"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">3</div>
 						</th>
 						<td class="s7"
 						    dir="ltr"
@@ -1525,6 +1396,8 @@
 						<th id="685479336R3"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">4</div>
 						</th>
 						<td class="s9"
 						    dir="ltr"
@@ -1560,6 +1433,8 @@
 						<th id="685479336R4"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">5</div>
 						</th>
 						<td class="s9"
 						    dir="ltr"
@@ -1593,6 +1468,8 @@
 						<th id="685479336R5"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">6</div>
 						</th>
 						<td class="s0"
 						    dir="ltr"
@@ -1613,6 +1490,8 @@
 						<th id="685479336R6"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">7</div>
 						</th>
 						<td class="s0"
 						    dir="ltr"
@@ -1635,6 +1514,8 @@
 						<th id="685479336R7"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">8</div>
 						</th>
 						<td class="s0"
 						    dir="ltr"
@@ -1657,6 +1538,8 @@
 						<th id="685479336R8"
 						    style="height: 49px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 49px">9</div>
 						</th>
 						<td class="s0"
 						    dir="ltr"
@@ -1720,6 +1603,8 @@
 						<th id="685479336R9"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">10</div>
 						</th>
 						<td class="s11"/>
 					</tr>
@@ -1727,6 +1612,8 @@
 						<th id="685479336R10"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">11</div>
 						</th>
 						<td class="s0"
 						    dir="ltr">ID</td>
@@ -1748,6 +1635,8 @@
 						<th id="685479336R11"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">12</div>
 						</th>
 						<td class="s27"
 						    dir="ltr">1</td>
@@ -1795,10 +1684,118 @@
 						    dir="ltr"/>
 						<td class="s26"/>
 					</tr>
+					<tr style="height: 20px">
+						<th id="685479336R12"
+						    style="height: 20px;"
+						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">13</div>
+						</th>
+						<td class="s27"
+						    dir="ltr">2</td>
+						<td class="s29"
+						    dir="ltr">Булыга Анастасия Андреевна</td>
+						<td class="s12"
+						    dir="ltr">1гр_подг</td>
+						<td class="s12"/>
+						<td class="s12"
+						    dir="ltr">2</td>
+						<td class="s12"
+						    dir="ltr"/>
+						<td class="s29"/>
+						<td class="s12"
+						    dir="ltr">
+							<span class="s2"
+							      style="background-color: #e8eaed; color: #000000; width: 35.0px; max-width: 35.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; "/>
+						</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2">+-</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2">+-</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2">-</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2">+</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s30"/>
+						<td class="s29"
+						    dir="ltr"/>
+						<td class="s26"/>
+					</tr>
+					<tr style="height: 20px">
+						<th id="685479336R13"
+						    style="height: 20px;"
+						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">14</div>
+						</th>
+						<td class="s31"
+						    dir="ltr">н</td>
+						<td class="s29"
+						    dir="ltr">Егорова Кристина Игоревна</td>
+						<td class="s12"
+						    dir="ltr">7_подг</td>
+						<td class="s12"/>
+						<td class="s12"
+						    dir="ltr">12</td>
+						<td class="s12"
+						    dir="ltr"/>
+						<td class="s29"/>
+						<td class="s12"
+						    dir="ltr">
+							<span class="s2"
+							      style="background-color: #e8eaed; color: #000000; width: 35.0px; max-width: 35.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">н</span>
+						</td>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s12"
+						    dir="ltr"
+						    colspan="2"/>
+						<td class="s30"/>
+						<td class="s29"
+						    dir="ltr"/>
+						<td class="s26"/>
+					</tr>
 					<tr style="height: 53px">
 						<th id="685479336R27"
 						    style="height: 53px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 53px">28</div>
 						</th>
 						<td class="s11"/>
 						<td class="s32"/>
@@ -1841,6 +1838,8 @@
 						<th id="685479336R28"
 						    style="height: 2px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 2px">29</div>
 						</th>
 						<td class="s11"/>
 						<td class="s32"/>
@@ -1855,6 +1854,8 @@
 						<th id="685479336R29"
 						    style="height: 20px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 20px">30</div>
 						</th>
 						<td class="s37"
 						    dir="ltr"
@@ -1890,6 +1891,8 @@
 						<th id="685479336R30"
 						    style="height: 40px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 40px">31</div>
 						</th>
 						<td class="s11"/>
 						<td class="s40"/>
@@ -1920,6 +1923,8 @@
 						<th id="685479336R31"
 						    style="height: 18px;"
 						    class="row-headers-background">
+							<div class="row-header-wrapper"
+							     style="line-height: 18px">32</div>
 						</th>
 						<td class="s11"/>
 						<td class="s11"/>
@@ -2787,9 +2792,3 @@
 																</tbody>
 															</table>
 														</div>
-
-
-
-<input type=hidden name="Report" id="Report" value="0"/>
-
-<input type=hidden name=csrf value='{$csrf}'/>
