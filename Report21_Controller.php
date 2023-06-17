@@ -34,6 +34,23 @@ $sProgramForYearL3 = "---";
 $sSubsectionP3 = "---";
 $sJobNameT3 = "---";
 $sPrintOutsPdf = "---";
+$sJobCodeJ11 = "";
+$sJobCodeN11 = "";
+$sJobCodeR11 = "";
+$sJobCodeV11 = "";
+$sSubsectionJ7 = "";
+$sSubsectionN7 = "";
+$sSubsectionR7 = "";
+$sSubsectionV7 = "";
+$sTopicJ8 = "";
+$sTopicN8 = "";
+$sTopicR8 = "";
+$sTopicV8 = "";
+$sJobNameJ9 = "";
+$sJobNameN9 = "";
+$sJobNameR9 = "";
+$sJobNameV9 = "";
+
 $aTeachers =[];
 $vTeachers = [];
 
@@ -291,6 +308,124 @@ if($iColClass > 0){
             $sPrintOutsPdf = $vProgramForYearRow['PrintOutsPdf'];
         }
     }
+
+    $sSqlQueryProgramForYear1 = "SELECT
+           ProgramForYear.f12590 AS JobCode
+        FROM
+            " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
+        WHERE
+           ProgramForYear.f11700 = '".$sProgramAgeX2."'
+           AND ProgramForYear.f11710 = '".$iWeek."'
+           AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+           AND ProgramForYear.status = 0";
+    if($iColClass  > 1)
+        $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'"
+
+    $i = 0;
+    if($vProgramForYearDat1a = sql_query($sSqlQueryProgramForYear1)){
+        while ($vProgramForYearRow1 = sql_fetch_assoc($vProgramForYearData1)) {
+            $i++;
+            switch ($i)
+            {
+                case 1:
+                    $sJobCodeJ11 = $vProgramForYearRow1['JobCode'];
+                    $sJobCode = $sJobCodeJ11;
+                    break;
+                case 2:
+                    $sJobCodeN11 = $vProgramForYearRow1['JobCode'];
+                    $sJobCode = $sJobCodeJ11;
+                    break;
+                case 3:
+                    $sJobCodeR11 = $vProgramForYearRow1['JobCode'];
+                    $sJobCode = $sJobCodeJ11;
+                    break;
+                case 4:
+                    $sJobCodeV11 = $vProgramForYearRow1['JobCode'];
+                    $sJobCode = $sJobCodeJ11;
+                    break;
+            }
+            $sSqlQueryTasks1 = "SELECT
+                       Tasks.f14840 AS Subsection
+                       , Tasks.f10440 AS JobName
+                        , Tasks.f10420 AS Topic
+                    FROM
+                        " . DATA_TABLE . get_table_id(620) . " AS Tasks
+                    WHERE
+                       Tasks.status = 0
+                       AND Tasks.f12530 = '".$sJobCode."'";
+            if($vTasksData1 = sql_query($sSqlQueryTasks1)){
+                if ($vTasksRow1 = sql_fetch_assoc($vTasksData1)) {
+                    switch ($i)
+                    {
+                        case 1:
+                            $sSubsectionJ7 = $vTasksRow1['Subsection'];
+                            $sTopicJ8 = $vTasksRow1['Topic'];
+                            $sJobNameJ9 = $vTasksRow1['JobName'];
+                            $sSubsection = $sSubsectionJ7;
+                            break;
+                        case 2:
+                            $sSubsectionN7 = $vTasksRow1['Subsection'];
+                            $sTopicN8 = $vTasksRow1['Topic'];
+                            $sJobNameN9 = $vTasksRow1['JobName'];
+                            $sSubsection = $sSubsectionN7;
+                            break;
+                        case 3:
+                            $sSubsectionR7 = $vTasksRow1['Subsection'];
+                            $sTopicR8 = $vTasksRow1['Topic'];
+                            $sJobNameR9 = $vTasksRow1['JobName'];
+                            $sSubsection = $sSubsectionR7;
+                            break;
+                        case 4:
+                            $sSubsectionV7 = $vTasksRow1['Subsection'];
+                            $sTopicV8 = $vTasksRow1['Topic'];
+                            $sJobNameV9 = $vTasksRow1['JobName'];
+                            $sSubsection = $sSubsectionV7;
+                            break;
+                    }
+                }
+            }
+            $sSqlQuerySubsection = "SELECT
+                       Tasks.f14840 AS Subsection
+                       , Tasks.f10440 AS JobName
+                        , Tasks.f10420 AS Topic
+                    FROM
+                        " . DATA_TABLE . get_table_id(560) . " AS Subsections
+                    WHERE
+                       Tasks.status = 0
+                       AND Tasks.f12530 = '".$sJobCode."'";
+            if($vSubsectionData = sql_query($sSqlQuerySubsection)){
+                if ($vSubsectionRow = sql_fetch_assoc($vSubsectionData)) {
+                    switch ($i)
+                    {
+                        case 1:
+                            $sSubsectionJ7 = $vProgramForYearRow1['Subsection'];
+                            $sTopicJ8 = $vProgramForYearRow1['Topic'];
+                            $sJobNameJ9 = $vProgramForYearRow1['JobName'];
+                            $sSubsection = $sSubsectionJ7;
+                            break;
+                        case 2:
+                            $sSubsectionN7 = $vProgramForYearRow1['Subsection'];
+                            $sTopicN8 = $vProgramForYearRow1['Topic'];
+                            $sJobNameN9 = $vProgramForYearRow1['JobName'];
+                            $sSubsection = $sSubsectionN7;
+                            break;
+                        case 3:
+                            $sSubsectionR7 = $vProgramForYearRow1['Subsection'];
+                            $sTopicR8 = $vProgramForYearRow1['Topic'];
+                            $sJobNameR9 = $vProgramForYearRow1['JobName'];
+                            $sSubsection = $sSubsectionR7;
+                            break;
+                        case 4:
+                            $sSubsectionV7 = $vProgramForYearRow1['Subsection'];
+                            $sTopicV8 = $vProgramForYearRow1['Topic'];
+                            $sJobNameV9 = $vProgramForYearRow1['JobName'];
+                            $sSubsection = $sSubsectionV7;
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -305,11 +440,41 @@ $smarty->assign("bIsAdmin", $bIsAdmin);
 $smarty->assign("sCabinetH1", $sCabinetH1);
 $smarty->assign("sFormatPlanL1", $sFormatPlanL1);
 $smarty->assign("sWeekDayV1", $sWeekDayV1);
-$smarty->assign("sDateTimeX1", $sDateTimeX1);
+$smarty->assign("sDateTimeT1", $dSearchDate->format("d.m.Y"));
+$smarty->assign("sLessonTimeX1", $sLessonTimeX1);
 $smarty->assign("sTeacherFioFactD2", $sTeacherFioFactD2);
 $smarty->assign("sDepartmentNameH2", $sDepartmentNameH2);
 $smarty->assign("sDepartmentAddressL2", $sDepartmentAddressL2);
-$smarty->assign("aTeachers", $aTeachers);
+$smarty->assign("sProgramAgeX2", $sProgramAgeX2);
+$smarty->assign("sAcademicYearU2", $sAcademicYearU2);
+$smarty->assign("sWeekLessonR2", $sWeekLessonR2);
+$smarty->assign("sProgramForYearL3", $sProgramForYearL3);
+$smarty->assign("sSubsectionP3", $sSubsectionP3);
+$smarty->assign("sJobNameT3", $sJobNameT3);
+$smarty->assign("sPrintOutsPdf", $sPrintOutsPdf);
+$smarty->assign("sJobCodeJ11", $sJobCodeJ11);
+$smarty->assign("sJobCodeN11", $sJobCodeN11);
+$smarty->assign("sJobCodeR11", $sJobCodeR11);
+$smarty->assign("sJobCodeV11", $sJobCodeV11);
+
+$smarty->assign("sSubsectionJ7", $sSubsectionJ7);
+$smarty->assign("sSubsectionN7", $sSubsectionN7);
+$smarty->assign("sSubsectionR7", $sSubsectionR7);
+$smarty->assign("sSubsectionV7", $sSubsectionV7);
+
+$smarty->assign("sTopicJ8", $sTopicJ8);
+$smarty->assign("sTopicN8", $sTopicN8);
+$smarty->assign("sTopicR8", $sTopicR8);
+$smarty->assign("sTopicV8", $sTopicV8);
+
+$smarty->assign("sJobNameJ9", $sJobNameJ9);
+$smarty->assign("sJobNameN9", $sJobNameN9);
+$smarty->assign("sJobNameR9", $sJobNameR9);
+$smarty->assign("sJobNameV9", $sJobNameV9);
+
+
+
+$smarty->assign("vTeachers", $vTeachers);
 $smarty->assign("sAcademicYearU2", $sAcademicYearU2);
 $smarty->assign("sProgramAgeX2", $sProgramAgeX2);
 
