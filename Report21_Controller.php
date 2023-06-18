@@ -50,9 +50,42 @@ $sJobNameJ9 = "";
 $sJobNameN9 = "";
 $sJobNameR9 = "";
 $sJobNameV9 = "";
-
-$aTeachers =[];
+$sSectionJ6 = "";
+$sSectionN6 = "";
+$sSectionR6 = "";
+$sSectionV6 = "";
+$iJobCodeM9_1 = 0;
+$iJobCodeQ9_1 = 0;
+$iJobCodeU9_1 = 0;
+$iJobCodeY9_1 = 0;
+$iJobCodeM9_2 = 0;
+$iJobCodeQ9_2 = 0;
+$iJobCodeU9_2 = 0;
+$iJobCodeY9_2 = 0;
+$sJobCodeM9 = "";
+$sJobCodeQ9 = "";
+$sJobCodeU9 = "";
+$sJobCodeY9 = "";
+$sM5 = "";
+$sQ5 = "";
+$sU5 = "";
+$sY5 = "";
+$vGifts =[];
 $vTeachers = [];
+$vWhatDidLearnJ28 = [];
+$vWhatDidLearnN28 = [];
+$vWhatDidLearnR28 = [];
+$vWhatDidLearnV28 = [];
+$sPreviosCommentJ33 = "";
+$sThemeJ34 = "";
+$sThemeN34 = "";
+$sThemeR34 = "";
+$sThemeV34 = "";
+
+$sTaskJ35 = "";
+$sTaskN35 = "";
+$sTaskR35 = "";
+$sTaskV35 = "";
 
 //методисты 2
 //педагоги таблица  520
@@ -100,13 +133,13 @@ if ($result = sql_select_field(USERS_TABLE, "group_id", "id='" . $iUserId . "' a
 $sSqlQueryGroup = "SELECT DISTINCT
         Groups.id AS GroupId
         , Groups.f11090 AS GroupName
-        , if(Groups.f11140 IS NULL, '', Groups.f11140) AS ProgramAge
-        , if(Teacher.id IS NULL, 0, Teacher.id) AS TeacherId
-        , if(Teacher.f9660 IS NULL, '', Teacher.f9660) AS TeacherFioFact
-        , if(Departments.f9450 IS NULL, '', Departments.f9450) AS DepartmentName
-        , if(Departments.f9460  IS NULL, '', Departments.f9460) AS DepartmentAddress
-        , IFNULL((SELECT MAX(Classes.f12750) FROM " . DATA_TABLE . get_table_id(780) . "AS Classes  WHERE Classes.f12870 = Groups.id AND Classes.status = 0),'') AS MaxClassesDate
-        , if(Groups.f11240 IS NULL, '', Groups.f11240) AS ClassStartDate
+        , IFNULL(Groups.f11140, '') AS ProgramAge
+        , IFNULL(Teacher.id, 0) AS TeacherId
+        , IFNULL(Teacher.f9660, '') AS TeacherFioFact
+        , IFNULL(Departments.f9450, '') AS DepartmentName
+        , IFNULL(Departments.f9460, '') AS DepartmentAddress
+        , IFNULL((SELECT MAX(Classes.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS Classes  WHERE Classes.f12870 = Groups.id AND Classes.status = 0),'') AS MaxClassesDate
+        , IFNULL(Groups.f11240, '') AS ClassStartDate
     FROM
         " . DATA_TABLE . get_table_id(790) . " AS Schedule
         INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
@@ -160,7 +193,6 @@ if($vGroupData = sql_query($sSqlQueryGroup)){
     }
 }
 
-
 //$aDays[date("w", strtotime($sDateSearch))]
 //Находим следующую дату занятия
 //$aDaysEn = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
@@ -210,15 +242,13 @@ if ($vResWeekDays = sql_query("SELECT WeekDays.id AS WeekDayId, WeekDays.f10330 
 // Если количество занятий больше 0
 if($iColClass > 0){
     $sSqlQuerySchedule = "SELECT
-       if(Schedule.f13580 IS NULL, '', Schedule.f13580) AS FormatPlan
-        , if(Schedule.f13630 IS NULL, '', Schedule.f13630) AS Cabinet
-        , if(Schedule.f13570 IS NULL, '', Schedule.f13570) AS LessonTime
+       IFNULL(Schedule.f13580, '') AS FormatPlan
+        , IFNULL(Schedule.f13630, '') AS Cabinet
+        , IFNULL(Schedule.f13570, '') AS LessonTime
     FROM
         " . DATA_TABLE . get_table_id(790) . " AS Schedule
-        INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
-            ON Schedule.f13550 = Groups.id
     WHERE
-        Schedule.f12870 = ".$iGroupId."
+        Schedule.f13550 = ".$iGroupId."
         AND Schedule.f13560 = ".$iWeekDay."
         AND Schedule.status = 0";
     if($vScheduleData = sql_query($sSqlQuerySchedule)){
@@ -235,6 +265,7 @@ if($iColClass > 0){
     $dTrainingEnd->setDate(intval($dSearchDate->format("Y")), 8, 31);
 
     $sAcademicYearU2 = ($dSearchDate >= $dTrainingBeg && $dSearchDate <= $dTrainingEnd) ?  strval(intval($dSearchDate->format("Y")) - 1) : $dSearchDate->format("Y");
+    $sSearchDate = $dSearchDate->format('Y-m-d 00:00:00');
     $iWeek = 0;
     $iLesson = 0;
     //Из таблицы Занятия 780 по полю Название группы f12870 вычисляем по полям № недели f13020 и № урока f13340 номер последнего занятия (сначала макс по неделе, потом макс по уроку).
@@ -260,7 +291,7 @@ if($iColClass > 0){
             }
         }
     }
-
+    //учителя
     $sSqlQueryTeachers = "SELECT
            Teachers.id AS TeacherId
            , Teachers.f9660 AS TeacherName
@@ -272,9 +303,39 @@ if($iColClass > 0){
         ORDER BY Teachers.f9660";
     if($vTeachersData = sql_query($sSqlQueryTeachers)){
         while ($vTeachersRow = sql_fetch_assoc($vTeachersData)) {
-            $aTeachers["TeacherId"] = $vTeachersRow["TeacherId"];
-            $aTeachers["TeacherName"] = $vTeachersRow["TeacherName"];
             $vTeachers[] = array("TeacherId" => $vTeachersRow["TeacherId"], "TeacherName" => $vTeachersRow["TeacherName"]);
+        }
+    }
+    //подарки
+    $sSqlQueryGifts = "SELECT
+           Gifts.id AS GiftId
+           , Gifts.f10130 AS GiftName
+        FROM
+            " . DATA_TABLE . get_table_id(590) . " AS Gifts
+        WHERE
+           Gifts.id <> ".$iGroupTeacherId."
+            AND Gifts.status = 0
+        ORDER BY Gifts.f10130";
+    if($vGiftsData = sql_query($sSqlQueryGifts)){
+        while ($vTGiftsRow = sql_fetch_assoc($vGiftsData)) {
+            $vGifts[] = array("GiftId" => $vTeachersRow["GiftId"], "GiftName" => $vTeachersRow["GiftName"]);
+        }
+    }
+
+    //Комментарий с предыдущего занятия.
+    $sSqlQueryPreviosComment = "SELECT
+           PreviosComment.f12750 AS PreviosCommentDate
+           , PreviosComment.f12600 AS PreviosCommentLesson
+        FROM
+            " . DATA_TABLE . get_table_id(780) . " AS PreviosComment
+        WHERE
+           PreviosComment.f13010 = '".$iGroupId."'
+           AND PreviosComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f13010 = '".$iGroupId."' AND PP.status = 0)
+           AND PreviosComment.status = 0";
+    if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
+        if ($vPreviosCommentRow = sql_fetch_assoc($vPreviosCommentData)) {
+            $dDate1 = new DateTime($vPreviosCommentRow['PreviosCommentDate']);
+            $sPreviosCommentJ33 = $dDate1->format("d.m.Y") ."<br>". $vPreviosCommentRow['PreviosCommentLesson'];
         }
     }
 
@@ -292,6 +353,7 @@ if($iColClass > 0){
             $sProgramForYearL3 = $vProgramForYearRow['ProgramForYearName'];
         }
     }
+
     $sSqlQueryTasks = "SELECT
            Tasks.f14840 AS Subsection
            , Tasks.f10440 AS JobName
@@ -319,10 +381,10 @@ if($iColClass > 0){
            AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
            AND ProgramForYear.status = 0";
     if($iColClass  > 1)
-        $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'"
+        $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'";
 
     $i = 0;
-    if($vProgramForYearDat1a = sql_query($sSqlQueryProgramForYear1)){
+    if($vProgramForYearData1 = sql_query($sSqlQueryProgramForYear1)){
         while ($vProgramForYearRow1 = sql_fetch_assoc($vProgramForYearData1)) {
             $i++;
             switch ($i)
@@ -330,20 +392,90 @@ if($iColClass > 0){
                 case 1:
                     $sJobCodeJ11 = $vProgramForYearRow1['JobCode'];
                     $sJobCode = $sJobCodeJ11;
+                    //Комментарий по заданию
+                    $sSqlQueryTaskComment = "SELECT
+                               TaskComment.f12750 AS TaskCommentDate
+                               , TaskComment.f12960 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
+                            WHERE
+                               TaskComment.f12870 = '".$iGroupId."'
+                               AND TaskComment.f12930 = '".$sJobCode."'
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f12930 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.status = 0";
+                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                            $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                        }
+                    }
+
                     break;
                 case 2:
                     $sJobCodeN11 = $vProgramForYearRow1['JobCode'];
-                    $sJobCode = $sJobCodeJ11;
+                    $sJobCode = $sJobCodeN11;
+                    //Комментарий по заданию
+                    $sSqlQueryTaskComment = "SELECT
+                               TaskComment.f12750 AS TaskCommentDate
+                               , TaskComment.f13280 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
+                            WHERE
+                               TaskComment.f12870 = '".$iGroupId."'
+                               AND TaskComment.f13260 = '".$sJobCode."'
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13260 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.status = 0";
+                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                            $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                        }
+                    }
                     break;
                 case 3:
                     $sJobCodeR11 = $vProgramForYearRow1['JobCode'];
-                    $sJobCode = $sJobCodeJ11;
+                    $sJobCode = $sJobCodeR11;
+                    //Комментарий по заданию
+                    $sSqlQueryTaskComment = "SELECT
+                               TaskComment.f12750 AS TaskCommentDate
+                               , TaskComment.f13360 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
+                            WHERE
+                               TaskComment.f12870 = '".$iGroupId."'
+                               AND TaskComment.f13330 = '".$sJobCode."'
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13330 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.status = 0";
+                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                            $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                        }
+                    }
                     break;
                 case 4:
                     $sJobCodeV11 = $vProgramForYearRow1['JobCode'];
-                    $sJobCode = $sJobCodeJ11;
+                    $sJobCode = $sJobCodeV11;
+                    //Комментарий по заданию
+                    $sSqlQueryTaskComment = "SELECT
+                               TaskComment.f12750 AS TaskCommentDate
+                               , TaskComment.f13430 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
+                            WHERE
+                               TaskComment.f12870 = '".$iGroupId."'
+                               AND TaskComment.f13410  = '".$sJobCode."'
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13410 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.status = 0";
+                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                            $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                        }
+                    }
                     break;
             }
+
             $sSqlQueryTasks1 = "SELECT
                        Tasks.f14840 AS Subsection
                        , Tasks.f10440 AS JobName
@@ -360,74 +492,419 @@ if($iColClass > 0){
                         case 1:
                             $sSubsectionJ7 = $vTasksRow1['Subsection'];
                             $sTopicJ8 = $vTasksRow1['Topic'];
+
+                            //Комментарий по теме
+                            $sSqlQueryThemeComment = "SELECT
+                               ThemeComment.f12750 AS ThemeCommentDate
+                               , ThemeComment.f13180 AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
+                            WHERE
+                               ThemeComment.f12870 = '".$iGroupId."'
+                               AND ThemeComment.f16430 = '".$sTopicJ8."'
+                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16430 = '".$sTopicJ8."' AND PP.status = 0)
+                               AND ThemeComment.status = 0";
+                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                                    $sThemeJ34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                                }
+                            }
+
                             $sJobNameJ9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionJ7;
                             break;
                         case 2:
                             $sSubsectionN7 = $vTasksRow1['Subsection'];
                             $sTopicN8 = $vTasksRow1['Topic'];
+                            //Комментарий по теме
+                            $sSqlQueryThemeComment = "SELECT
+                               ThemeComment.f12750 AS ThemeCommentDate
+                               , ThemeComment.f13250 AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
+                            WHERE
+                               ThemeComment.f12870 = '".$iGroupId."'
+                               AND ThemeComment.f16440 = '".$sTopicN8."'
+                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16440 = '".$sTopicN8."' AND PP.status = 0)
+                               AND ThemeComment.status = 0";
+                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                                    $sThemeN34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                                }
+                            }
+
                             $sJobNameN9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionN7;
                             break;
                         case 3:
                             $sSubsectionR7 = $vTasksRow1['Subsection'];
                             $sTopicR8 = $vTasksRow1['Topic'];
+                            //Комментарий по теме
+                            $sSqlQueryThemeComment = "SELECT
+                               ThemeComment.f12750 AS ThemeCommentDate
+                               , ThemeComment.f13320 AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
+                            WHERE
+                               ThemeComment.f12870 = '".$iGroupId."'
+                               AND ThemeComment.f16450 = '".$sTopicR8."'
+                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16450 = '".$sTopicR8."' AND PP.status = 0)
+                               AND ThemeComment.status = 0";
+                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                                    $sThemeR34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                                }
+                            }
                             $sJobNameR9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionR7;
                             break;
                         case 4:
                             $sSubsectionV7 = $vTasksRow1['Subsection'];
                             $sTopicV8 = $vTasksRow1['Topic'];
+                            //Комментарий по теме
+                            $sSqlQueryThemeComment = "SELECT
+                               ThemeComment.f12750 AS ThemeCommentDate
+                               , ThemeComment.f13400 AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
+                            WHERE
+                               ThemeComment.f12870 = '".$iGroupId."'
+                               AND ThemeComment.f16460 = '".$sTopicV8."'
+                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16460 = '".$sTopicV8."' AND PP.status = 0)
+                               AND ThemeComment.status = 0";
+                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                                    $sThemeV34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                                }
+                            }
                             $sJobNameV9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionV7;
                             break;
                     }
                 }
             }
+
+
             $sSqlQuerySubsection = "SELECT
-                       Tasks.f14840 AS Subsection
-                       , Tasks.f10440 AS JobName
-                        , Tasks.f10420 AS Topic
+                       Sections.f9870 AS SectionName
                     FROM
                         " . DATA_TABLE . get_table_id(560) . " AS Subsections
+                        INNER JOIN " . DATA_TABLE . get_table_id(550) . " AS Sections
+                            ON Subsections.f9930 = Sections.id
                     WHERE
-                       Tasks.status = 0
-                       AND Tasks.f12530 = '".$sJobCode."'";
+                       Subsections.status = 0
+                       AND Subsections.f12420 = '".$sSubsection."'";
             if($vSubsectionData = sql_query($sSqlQuerySubsection)){
                 if ($vSubsectionRow = sql_fetch_assoc($vSubsectionData)) {
                     switch ($i)
                     {
                         case 1:
-                            $sSubsectionJ7 = $vProgramForYearRow1['Subsection'];
-                            $sTopicJ8 = $vProgramForYearRow1['Topic'];
-                            $sJobNameJ9 = $vProgramForYearRow1['JobName'];
-                            $sSubsection = $sSubsectionJ7;
+                            $sSectionJ6 = $vProgramForYearRow1['SectionName'];
                             break;
                         case 2:
-                            $sSubsectionN7 = $vProgramForYearRow1['Subsection'];
-                            $sTopicN8 = $vProgramForYearRow1['Topic'];
-                            $sJobNameN9 = $vProgramForYearRow1['JobName'];
-                            $sSubsection = $sSubsectionN7;
+                            $sSectionN6 = $vProgramForYearRow1['SectionName'];
                             break;
                         case 3:
-                            $sSubsectionR7 = $vProgramForYearRow1['Subsection'];
-                            $sTopicR8 = $vProgramForYearRow1['Topic'];
-                            $sJobNameR9 = $vProgramForYearRow1['JobName'];
-                            $sSubsection = $sSubsectionR7;
+                            $sSectionR6 = $vProgramForYearRow1['SectionName'];
                             break;
                         case 4:
-                            $sSubsectionV7 = $vProgramForYearRow1['Subsection'];
-                            $sTopicV8 = $vProgramForYearRow1['Topic'];
-                            $sJobNameV9 = $vProgramForYearRow1['JobName'];
-                            $sSubsection = $sSubsectionV7;
+                            $sSectionV6 = $vProgramForYearRow1['SectionName'];
                             break;
                     }
                 }
             }
+
+            $sSqlQueryProgramForYear3 = "SELECT
+                   SUM(ProgramForYear.id) AS JobCode
+                FROM
+                    " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
+                WHERE
+                   ProgramForYear.f11700 = '".$sProgramAgeX2."'
+                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.status = 0";
+            if($vProgramForYearData3 = sql_query($sSqlQueryProgramForYear3)){
+                if ($vProgramForYearRow3 = sql_fetch_assoc($vProgramForYearData3)) {
+                    switch ($i)
+                    {
+                        case 1:
+                            $iJobCodeM9_1 = GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            break;
+                        case 2:
+                            $iJobCodeQ9_1 = GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            break;
+                        case 3:
+                            $iJobCodeU9_1 = GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            break;
+                        case 4:
+                            $iJobCodeY9_1 = GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            break;
+                    }
+                }
+            }
+
+            function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
+                $sSqlQueryProgramForYear4 = "SELECT
+                   ProgramForYear.f11710 AS Week
+                FROM
+                    " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
+                WHERE
+                   ProgramForYear.f11700 = '".$sProgramAgeX2."'
+                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.status = 0";
+                $i = 0;
+                if($vProgramForYearData4 = sql_query($sSqlQueryProgramForYear4)){
+                    while ($vProgramForYearRow4 = sql_fetch_assoc($vProgramForYearData4)) {
+                        $i++;
+                        if(intval($vProgramForYearRow4['Week']) == $iWeek)
+                            return $i;
+                    }
+                }
+                return 0;
+            }
+
+            $sSqlQueryProgramForYear2 = "SELECT
+                   SUM(ProgramForYear.id) AS JobCode
+                FROM
+                    " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
+                WHERE
+                   ProgramForYear.f11700 = '".$sProgramAgeX2."'
+                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.status = 0";
+            if($vProgramForYearData2 = sql_query($sSqlQueryProgramForYear2)){
+                if ($vProgramForYearRow2 = sql_fetch_assoc($vProgramForYearData2)) {
+                    switch ($i)
+                    {
+                        case 1:
+                            $iJobCodeM9_2 = intval($vProgramForYearRow1['JobCode']);
+                            if($iJobCodeM9_1 < $iJobCodeM9_2) {
+                                $sM5 = "нужно";
+                            } else {
+                                $sM5 = "не нужно";
+                            }
+                            break;
+                        case 2:
+                            $iJobCodeQ9_2 = intval($vProgramForYearRow1['JobCode']);
+                            if($iJobCodeQ9_1 < $iJobCodeQ9_2) {
+                                $sQ5 = "нужно";
+                            } else {
+                                $sQ5 = "не нужно";
+                            }
+                            break;
+                        case 3:
+                            $iJobCodeU9_2 = intval($vProgramForYearRow1['JobCode']);
+                            if($iJobCodeU9_1 < $iJobCodeU9_2) {
+                                $sU5 = "нужно";
+                            } else {
+                                $sU5 = "не нужно";
+                            }
+                            break;
+                        case 4:
+                            $iJobCodeY9_2 = intval($vProgramForYearRow1['JobCode']);
+                            if($iJobCodeY9_1 < $iJobCodeY9_2) {
+                                $sY5 = "нужно";
+                            } else {
+                                $sY5 = "не нужно";
+                            }
+                            break;
+                    }
+                }
+            }
+
+            //Чему учились
+
+            $sSqlQueryWhatDidLearn = "SELECT
+                           WhatDidLearn.Id AS WhatDidLearnId
+                           , WhatDidLearn.f10680 AS WhatDidLearnName
+                        FROM
+                            " . DATA_TABLE . get_table_id(640) . " AS WhatDidLearn
+                        WHERE
+                           WhatDidLearn.f12580 = '".$sJobCode."'
+                           AND WhatDidLearn.status = 0";
+            if($vWhatDidLearnData = sql_query($sSqlQueryWhatDidLearn)){
+                while ($vWhatDidLearnRow = sql_fetch_assoc($vWhatDidLearnData)) {
+                    switch ($i)
+                    {
+                        case 1:
+                            $vWhatDidLearnJ28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            break;
+                        case 2:
+                            $vWhatDidLearnN28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            break;
+                        case 3:
+                            $vWhatDidLearnR28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            break;
+                        case 4:
+                            $vWhatDidLearnV28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            break;
+                    }
+                }
+            }
+
+            //Комментарий с предыдущего занятия.
+            $sSqlQueryPreviosComment = "SELECT
+                   PreviosComment.f12600 AS PreviosCommentLesson
+                FROM
+                    " . DATA_TABLE . get_table_id(780) . " AS PreviosComment
+                WHERE
+                   PreviosComment.f13010 = '".$iGroupId."'
+                   AND PreviosComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f13010 = '".$iGroupId."' AND PP.status = 0)
+                   AND PreviosComment.status = 0";
+            if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
+                if ($vPreviosCommentRow = sql_fetch_assoc($vPreviosCommentData)) {
+                    $sPreviosCommentJ33 = $vProgramForYearRow['PreviosCommentLesson'];
+                }
+            }
+
+        }
+    }
+
+    //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
+    $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
+                        , ClienCards.f9750 as ChildrenFIO
+                        , IFNULL((SELECT MAX(WorkingOff2.id) FROM " . DATA_TABLE . get_table_id(820) . " AS WorkingOff2  WHERE WorkingOff2.f14920 = '" . $iGroupId . "' AND WorkingOff2.f14890 = ClienCards.id AND WorkingOff2.status = 0),-1) AS nn
+                        , Students.f11490 AS ClassGroup
+                        , IFNULL(PickGives.f11410, '') AS PickGivesName
+                        , IFNULL((SELECT SUM(ClassGrades.f14690) FROM " . DATA_TABLE . get_table_id(810) . " AS ClassGrades WHERE ClassGrades.f14680 = ClienCards.id AND ClassGrades.status = 0),0) AS Stars
+                        , IFNULL((SELECT SUM(DelivGifts.f16420) FROM " . DATA_TABLE . get_table_id(850) . " AS DelivGifts WHERE DelivGifts.f15270 = ClienCards.id AND DelivGifts.status = 0),0) AS Gifts
+                    FROM
+                        " . DATA_TABLE . get_table_id(530) . " AS ClienCards
+                        INNER JOIN " . DATA_TABLE . get_table_id(720) . " AS Students
+                            ON Students.f11460 = ClienCards.id
+                        LEFT JOIN " . DATA_TABLE . get_table_id(710) . " AS PickGives
+                            ON Students.f11510 = PickGives.id
+                    WHERE
+                        ClienCards.id IN (
+                            SELECT Students.f11460 as ChildrenId
+                                                FROM
+                                                    " . DATA_TABLE . get_table_id(720) . " AS Students
+                                                WHERE
+                                                    Students.f11480 = '" . $iGroupId . "'
+                                                    AND ((Students.f11580 <='" . $sSearchDate . "' AND Students.f11590 IS NULL AND Students.f11580 <>'" . $sDateZero . "')
+                                                    OR (Students.f11580 <='" . $sSearchDate . "' AND Students.f11590 = '" . $sDateZero . "' AND Students.f11580 <>'" . $sDateZero . "')
+                                                    OR (Students.f11580 <>'" . $sDateZero . "' AND Students.f11580 <='" . $sSearchDate . "' AND Students.f11590 >= '" . $sSearchDate . "' AND Students.f11590 <>'" . $sDateZero . "'))
+                                                    AND Students.status = 0
+                                                UNION
+                                                SELECT
+                                                    WorkingOff.f14890  as ChildrenId
+                                                FROM
+                                                    ".DATA_TABLE.get_table_id(820)." AS WorkingOff
+                                                WHERE
+                                                    WorkingOff.f14960 = '" . $iGroupId . "'
+                                                    AND WorkingOff.f15070 = '" . $sSearchDate . "'
+                                                    AND WorkingOff.status = 0
+                            )
+                        AND ClienCards.status = 0
+                    ORDER BY ChildrenFIO";
+    if($vStudentsData = sql_query($sSqlQueryStudents)) {
+        while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
+            $vTableData['ChildrenId'] = $vStudentRow['ChildrenId'];
+            $vTableData['ChildrenFIO'] = form_display($vStudentRow['ChildrenFIO']);
+            $vTableData['nn'] = $vStudentRow['nn'];
+            $vTableData['ClassGroup'] = $vStudentRow['ClassGroup'];
+            $vTableData['PickGivesName'] = $vStudentRow['PickGivesName'];
+            $vTableData['Stars'] = $vStudentRow['Stars'];
+            $vTableData['Gifts'] = $vStudentRow['Gifts'];
+
+            $iTrialCount = 0;
+            $vTableData['Trial'] = "";
+            $sSqlQueryTrial = "SELECT
+                        WorkingOff3.f14930 AS Trial
+                    FROM
+                        " . DATA_TABLE . get_table_id(820) . " AS WorkingOff3
+                    WHERE
+                        WorkingOff3.f14960 = '" . $iGroupId . "'
+                        AND WorkingOff3.f14890 = '" . $vStudentRow['ChildrenId'] . "'
+                        AND WorkingOff3.status = 0";
+            if($vTrialData = sql_query($sSqlQueryTrial)){
+                while ($vTrialRow = sql_fetch_assoc($vTrialData)) {
+                    $iTrialCount++;
+                    $vTableData['Trial'] = $vTrialRow['Trial'];
+                }
+            }
+            if($iTrialCount > 1)
+                $vTableData['Trial'] = "";
+
+            $iWorkingOffCount = 0;
+            $vTableData['WorkingOff'] = "";
+
+            $sSqlQueryWorkingOff = "SELECT
+                        WorkingOff3.f14900 AS WorkingOff
+                    FROM
+                        " . DATA_TABLE . get_table_id(820) . " AS WorkingOff3
+                    WHERE
+                        WorkingOff3.f14960 = '" . $iGroupId . "'
+                        AND WorkingOff3.f14890 = '" . $vStudentRow['ChildrenId'] . "'
+                        AND WorkingOff3.f15070 = '" . $sSearchDate . "'
+                        AND WorkingOff3.f14900 <> '" . $sDateZero . "'
+                        AND NOT WorkingOff3.f14900 IS NULL
+                        AND WorkingOff3.status = 0";
+            if($vWorkingOffData = sql_query($sSqlQueryWorkingOff)){
+                while ($vWorkingOffRow = sql_fetch_assoc($vWorkingOffData)) {
+                    if($iWorkingOffCount == 0) {
+                        $vTableData['WorkingOff'] = $vWorkingOffRow['WorkingOff'];
+                    } else {
+                        if($vTableData['WorkingOff'] != $vWorkingOffRow['WorkingOff']) {
+                            $vTableData['WorkingOff'] = "";
+                            break;
+                        }
+                    }
+                    $iWorkingOffCount++;
+                }
+            }
+
+            $iWorkingOffCount2 = 0;
+            $vTableData['WorkingOffReport'] = "";
+
+            $sSqlQueryWorkingOff2 = "SELECT
+                        IFNULL(WorkingOff3.f14900, '') AS WorkingOffReport
+                    FROM
+                        " . DATA_TABLE . get_table_id(820) . " AS WorkingOff3
+                    WHERE
+                        WorkingOff3.f14960 = '" . $iGroupId . "'
+                        AND WorkingOff3.f14890 = '" . $vStudentRow['ChildrenId'] . "'
+                        AND WorkingOff3.f15070 = '" . $sSearchDate . "'
+                        AND WorkingOff3.status = 0";
+            if($vWorkingOffData2 = sql_query($sSqlQueryWorkingOff2)){
+                while ($vWorkingOffRow2 = sql_fetch_assoc($vWorkingOffData2)) {
+                    if($iWorkingOffCount2 == 0) {
+                        $vTableData['WorkingOffReport'] = $vWorkingOffRow2['WorkingOffReport'];
+                    } else {
+                        break;
+                    }
+                    $iWorkingOffCount2++;
+                }
+            }
+
+            $sSqlQueryTeacherMessages = "SELECT
+                        IFNULL(TeacherMessage.f15050, '') AS TeacherMessageText
+                    FROM
+                        " . DATA_TABLE . get_table_id(830) . " AS TeacherMessage
+                    WHERE
+                        TeacherMessage.f15040 = '" . $iGroupId . "'
+                        AND TeacherMessage.f15020 = '" . $vStudentRow['ChildrenId'] . "'
+                        AND TeacherMessage.f15030 = '" . $sSearchDate . "'
+                        AND TeacherMessage.status = 0";
+            if($vTeacherMessageData2 = sql_query($sSqlQueryTeacherMessages)){
+                while ($vTeacherMessageRow2 = sql_fetch_assoc($vTeacherMessageData2)) {
+                    if($vTableData['WorkingOffReport'] != "") {
+                        $vTableData['WorkingOffReport'] = $vTableData['WorkingOffReport'].";".$vTeacherMessageRow2['TeacherMessageText'];
+                    } else {
+                        $vTableData['WorkingOffReport'] = $vTeacherMessageRow2['TeacherMessageText'];
+                    }
+                }
+            }
+
+            $vLines[] = $vTableData;
         }
     }
 }
-
 
 $result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
 $row = sql_fetch_assoc($result);
@@ -472,7 +949,37 @@ $smarty->assign("sJobNameN9", $sJobNameN9);
 $smarty->assign("sJobNameR9", $sJobNameR9);
 $smarty->assign("sJobNameV9", $sJobNameV9);
 
+$smarty->assign("sSectionJ6", $sSectionJ6);
+$smarty->assign("sSectionN6", $sSectionN6);
+$smarty->assign("sSectionR6", $sSectionR6);
+$smarty->assign("sSectionV6", $sSectionV6);
 
+$smarty->assign("sSectionJ6", $sSectionJ6);
+$smarty->assign("sSectionN6", $sSectionN6);
+$smarty->assign("sSectionR6", $sSectionR6);
+$smarty->assign("sSectionV6", $sSectionV6);
+
+$smarty->assign("sJobCodeM9", strval($iJobCodeM9_1)." из ".strval($iJobCodeM9_2));
+$smarty->assign("sJobCodeQ9", strval($iJobCodeQ9_1)." из ".strval($iJobCodeQ9_2));
+$smarty->assign("sJobCodeU9", strval($iJobCodeU9_1)." из ".strval($iJobCodeU9_2));
+$smarty->assign("sJobCodeY9", strval($iJobCodeY9_1)." из ".strval($iJobCodeY9_2));
+
+$smarty->assign("sM5", $sM5);
+$smarty->assign("sQ5", $sQ5);
+$smarty->assign("sU5", $sU5);
+$smarty->assign("sY5", $sY5);
+
+$smarty->assign("sPreviosCommentJ33", $sPreviosCommentJ33);
+
+$smarty->assign("sThemeJ34", $sThemeJ34);
+$smarty->assign("sThemeN34", $sThemeN34);
+$smarty->assign("sThemeR34", $sThemeR34);
+$smarty->assign("sThemeV34", $sThemeV34);
+
+$smarty->assign("sTaskJ35", $sTaskJ35);
+$smarty->assign("sTaskN35", $sTaskN35);
+$smarty->assign("sTaskR35", $sTaskR35);
+$smarty->assign("sTaskV35", $sTaskV35);
 
 $smarty->assign("vTeachers", $vTeachers);
 $smarty->assign("sAcademicYearU2", $sAcademicYearU2);
