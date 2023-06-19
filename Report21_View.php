@@ -717,7 +717,7 @@
 		color: #000000;
 		font-family: 'Times New Roman';
 		font-size: 10pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: nowrap;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
@@ -1911,19 +1911,36 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4"
-						    rowspan="2">Учились делать рисунки на математическом планшете по карточкам разных уровней.</td>
+						    rowspan="2">
+								<select name="iJ28">
+									{foreach from=$vWhatDidLearnJ28 item=data name="rows"}
+										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+									{/foreach}
+								</select></td>
 						<td class="s35"
 						    dir="ltr"
 						    colspan="4"
-						    rowspan="2">выберете текст</td>
+						    rowspan="2">								<select name="iJ28">
+									{foreach from=$vWhatDidLearnN28 item=data name="rows"}
+										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+									{/foreach}
+								</select></td>
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4"
-						    rowspan="2">Учились складывать цвета по круговой диаграмме.</td>
+						    rowspan="2">								<select name="iJ28">
+									{foreach from=$vWhatDidLearnR28 item=data name="rows"}
+										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+									{/foreach}
+								</select></td>
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4"
-						    rowspan="2">Учились рисовать картинки по стрелкам.</td>
+						    rowspan="2">								<select name="iJ28">
+									{foreach from=$vWhatDidLearnV28 item=data name="rows"}
+										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+									{/foreach}
+								</select></td>
 						<td class="s36"
 						    dir="ltr"/>
 						<td class="s11"
@@ -2063,7 +2080,7 @@
 						    colspan="6">Комментарий с предыдущего занятия.</td>
 						<td class="s46"
 						    dir="ltr"
-						    colspan="4">03.03.23<br>Необходимо принести игру Головоноги</td>
+						    colspan="4">{$sPreviosCommentJ33}</td>
 							<td class="s24"/>
 							<td class="s24"/>
 							<td class="s24"/>
@@ -2093,14 +2110,14 @@
 							    dir="ltr"
 							    colspan="6">Комментарий по теме</td>
 							<td class="s3"
-							    colspan="4"/>
+							    colspan="4">{$sThemeJ34}</td>
 							<td class="s46"
 							    dir="ltr"
-							    colspan="4">15.02.23<br>Сделать уровень чисел более 10</td>
+							    colspan="4">{$sThemeN34}</td>
 								<td class="s3"
-								    colspan="4"/>
+								    colspan="4">{$sThemeR34}</td>
 								<td class="s3"
-								    colspan="4"/>
+								    colspan="4">{$sThemeV34}</td>
 								<td class="s11"/>
 								<td class="s11"
 								    dir="ltr"/>
@@ -2120,14 +2137,14 @@
 								    dir="ltr"
 								    colspan="6">Комментарий по заданию</td>
 								<td class="s3"
-								    colspan="4"/>
+								    colspan="4">{$sTaskJ35}</td>
 								<td class="s3"
-								    colspan="4"/>
+								    colspan="4">{$sTaskN35}</td>
 								<td class="s3"
-								    colspan="4"/>
+								    colspan="4">{$sTaskR35}</td>
 								<td class="s46"
 								    dir="ltr"
-								    colspan="4">01.02.23<br>Очень было тяжело, начать с самого простого уровня</td>
+								    colspan="4">{$sTaskV35}</td>
 									<td class="s11"/>
 									<td class="s11"/>
 									<td class="s11"/>
@@ -2374,7 +2391,9 @@
 									<td class="s11"/>
 									<td class="s11"/>
 								</tr>
-								<tr style="height: 20px">
+
+				{foreach from=$lines item=data name="rows"}
+							<tr style="height: 20px">
 									<th id="685479336R43"
 									    style="height: 20px;"
 									    class="row-headers-background">
@@ -2382,106 +2401,68 @@
 										     style="line-height: 20px"></div>
 									</th>
 									<td class="s53"/>
-									<td class="s54">1</td>
+									<td class="s54">{$data.iPos}</td>
 									<td class="s29"
-									    colspan="6">Алиева Екатерина Ивановна</td>
+									    colspan="6">{$data.ChildrenFIO}</td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s55"
-									    dir="ltr"/>
-									<td class="s40"/>
-									<td class="s11"/>
-									<td class="s11"/>
-								</tr>
-								<tr style="height: 20px">
-									<th id="685479336R44"
-									    style="height: 20px;"
-									    class="row-headers-background">
-										<div class="row-header-wrapper"
-										     style="line-height: 20px"></div>
-									</th>
-									<td class="s11"/>
-									<td class="s54">2</td>
-									<td class="s29"
-									    colspan="6">Булыга Анастасия Андреевна</td>
-									<td class="s57"
-									    dir="ltr"
-									    colspan="3">Выберете рекомендацию</td>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s58"
-									    dir="ltr"
-									    colspan="3">Нет рекомендации в базе</td>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s59"
-									    dir="ltr"
-									    colspan="3">Тренироваться из палочек разных размеров строить фигуры.</td>
-									<td class="s14"
-									    dir="ltr">
-										<a target="_blank"
-										   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
+									    colspan="4">
+										<select name="iJ44_{$data.iPos}">
+											{foreach from=$vRecomendationJ44 item=data name="rows"}
+												{if $data.RecomendationLink == ""}
+													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+												{else}
+													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+												{/if}
+											{/foreach}
+										</select>
 									</td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="3"/>
+									    colspan="4">
+										<select name="iN44_{$data.iPos}">
+											{foreach from=$vRecomendationN44 item=data name="rows"}
+												{if $data.RecomendationLink == ""}
+													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+												{else}
+													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+												{/if}
+											{/foreach}
+										</select>
+									</td>
+									<td class="s55"
+									    dir="ltr"
+									    colspan="4">
+										<select name="iR44_{$data.iPos}">
+											{foreach from=$vRecomendationR44 item=data name="rows"}
+												{if $data.RecomendationLink == ""}
+													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+												{else}
+													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+												{/if}
+											{/foreach}
+										</select>
+									</td>
+									<td class="s55"
+									    dir="ltr"
+									    colspan="4">
+										<select name="iV44_{$data.iPos}">
+											{foreach from=$vRecomendationV44 item=data name="rows"}
+												{if $data.RecomendationLink == ""}
+													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+												{else}
+													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+												{/if}
+											{/foreach}
+										</select>
+									</td>
 									<td class="s55"
 									    dir="ltr"/>
 									<td class="s40"/>
 									<td class="s11"/>
 									<td class="s11"/>
 								</tr>
-								<tr style="height: 20px">
-									<th id="685479336R45"
-									    style="height: 20px;"
-									    class="row-headers-background">
-										<div class="row-header-wrapper"
-										     style="line-height: 20px"></div>
-									</th>
-									<td class="s11"/>
-									<td class="s54">н</td>
-									<td class="s29"
-									    colspan="6">Егорова Кристина Игоревна</td>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s56"
-									    dir="ltr"/>
-									<td class="s55"
-									    dir="ltr"
-									    colspan="3"/>
-									<td class="s55"
-									    dir="ltr"/>
-									<td class="s40"/>
-									<td class="s11"/>
-									<td class="s11"/>
-								</tr>
+				{/foreach}
 								<tr style="height: 20px">
 									<th id="685479336R46"
 									    style="height: 20px;"
@@ -2585,12 +2566,13 @@
 									<td class="s16"/>
 									<td class="s16"/>
 								</tr>
+
 								<tr style="height: 67px">
 									<th id="685479336R49"
 									    style="height: 67px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 67px">50</div>
+										     style="line-height: 67px"></div>
 									</th>
 									<td class="s62"/>
 									<td class="s63"
@@ -2612,48 +2594,55 @@
 									<td class="s16"/>
 									<td class="s16"/>
 								</tr>
+						{foreach from=$vTasks item=data name="rows"}
 								<tr style="height: 89px">
 									<th id="685479336R50"
 									    style="height: 89px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 89px">51</div>
+										     style="line-height: 89px"></div>
 									</th>
 									<td class="s65"
 									    dir="ltr"
-									    rowspan="2">1</td>
-									<td class="s66">Бинарное дерево</td>
+									    rowspan="2">{$data.iPos}</td>
+									<td class="s66">{$data.JobName}</td>
 									<td class="s8"
 									    dir="ltr"
 									    colspan="11"
-									    rowspan="2">Легенда. Помогаем котику найти фрукт по адресу.<br>Описание. На стену вешаем дерево и показываем пример, как искать, что нашёл котик. Далее работаем по работаем по распечаткам: 1 уровень для 5 лет, 2 уровень для 6 лет, 2.5 для 1 класса.<br>Онлайн 1 урок. Аналогично очному.</td>
+									    rowspan="2">{$data.JobDescription}</td>
 											<td class="s8"
-											    dir="ltr">математический планшет</td>
+											    dir="ltr">{$data.Rekvizit1Name}</td>
 											<td class="s8"
-											    dir="ltr">резинки (большие и маленькие)</td>
+											    dir="ltr">{$data.Rekvizit2Name}</td>
 											<td class="s8"
-											    dir="ltr"/>
+											    dir="ltr">{$data.Rekvizit3Name}</td>
 											<td class="s8"
-											    dir="ltr"/>
+											    dir="ltr">{$data.Rekvizit4Name}</td>
 											<td class="s8"
-											    dir="ltr"/>
+											    dir="ltr">{$data.Rekvizit5Name}</td>
 											<td class="s8"
-											    dir="ltr"/>
+											    dir="ltr">{$data.Rekvizit6Name}</td>
 											<td class="s67"
 											    dir="ltr"
-											    rowspan="2"/>
+											    rowspan="2">
+											{if $data.JobPrintPDF != ""}
+											<a target="_blank" href="{$data.JobPrintPDF}">ссылка</a>
+											{/if}
+											</td>
 											<td class="s68"
 											    dir="ltr"
 											    rowspan="2">
-												<a target="_blank"
-												   href="https://ru.wikipedia.org/wiki/%D0%9D%D1%8F">ссылка</a>
+											{if $data.JobCardPDF != ""}
+											<a target="_blank" href="{$data.JobCardPDF}">ссылка</a>
+											{/if}
 											</td>
 											<td class="s68"
 											    dir="ltr"
 											    colspan="3"
 											    rowspan="2">
-												<a target="_blank"
-												   href="https://ru.wikipedia.org/wiki/%D0%9D%D1%8F">ссылка</a>
+											{if $data.JobVideo != ""}
+											<a target="_blank" href="{$data.JobVideo}">ссылка</a>
+											{/if}
 											</td>
 											<td class="s61"/>
 											<td class="s16"/>
@@ -2666,218 +2655,49 @@
 												<div class="row-header-wrapper"
 												     style="line-height: 16px"></div>
 											</th>
-											<td class="s69">3|3.1|3.1.3|1</td>
+											<td class="s69">{$data.JobCode}</td>
 											<td class="s70"
 											    dir="ltr">
-												<a target="_blank"
-												   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
+											{if $data.Rekvizit1Link != ""}
+											<a target="_blank" href="{$data.Rekvizit1Link}">ссылка</a>
+											{/if}
 											</td>
 											<td class="s70"
 											    dir="ltr">
-												<a target="_blank"
-												   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
+											{if $data.Rekvizit3Link != ""}
+											<a target="_blank" href="{$data.Rekvizit2Link}">ссылка</a>
+											{/if}
 											</td>
 											<td class="s71"
-											    dir="ltr"/>
-											<td class="s71"/>
-											<td class="s71"/>
-											<td class="s71"/>
+											    dir="ltr">
+													{if $data.Rekvizit3Link != ""}
+													<a target="_blank" href="{$data.Rekvizit3Link}">ссылка</a>
+													{/if}
+												</td>
+											<td class="s71"
+											    dir="ltr">
+													{if $data.Rekvizit4Link != ""}
+													<a target="_blank" href="{$data.Rekvizit4Link}">ссылка</a>
+													{/if}
+												</td>
+											<td class="s71"
+											    dir="ltr">
+													{if $data.Rekvizit5Link != ""}
+													<a target="_blank" href="{$data.Rekvizit5Link}">ссылка</a>
+													{/if}
+												</td>
+											<td class="s71"
+											    dir="ltr">
+													{if $data.Rekvizit6Link != ""}
+													<a target="_blank" href="{$data.Rekvizit6Link}">ссылка</a>
+													{/if}
+												</td>
 											<td class="s60"/>
 											<td class="s16"/>
 											<td class="s16"/>
 										</tr>
-										<tr style="height: 109px">
-											<th id="685479336R52"
-											    style="height: 109px;"
-											    class="row-headers-background">
-												<div class="row-header-wrapper"
-												     style="line-height: 109px">53</div>
-											</th>
-											<td class="s72"
-											    dir="ltr"
-											    rowspan="2">2</td>
-											<td class="s73">Делаем башни из плашек</td>
-											<td class="s74"
-											    colspan="11"
-											    rowspan="2">Легенда. Строим башни.<br>Описание. В этом задании только строим, рисуем в другом. Сажаем детей в круг, в центр высыпаем плашки, строим по уровням. Уровни для занятия выбирает педагог в зависимости от уровня детей. Цвета плашек не важны.<br>Онлайн 1 урок. Работаем по уровням. 2-5к уровень выбирает педагог, дети рисуют по клеткам. Мы маленький человечек, смотрим на башни и раскрашиваем их фотографии.<br>Онлайн 2 урок. 1-4к педагог сам выбирает уровень сложности, дети рисуют по клеткам.<br>Онлайн 3-5 урок. Аналогично другим онлайнам.<br/>
-																<td class="s74"
-																    dir="ltr">игральные кости (с числами)</td>
-																<td class="s74"
-																    dir="ltr">простые карандаши</td>
-																<td class="s74"
-																    dir="ltr">ластик</td>
-																<td class="s74"
-																    dir="ltr"/>
-																<td class="s74"
-																    dir="ltr"/>
-																<td class="s74"
-																    dir="ltr"/>
-																<td class="s75"
-																    rowspan="2"/>
-																<td class="s76"
-																    dir="ltr"
-																    rowspan="2">
-																	<a target="_blank"
-																	   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																</td>
-																<td class="s76"
-																    dir="ltr"
-																    colspan="3"
-																    rowspan="2">
-																	<a target="_blank"
-																	   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																</td>
-																<td class="s61"/>
-																<td class="s16"/>
-																<td class="s16"/>
-															</tr>
-															<tr style="height: 20px">
-																<th id="685479336R53"
-																    style="height: 20px;"
-																    class="row-headers-background">
-																	<div class="row-header-wrapper"
-																	     style="line-height: 20px">54</div>
-																</th>
-																<td class="s77">2|2.2|2.2.1|22</td>
-																<td class="s78"
-																    dir="ltr">
-																	<a target="_blank"
-																	   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																</td>
-																<td class="s79"
-																    dir="ltr"/>
-																<td class="s79"/>
-																<td class="s79"/>
-																<td class="s79"/>
-																<td class="s79"/>
-																<td class="s60"/>
-																<td class="s16"/>
-																<td class="s16"/>
-															</tr>
-															<tr style="height: 20px">
-																<th id="685479336R54"
-																    style="height: 20px;"
-																    class="row-headers-background">
-																	<div class="row-header-wrapper"
-																	     style="line-height: 20px">55</div>
-																</th>
-																<td class="s65"
-																    dir="ltr"
-																    rowspan="2">3</td>
-																<td class="s66">Делаем фигуры из геостик</td>
-																<td class="s8"
-																    colspan="11"
-																    rowspan="2">Легенда. Собираем фигуры из волшебных палочек.<br>Описание. На стену вешаем по порядку все цветные фигуры. Задача - построить по порядку эти фигуры. Кто всё сделает, может построить свою фигуру.</td>
-																	<td class="s8"
-																	    dir="ltr">стыкующиеся кубики</td>
-																	<td class="s8"
-																	    dir="ltr"/>
-																	<td class="s8"/>
-																	<td class="s8"/>
-																	<td class="s8"/>
-																	<td class="s8"/>
-																	<td class="s68"
-																	    dir="ltr"
-																	    rowspan="2">
-																		<a target="_blank"
-																		   href="https://ru.wikipedia.org/wiki/%D0%9D%D1%8F">ссылка</a>
-																	</td>
-																	<td class="s68"
-																	    dir="ltr"
-																	    rowspan="2">
-																		<a target="_blank"
-																		   href="https://ru.wikipedia.org/wiki/%D0%9D%D1%8F">ссылка</a>
-																	</td>
-																	<td class="s68"
-																	    dir="ltr"
-																	    colspan="3"
-																	    rowspan="2">
-																		<a target="_blank"
-																		   href="https://ru.wikipedia.org/wiki/%D0%9D%D1%8F">ссылка</a>
-																	</td>
-																	<td class="s61"/>
-																	<td class="s16"/>
-																	<td class="s16"/>
-																</tr>
-																<tr style="height: 22px">
-																	<th id="685479336R55"
-																	    style="height: 22px;"
-																	    class="row-headers-background">
-																		<div class="row-header-wrapper"
-																		     style="line-height: 22px">56</div>
-																	</th>
-																	<td class="s69">2|2.1|2.1.1|61</td>
-																	<td class="s70"
-																	    dir="ltr">
-																		<a target="_blank"
-																		   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																	</td>
-																	<td class="s71"/>
-																	<td class="s71"/>
-																	<td class="s71"/>
-																	<td class="s71"/>
-																	<td class="s71"/>
-																	<td class="s40"/>
-																	<td class="s11"/>
-																	<td class="s11"/>
-																</tr>
-																<tr style="height: 20px">
-																	<th id="685479336R56"
-																	    style="height: 20px;"
-																	    class="row-headers-background">
-																		<div class="row-header-wrapper"
-																		     style="line-height: 20px">57</div>
-																	</th>
-																	<td class="s72"
-																	    dir="ltr"
-																	    rowspan="2">4</td>
-																	<td class="s73">Узоры по стрелкам</td>
-																	<td class="s74"
-																	    colspan="11"
-																	    rowspan="2">Легенда. Расшифровываем наскальные рисунки.<br>Описание. Рисуем картинки по стрелочкам, начинаем с точки. Больше заданий по clck.ru/34iDmJ</td>
-																		<td class="s74">набор игры Автологика</td>
-																		<td class="s74"/>
-																		<td class="s74"/>
-																		<td class="s74"/>
-																		<td class="s74"/>
-																		<td class="s74"/>
-																		<td class="s75"
-																		    rowspan="2"/>
-																		<td class="s75"
-																		    rowspan="2"/>
-																		<td class="s76"
-																		    dir="ltr"
-																		    colspan="3"
-																		    rowspan="2">
-																			<a target="_blank"
-																			   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																		</td>
-																		<td class="s40"/>
-																		<td class="s11"/>
-																		<td class="s11"/>
-																	</tr>
-																	<tr style="height: 20px">
-																		<th id="685479336R57"
-																		    style="height: 20px;"
-																		    class="row-headers-background">
-																			<div class="row-header-wrapper"
-																			     style="line-height: 20px">58</div>
-																		</th>
-																		<td class="s77">1|1.6|1.6.1|12</td>
-																		<td class="s76"
-																		    dir="ltr">
-																			<a target="_blank"
-																			   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
-																		</td>
-																		<td class="s79"/>
-																		<td class="s79"/>
-																		<td class="s79"/>
-																		<td class="s79"/>
-																		<td class="s79"/>
-																		<td class="s40"/>
-																		<td class="s11"/>
-																		<td class="s11"/>
-																	</tr>
+								{/foreach}
+
 																</tbody>
 															</table>
 														</div>
