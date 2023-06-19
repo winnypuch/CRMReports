@@ -18,22 +18,22 @@ $sDateZero = '0000-00-00 00:00:00';
 $vLines = [];
 $sDateNow = date('Y-m-d 00:00:00');
 $bIsAdmin = true;
-$sCabinetH1 = "---";
-$sFormatPlanL1 = "---";
-$sWeekDayV1 = "---";
-$sDateTimeX1 = "---";
-$sTeacherFioFactD2 = "---";
-$sDepartmentNameH2 = "---";
-$sDepartmentAddressL2 = "---";
-$sCabinetH1 = "---";
-$sLessonTimeX1 = "---";
-$sProgramAgeX2 = "---";
-$sAcademicYearU2 = "---";
-$sWeekLessonR2 = "---";
-$sProgramForYearL3 = "---";
-$sSubsectionP3 = "---";
-$sJobNameT3 = "---";
-$sPrintOutsPdf = "---";
+$sCabinetH1 = "";
+$sFormatPlanL1 = "";
+$sWeekDayV1 = "";
+$sDateTimeX1 = "";
+$sTeacherFioFactD2 = "";
+$sDepartmentNameH2 = "";
+$sDepartmentAddressL2 = "";
+$sCabinetH1 = "";
+$sLessonTimeX1 = "";
+$sProgramAgeX2 = "";
+$sAcademicYearU2 = "";
+$sWeekLessonR2 = "";
+$sProgramForYearL3 = "";
+$sSubsectionP3 = "";
+$sJobNameT3 = "";
+$sPrintOutsPdf = "";
 $sJobCodeJ11 = "";
 $sJobCodeN11 = "";
 $sJobCodeR11 = "";
@@ -202,7 +202,7 @@ if($vGroupData = sql_query($sSqlQueryGroup)){
 //$aDays[date("w", strtotime($sDateSearch))]
 //Находим следующую дату занятия
 //$aDaysEn = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-//$aDays = array('Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота');
+$aDays = array('Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота');
 $aDaysToEng = array('Воскресенье' => 'sunday', 'Понедельник' => 'monday', 'Вторник' => 'tuesday', 'Среда' => 'wednesday', 'Четверг' => 'thursday', 'Пятница' => 'friday', 'Суббота' => 'saturday');
 if($sMaxClassesDate == ""){
     $sStartDate = $sClassStartDate;
@@ -226,8 +226,8 @@ $sSqlWeekDays = "SELECT
                 INNER JOIN " . DATA_TABLE . get_table_id(600) ." AS WeekDays
                     ON Schedule.f13560 = WeekDays.id
         WHERE
-            Schedule.f13550='" . $iGroupId . "' AND Schedule.status='0' ORDER BY WeekDays.id"
-if ($vResWeekDays = sql_query()) {
+            Schedule.f13550='" . $iGroupId . "' AND Schedule.status='0' ORDER BY WeekDays.id";
+if ($vResWeekDays = sql_query($sSqlWeekDays)) {
     while ($vRowWeekDays = sql_fetch_assoc($vResWeekDays)) {
         $iColClass++;
         //Если день начальной даты для поиска равен дню недели
@@ -253,8 +253,8 @@ if ($vResWeekDays = sql_query()) {
         }
     }
 }
-if($sWeekDayV1 = "---"){
-
+if($sWeekDayV1 == ""){
+    $sWeekDayV1 = $aDays[date("w", strtotime($dSearchDate->format("Y-m-d")))];
 }
 // Если количество занятий больше 0
 if($iColClass > 0){
@@ -879,11 +879,19 @@ if($iColClass > 0){
                             )
                         AND ClienCards.status = 0
                     ORDER BY ChildrenFIO";
+    $iPos = 0;
     if($vStudentsData = sql_query($sSqlQueryStudents)) {
         while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
+            $iPos++;
+
             $vTableData['ChildrenId'] = $vStudentRow['ChildrenId'];
             $vTableData['ChildrenFIO'] = form_display($vStudentRow['ChildrenFIO']);
             $vTableData['nn'] = $vStudentRow['nn'];
+            if(intval($vStudentRow['nn']) == -1){
+                $vTableData['iPos'] = $iPos;
+            } else{
+                $vTableData['iPos'] = "н";
+            }
             $vTableData['ClassGroup'] = $vStudentRow['ClassGroup'];
             $vTableData['PickGivesName'] = $vStudentRow['PickGivesName'];
             $vTableData['Stars'] = $vStudentRow['Stars'];
@@ -935,12 +943,16 @@ if($iColClass > 0){
                     $iWorkingOffCount++;
                 }
             }
+            if($vTableData['WorkingOff'] != ""){
+                $dWorkingOff = new DateTime($vTableData['WorkingOff']);
+                $vTableData['WorkingOff'] = $dWorkingOff->format("d.m.Y");
+            }
 
             $iWorkingOffCount2 = 0;
             $vTableData['WorkingOffReport'] = "";
 
             $sSqlQueryWorkingOff2 = "SELECT
-                        IFNULL(WorkingOff3.f14900, '') AS WorkingOffReport
+                        IFNULL(WorkingOff3.f15060, '') AS WorkingOffReport
                     FROM
                         " . DATA_TABLE . get_table_id(820) . " AS WorkingOff3
                     WHERE
@@ -987,7 +999,6 @@ $result = sql_select_field("" . SCHEMES_TABLE . "", "color3", "active='1'");
 $row = sql_fetch_assoc($result);
 
 $smarty->assign("color3", $row['color3']);
-$smarty->assign("lines", $vLines);
 $smarty->assign("vGroups", $vGroups);
 $smarty->assign("iGroupId", $iGroupId);
 $smarty->assign("bIsAdmin", $bIsAdmin);
@@ -1006,10 +1017,16 @@ $smarty->assign("sProgramForYearL3", $sProgramForYearL3);
 $smarty->assign("sSubsectionP3", $sSubsectionP3);
 $smarty->assign("sJobNameT3", $sJobNameT3);
 $smarty->assign("sPrintOutsPdf", $sPrintOutsPdf);
-$smarty->assign("sJobCodeJ11", $sJobCodeJ11);
-$smarty->assign("sJobCodeN11", $sJobCodeN11);
-$smarty->assign("sJobCodeR11", $sJobCodeR11);
-$smarty->assign("sJobCodeV11", $sJobCodeV11);
+
+$smarty->assign("sM5", $sM5);
+$smarty->assign("sQ5", $sQ5);
+$smarty->assign("sU5", $sU5);
+$smarty->assign("sY5", $sY5);
+
+$smarty->assign("sSectionJ6", $sSectionJ6);
+$smarty->assign("sSectionN6", $sSectionN6);
+$smarty->assign("sSectionR6", $sSectionR6);
+$smarty->assign("sSectionV6", $sSectionV6);
 
 $smarty->assign("sSubsectionJ7", $sSubsectionJ7);
 $smarty->assign("sSubsectionN7", $sSubsectionN7);
@@ -1026,25 +1043,17 @@ $smarty->assign("sJobNameN9", $sJobNameN9);
 $smarty->assign("sJobNameR9", $sJobNameR9);
 $smarty->assign("sJobNameV9", $sJobNameV9);
 
-$smarty->assign("sSectionJ6", $sSectionJ6);
-$smarty->assign("sSectionN6", $sSectionN6);
-$smarty->assign("sSectionR6", $sSectionR6);
-$smarty->assign("sSectionV6", $sSectionV6);
-
-$smarty->assign("sSectionJ6", $sSectionJ6);
-$smarty->assign("sSectionN6", $sSectionN6);
-$smarty->assign("sSectionR6", $sSectionR6);
-$smarty->assign("sSectionV6", $sSectionV6);
-
 $smarty->assign("sJobCodeM9", strval($iJobCodeM9_1)." из ".strval($iJobCodeM9_2));
 $smarty->assign("sJobCodeQ9", strval($iJobCodeQ9_1)." из ".strval($iJobCodeQ9_2));
 $smarty->assign("sJobCodeU9", strval($iJobCodeU9_1)." из ".strval($iJobCodeU9_2));
 $smarty->assign("sJobCodeY9", strval($iJobCodeY9_1)." из ".strval($iJobCodeY9_2));
 
-$smarty->assign("sM5", $sM5);
-$smarty->assign("sQ5", $sQ5);
-$smarty->assign("sU5", $sU5);
-$smarty->assign("sY5", $sY5);
+$smarty->assign("sJobCodeJ11", $sJobCodeJ11);
+$smarty->assign("sJobCodeN11", $sJobCodeN11);
+$smarty->assign("sJobCodeR11", $sJobCodeR11);
+$smarty->assign("sJobCodeV11", $sJobCodeV11);
+
+$smarty->assign("lines", $vLines);
 
 $smarty->assign("sPreviosCommentJ33", $sPreviosCommentJ33);
 

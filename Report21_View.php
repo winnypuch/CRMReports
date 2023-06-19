@@ -37,6 +37,9 @@
 
     </script>
 <style type="text/css">
+	.yellowbk{
+		background-color:yellow;
+	}
 	.title {
         margin: 20px 0px;
         font-size: 23px;
@@ -1425,7 +1428,7 @@
 									{/foreach}
 								</select>
 							{else}
-								<input type=hidden name="sFormatFactO1" id="sFormatFactO1" value="{$sFormatPlanL1}"/>
+								<input type=hidden name="sFormatFactO1" id="sFormatFactO1" value="{$sFormatPlanL1}"/>{$sFormatPlanL1}
 							{/if}
 						</td>
 						<td class="s0"
@@ -1476,7 +1479,7 @@
 						<td class="s10"
 						    dir="ltr">{$sWeekLessonR2}</td>
 						<td class="s10"
-						    dir="ltr"/>
+						    dir="ltr">{$sWeekLessonR2}</td>
 						<td class="s0"
 						    dir="ltr">Учебный год</td>
 						<td class="s1">{$sAcademicYearU2}</td>
@@ -1513,17 +1516,18 @@
 						    dir="ltr"
 						    colspan="2">ДЗ</td>
 						<td class="s12"
-						    colspan="4">Код задания 2|2.5|2.5.1|69</td>
+						    colspan="4">Код задания {$sProgramForYearL3}</td>
 						<td class="s13"
 						    dir="ltr"
-						    colspan="4">Пространственное мышление</td>
+						    colspan="4">{$sSubsectionP3}</td>
 						<td class="s13"
 						    dir="ltr"
-						    colspan="5">Раздели шоколадки для близнецов 6 лет</td>
+						    colspan="5">{$sJobNameT3}</td>
 						<td class="s14"
 						    dir="ltr">
-							<a target="_blank"
-							   href="https://ru.wikipedia.org/wiki/%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0">ссылка</a>
+							{if $sPrintOutsPdf != ""}
+							<a target="_blank" href="{$sPrintOutsPdf}">ссылка</a>
+							{/if}
 						</td>
 						<td class="s15"/>
 						<td class="s16"/>
@@ -1575,23 +1579,23 @@
 						<td class="s19"
 						    dir="ltr"
 						    colspan="3"/>
-						<td class="s13"
-						    dir="ltr">не нужно</td>
+						<td class="s13{if $sM5=='нужно'} yellowbk{/if}"
+						    dir="ltr">{$sM5}</td>
 						<td class="s19"
 						    dir="ltr"
 						    colspan="3"/>
-						<td class="s20"
-						    dir="ltr">нужно</td>
+						<td class="s13{if $sQ5=='нужно'} yellowbk{/if}"
+						    dir="ltr">{$sQ5}</td>
 						<td class="s19"
 						    dir="ltr"
 						    colspan="3"/>
-						<td class="s13"
-						    dir="ltr">не нужно</td>
+						<td class="s13{if $sU5=='нужно'} yellowbk{/if}"
+						    dir="ltr">{$sU5}</td>
 						<td class="s19"
 						    dir="ltr"
 						    colspan="3"/>
-						<td class="s13"
-						    dir="ltr">не нужно</td>
+						<td class="s13{if $sY5=='нужно'} yellowbk{/if}"
+						    dir="ltr">{$sY5}</td>
 						<td class="s21"
 						    dir="ltr"/>
 						<td class="s11"/>
@@ -1606,13 +1610,13 @@
 						    dir="ltr"
 						    colspan="3">Раздел</td>
 						<td class="s12"
-						    colspan="4">Логика</td>
+						    colspan="4">{$sSectionJ6}</td>
 						<td class="s12"
-						    colspan="4">Геометрия</td>
+						    colspan="4">{$sSectionN6}</td>
 						<td class="s12"
-						    colspan="4">Геометрия</td>
+						    colspan="4">{$sSectionR6}</td>
 						<td class="s12"
-						    colspan="4">Арифметика</td>
+						    colspan="4">{$sSectionV6}</td>
 						<td class="s22"/>
 						<td class="s11"/>
 						<td class="s11"/>
@@ -1626,13 +1630,13 @@
 						    dir="ltr"
 						    colspan="3">Подраздел</td>
 						<td class="s12"
-						    colspan="4">Последовательности</td>
+						    colspan="4">{$sSubsectionJ7}</td>
 						<td class="s12"
-						    colspan="4">Проекция, развертка</td>
+						    colspan="4">{$sSubsectionN7}</td>
 						<td class="s12"
-						    colspan="4">Геометрические фигуры</td>
+						    colspan="4">{$sSubsectionR7}</td>
 						<td class="s12"
-						    colspan="4">Умножение и деление</td>
+						    colspan="4">{$sSubsectionV7}</td>
 						<td class="s22"/>
 						<td class="s11"
 						    dir="ltr"/>
@@ -1648,13 +1652,13 @@
 						    dir="ltr"
 						    colspan="3">Тема</td>
 						<td class="s12"
-						    colspan="4">Фракталы</td>
+						    colspan="4">{$sTopicJ8}</td>
 						<td class="s12"
-						    colspan="4">Проекции</td>
+						    colspan="4">{$sTopicN8}</td>
 						<td class="s12"
-						    colspan="4">Геометрические фигуры</td>
+						    colspan="4">{$sTopicR8}</td>
 						<td class="s12"
-						    colspan="4">Умножение и деление</td>
+						    colspan="4">{$sTopicV8}</td>
 						<td class="s23"/>
 						<td class="s24"
 						    dir="ltr"/>
@@ -1691,31 +1695,31 @@
 						<td class="s25"
 						    dir="ltr"
 						    colspan="3"
-						    rowspan="2">Бинарное дерево</td>
+						    rowspan="2">{$sJobNameJ9}</td>
 						<td class="s25"
 						    dir="ltr"
-						    rowspan="2">1 из 1</td>
-						<td class="s25"
-						    dir="ltr"
-						    colspan="3"
-						    rowspan="2">Делаем башни из плашек</td>
-						<td class="s25"
-						    dir="ltr"
-						    rowspan="2">2 из 3</td>
+						    rowspan="2">{$sJobCodeM9}</td>
 						<td class="s25"
 						    dir="ltr"
 						    colspan="3"
-						    rowspan="2">Делаем фигуры из геостик</td>
+						    rowspan="2">{$sJobNameN9}</td>
 						<td class="s25"
 						    dir="ltr"
-						    rowspan="2">1 из 1</td>
+						    rowspan="2">{$sJobCodeQ9}</td>
 						<td class="s25"
 						    dir="ltr"
 						    colspan="3"
-						    rowspan="2">Узоры по стрелкам</td>
+						    rowspan="2">{$sJobNameR9}</td>
 						<td class="s25"
 						    dir="ltr"
-						    rowspan="2">1 из 4</td>
+						    rowspan="2">{$sJobCodeU9}</td>
+						<td class="s25"
+						    dir="ltr"
+						    colspan="3"
+						    rowspan="2">{$sJobNameV9}</td>
+						<td class="s25"
+						    dir="ltr"
+						    rowspan="2">{$sJobCodeY9}</td>
 						<td class="s25"
 						    dir="ltr"
 						    rowspan="3">Комментарий</td>
@@ -1740,69 +1744,151 @@
 						    dir="ltr">ID</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания 3|3.2|3.2.1|39</td>
+						    colspan="4">Код задания {$sJobCodeJ11}</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания 3|3.2|3.2.1|39</td>
+						    colspan="4">Код задания {$sJobCodeN11}</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания 3|3.2|3.2.1|39</td>
+						    colspan="4">Код задания {$sJobCodeR11}</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания 3|3.2|3.2.1|39</td>
+						    colspan="4">Код задания {$sJobCodeV11}</td>
 						<td class="s26"/>
 					</tr>
+				{foreach from=$lines item=data name="rows"}
 					<tr style="height: 20px">
 						<th id="685479336R11"
 						    style="height: 20px;"
 						    class="row-headers-background">
 						</th>
 						<td class="s27"
-						    dir="ltr">1</td>
+						    dir="ltr">{$data.iPos}<input name="iB{$data.iPos}" type="hidden" value=""/></td>
 						<td class="s28"
-						    dir="ltr">Алиева Екатерина Ивановна</td>
+						    dir="ltr">{$data.ChildrenFIO}</td>
 						<td class="s12"
-						    dir="ltr">7_подг</td>
-						<td class="s12"/>
-						<td class="s12"
-						    dir="ltr">6</td>
-						<td class="s12"
-						    dir="ltr"/>
-						<td class="s29"/>
-						<td class="s12"
-						    dir="ltr">
-							<span class="s2"
-							      style="background-color: #e8eaed; color: #000000; width: 35.0px; max-width: 35.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; "/>
+						    dir="ltr">{$data.ClassGroup}</td>
+						<td class="s12">{$data.PickGivesName}</td>
+						<td class="s12" dir="ltr">{$data.Stars}</td>
+						<td class="s12" dir="ltr">
+							<select name="iG{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="-">-</option>
+							</select>
+						</td>
+						<td class="s29">
+							<select name="iH{$data.iPos}">
+								{if $data.Trial=='Пробное' || $data.Trial=='пробное'}
+									<option value=""></option>
+									<option value="Пробное" selected style="background-color:green;">Пробное</option>
+								{else}
+									<option value="" selected></option>
+									<option value="Пробное" style="background-color:green;">Пробное</option>
+								{/if}
+							</select>
+							/{$data.WorkingOff}
+						</td>
+						<td class="s12" dir="ltr">
+							<select name="iI{$data.iPos}">
+								<option value="н" selected>н</option>
+								<option value=""></option>
+							</select>
 						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2">+</td>
+						    colspan="2">
+							<select name="iJ{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
+						    colspan="2">
+							<select name="iL{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
+						    colspan="2">
+							<select name="iN{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
+						    colspan="2">
+							<select name="iP{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
+						    colspan="2">
+							<select name="iR{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
+						    colspan="2">
+							<select name="iT{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2">+</td>
+						    colspan="2">
+							<select name="iV{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="2"/>
-						<td class="s30"/>
+						    colspan="2">
+							<select name="iX{$data.iPos}">
+								<option value="" selected></option>
+								<option value="+">+</option>
+								<option value="+-">+-</option>
+								<option value="-">-</option>
+							</select>
+						</td>
+						<td class="s30">{$data.WorkingOffReport}</td>
 						<td class="s29"
-						    dir="ltr"/>
+						    dir="ltr">
+							{if $bIsAdmin}
+								<select name="iZ{$data.iPos}">
+									{foreach from=$vGifts item=data name="rows"}
+										<option value="{$data.GiftId}">{$data.GiftName}</option>
+									{/foreach}
+								</select>
+							{/if}
+						</td>
 						<td class="s26"/>
 					</tr>
+				{/foreach}
 					<tr style="height: 53px">
 						<th id="685479336R27"
 						    style="height: 53px;"
@@ -1968,7 +2054,7 @@
 						    style="height: 58px;"
 						    class="row-headers-background">
 							<div class="row-header-wrapper"
-							     style="line-height: 58px">33</div>
+							     style="line-height: 58px"></div>
 						</th>
 						<td class="s11"/>
 						<td class="s32"/>
@@ -1999,7 +2085,7 @@
 							    style="height: 39px;"
 							    class="row-headers-background">
 								<div class="row-header-wrapper"
-								     style="line-height: 39px">34</div>
+								     style="line-height: 39px"></div>
 							</th>
 							<td class="s11"/>
 							<td class="s41"/>
@@ -2026,7 +2112,7 @@
 								    style="height: 51px;"
 								    class="row-headers-background">
 									<div class="row-header-wrapper"
-									     style="line-height: 51px">35</div>
+									     style="line-height: 51px"></div>
 								</th>
 								<td class="s11"/>
 								<td class="s41"/>
@@ -2051,7 +2137,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">36</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s11"/>
@@ -2088,7 +2174,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">37</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s11"/>
@@ -2123,7 +2209,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">38</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s48"
@@ -2166,7 +2252,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">39</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s48"
@@ -2224,7 +2310,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">41</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s40"/>
@@ -2260,7 +2346,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">42</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s40"/>
@@ -2293,7 +2379,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">44</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s53"/>
 									<td class="s54">1</td>
@@ -2328,7 +2414,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">45</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s54">2</td>
@@ -2366,7 +2452,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">46</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s54">н</td>
@@ -2401,7 +2487,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">47</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s40"/>
@@ -2437,7 +2523,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">48</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s11"/>
 									<td class="s11"/>
@@ -2472,7 +2558,7 @@
 									    style="height: 20px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 20px">49</div>
+										     style="line-height: 20px"></div>
 									</th>
 									<td class="s24"/>
 									<td class="s43"/>
@@ -2578,7 +2664,7 @@
 											    style="height: 16px;"
 											    class="row-headers-background">
 												<div class="row-header-wrapper"
-												     style="line-height: 16px">52</div>
+												     style="line-height: 16px"></div>
 											</th>
 											<td class="s69">3|3.1|3.1.3|1</td>
 											<td class="s70"
