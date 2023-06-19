@@ -1414,7 +1414,7 @@
 						<td class="s1"
 						    dir="ltr">
 							{if $bIsAdmin}
-								<select name="sFormatFactO1">
+								<select name="sFormatFactO1" onchange="return  SubmitData();">
 									{$vForms = ['очно', 'онлайн']}
 									{foreach $vForms as $vForm}
 										{if $vForm == $sFormatPlanL1}
@@ -1432,13 +1432,13 @@
 						    dir="ltr"
 						    colspan="4">Информация по занятию</td>
 						<td class="s4"
-						    colspan="2">{$sDateT1}
+						    colspan="2">{$sDateTimeT1}
 						<!--<input type="text" name="sDateT1" id="sDateT1" value="{$sDateT1}" size="10" class="datepicker form-control form-control-160"/>-->
 						</td>
 						<td class="s4"
 						    colspan="2">{$sWeekDayV1}</td>
 						<td class="s1"
-						    colspan="2">{$sDateTimeX1}</td>
+						    colspan="2">{$sLessonTimeX1}</td>
 						<td class="s5"
 						    dir="ltr"/>
 						<td class="s6"
@@ -1456,36 +1456,36 @@
 						    colspan="2">Преподаватель 1</td>
 						<td class="s8"
 						    dir="ltr"
-						    colspan="3">Шишкина Ксения</td>
+						    colspan="3">{$sTeacherFioFactD2}</td>
 						<td class="s9"
 						    dir="ltr"
 						    rowspan="2">Место</td>
 						<td class="s3"
 						    dir="ltr"
 						    colspan="2"
-						    rowspan="2">ДОП 1454 (Красностуденческий пр. 2а)</td>
+						    rowspan="2">{$sDepartmentNameH2}</td>
 						<td class="s0"
 						    dir="ltr"
 						    colspan="2">Адрес</td>
 						<td class="s3"
 						    dir="ltr"
-						    colspan="4">Красностуденческий проезд 2А</td>
+						    colspan="4">{$sDepartmentAddressL2}</td>
 						<td class="s9"
 						    dir="ltr"
 						    colspan="2">Неделя/Урок</td>
 						<td class="s10"
-						    dir="ltr">22.1</td>
+						    dir="ltr">{$sWeekLessonR2}</td>
 						<td class="s10"
 						    dir="ltr"/>
 						<td class="s0"
 						    dir="ltr">Учебный год</td>
-						<td class="s1">2022</td>
+						<td class="s1">{$sAcademicYearU2}</td>
 						<td class="s9"
 						    dir="ltr"
 						    colspan="2">Возраст</td>
 						<td class="s9"
 						    dir="ltr"
-						    colspan="2">6</td>
+						    colspan="2">{$sProgramAgeX2}</td>
 						<td class="s6"/>
 						<td class="s11"/>
 						<td class="s6"/>
@@ -1500,7 +1500,15 @@
 						    colspan="2">Преподаватель 2</td>
 						<td class="s3"
 						    dir="ltr"
-						    colspan="3"/>
+						    colspan="3">
+							{if $bIsAdmin}
+								<select name="iTeacherId2">
+									{foreach from=$vTeachers item=data name="rows"}
+										<option value="{$data.TeacherId}">{$data.TeacherName}</option>
+									{/foreach}
+								</select>
+							{/if}
+						</td>
 						<td class="s7"
 						    dir="ltr"
 						    colspan="2">ДЗ</td>

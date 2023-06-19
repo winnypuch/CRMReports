@@ -87,6 +87,12 @@ $sTaskN35 = "";
 $sTaskR35 = "";
 $sTaskV35 = "";
 
+$vRecomendationJ44 = [];
+$vRecomendationN44 = [];
+$vRecomendationR44 = [];
+$vRecomendationV44 = [];
+$vTasks =[];
+
 //методисты 2
 //педагоги таблица  520
 //педагоги 790 f9660 ФИО педагога сокр.
@@ -207,13 +213,21 @@ $dStartDate = new DateTime($sStartDate);
 $sStartWeekDay = strtolower(date("l", strtotime($sStartDate)));
 $dSearchDate = $dStartDate;
 $iWeekDay = 0;
-$sWeekDayV1 = "";
 //$dStartDate->modify('next monday');
 //Расписние 790 Дни недели 600
 //f13560 День недели
 //f10330 Дни недели
 $iColClass = 0;
-if ($vResWeekDays = sql_query("SELECT WeekDays.id AS WeekDayId, WeekDays.f10330 AS WeekDayName FROM " . DATA_TABLE . get_table_id(790) ." AS Schedule INNER JOIN " . DATA_TABLE . get_table_id(600) ." AS WeekDays ON Schedule.f13560 = WeekDays.id WHERE Schedule.f13550='" . $iGroupId . "' AND Schedule.status='0' ORDER BY WeekDays.id")) {
+$sSqlWeekDays = "SELECT
+        WeekDays.id AS WeekDayId
+        , WeekDays.f10330 AS WeekDayName
+        FROM
+            " . DATA_TABLE . get_table_id(790) ." AS Schedule
+                INNER JOIN " . DATA_TABLE . get_table_id(600) ." AS WeekDays
+                    ON Schedule.f13560 = WeekDays.id
+        WHERE
+            Schedule.f13550='" . $iGroupId . "' AND Schedule.status='0' ORDER BY WeekDays.id"
+if ($vResWeekDays = sql_query()) {
     while ($vRowWeekDays = sql_fetch_assoc($vResWeekDays)) {
         $iColClass++;
         //Если день начальной даты для поиска равен дню недели
@@ -238,6 +252,9 @@ if ($vResWeekDays = sql_query("SELECT WeekDays.id AS WeekDayId, WeekDays.f10330 
             }
         }
     }
+}
+if($sWeekDayV1 = "---"){
+
 }
 // Если количество занятий больше 0
 if($iColClass > 0){
@@ -325,11 +342,11 @@ if($iColClass > 0){
     //Комментарий с предыдущего занятия.
     $sSqlQueryPreviosComment = "SELECT
            PreviosComment.f12750 AS PreviosCommentDate
-           , PreviosComment.f12600 AS PreviosCommentLesson
+           , PreviosComment.f13010 AS PreviosCommentLesson
         FROM
             " . DATA_TABLE . get_table_id(780) . " AS PreviosComment
         WHERE
-           PreviosComment.f13010 = '".$iGroupId."'
+           PreviosComment.f12870 = '".$iGroupId."'
            AND PreviosComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f13010 = '".$iGroupId."' AND PP.status = 0)
            AND PreviosComment.status = 0";
     if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
@@ -410,6 +427,22 @@ if($iColClass > 0){
                         }
                     }
 
+                    //Рекомендации
+                    $sSqlQueryRecomendations = "SELECT
+                               Recomendations.Id AS RecomendationId
+                               , Recomendations.f10610 AS RecomendationText
+                               , Recomendations.f10620 AS RecomendationLink
+                            FROM
+                                " . DATA_TABLE . get_table_id(630) . " AS Recomendations
+                            WHERE
+                               Recomendations.f12570 = '".$sJobCode."'
+                               AND Recomendations.status = 0";
+                    if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
+                        while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
+                            $vRecomendationJ44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                        }
+                    }
+
                     break;
                 case 2:
                     $sJobCodeN11 = $vProgramForYearRow1['JobCode'];
@@ -429,6 +462,22 @@ if($iColClass > 0){
                         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
                             $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
                             $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                        }
+                    }
+
+                    //Рекомендации
+                    $sSqlQueryRecomendations = "SELECT
+                               Recomendations.Id AS RecomendationId
+                               , Recomendations.f10610 AS RecomendationText
+                               , Recomendations.f10620 AS RecomendationLink
+                            FROM
+                                " . DATA_TABLE . get_table_id(630) . " AS Recomendations
+                            WHERE
+                               Recomendations.f12570 = '".$sJobCode."'
+                               AND Recomendations.status = 0";
+                    if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
+                        while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
+                            $vRecomendationN44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
                         }
                     }
                     break;
@@ -452,6 +501,22 @@ if($iColClass > 0){
                             $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
                         }
                     }
+
+                    //Рекомендации
+                    $sSqlQueryRecomendations = "SELECT
+                               Recomendations.Id AS RecomendationId
+                               , Recomendations.f10610 AS RecomendationText
+                               , Recomendations.f10620 AS RecomendationLink
+                            FROM
+                                " . DATA_TABLE . get_table_id(630) . " AS Recomendations
+                            WHERE
+                               Recomendations.f12570 = '".$sJobCode."'
+                               AND Recomendations.status = 0";
+                    if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
+                        while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
+                            $vRecomendationR44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                        }
+                    }
                     break;
                 case 4:
                     $sJobCodeV11 = $vProgramForYearRow1['JobCode'];
@@ -473,15 +538,59 @@ if($iColClass > 0){
                             $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
                         }
                     }
+
+                    //Рекомендации
+                    $sSqlQueryRecomendations = "SELECT
+                               Recomendations.Id AS RecomendationId
+                               , Recomendations.f10610 AS RecomendationText
+                               , Recomendations.f10620 AS RecomendationLink
+                            FROM
+                                " . DATA_TABLE . get_table_id(630) . " AS Recomendations
+                            WHERE
+                               Recomendations.f12570 = '".$sJobCode."'
+                               AND Recomendations.status = 0";
+                    if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
+                        while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
+                            $vRecomendationV44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                        }
+                    }
                     break;
             }
 
             $sSqlQueryTasks1 = "SELECT
-                       Tasks.f14840 AS Subsection
-                       , Tasks.f10440 AS JobName
-                        , Tasks.f10420 AS Topic
+                       IFNULL(Tasks.f14840, '') AS Subsection
+                       , IFNULL(Tasks.f10440, '') AS JobName
+                       , IFNULL(Tasks.f10420, '') AS Topic
+                       , IFNULL(Tasks.f10450, '') AS Description
+                       , IFNULL(Rekvizit1.f10070, '') AS Rekvizit1Name
+                       , IFNULL(Rekvizit1.f16400, '') AS Rekvizit1Link
+                       , IFNULL(Rekvizit2.f10070, '') AS Rekvizit2Name
+                       , IFNULL(Rekvizit2.f16400, '') AS Rekvizit2Link
+                       , IFNULL(Rekvizit3.f10070, '') AS Rekvizit3Name
+                       , IFNULL(Rekvizit3.f16400, '') AS Rekvizit3Link
+                       , IFNULL(Rekvizit4.f10070, '') AS Rekvizit4Name
+                       , IFNULL(Rekvizit4.f16400, '') AS Rekvizit4Link
+                       , IFNULL(Rekvizit5.f10070, '') AS Rekvizit5Name
+                       , IFNULL(Rekvizit5.f16400, '') AS Rekvizit5Link
+                       , IFNULL(Rekvizit6.f10070, '') AS Rekvizit6Name
+                       , IFNULL(Rekvizit6.f16400, '') AS Rekvizit6Link
+                       , IFNULL(Tasks.f10480, '') AS PrintPDF
+                       , IFNULL(Tasks.f10550, '') AS CardPDF
+                       , IFNULL(Tasks.f16480, '') AS Video
                     FROM
                         " . DATA_TABLE . get_table_id(620) . " AS Tasks
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit1
+                                ON Tasks.f10490 = Rekvizit1.Id
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit2
+                                ON Tasks.f10500 = Rekvizit2.Id
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit3
+                                ON Tasks.f10510 = Rekvizit3.Id
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit4
+                                ON Tasks.f10520 = Rekvizit4.Id
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit5
+                                ON Tasks.f10530 = Rekvizit5.Id
+                            LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit6
+                                ON Tasks.f10540 = Rekvizit6.Id
                     WHERE
                        Tasks.status = 0
                        AND Tasks.f12530 = '".$sJobCode."'";
@@ -513,6 +622,8 @@ if($iColClass > 0){
 
                             $sJobNameJ9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionJ7;
+                            $vTasks[] = array("JobName" => $sJobNameJ9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
+
                             break;
                         case 2:
                             $sSubsectionN7 = $vTasksRow1['Subsection'];
@@ -537,6 +648,7 @@ if($iColClass > 0){
 
                             $sJobNameN9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionN7;
+                            $vTasks[] = array("JobName" => $sJobNameN9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
                             break;
                         case 3:
                             $sSubsectionR7 = $vTasksRow1['Subsection'];
@@ -560,6 +672,7 @@ if($iColClass > 0){
                             }
                             $sJobNameR9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionR7;
+                            $vTasks[] = array("JobName" => $sJobNameR9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
                             break;
                         case 4:
                             $sSubsectionV7 = $vTasksRow1['Subsection'];
@@ -583,6 +696,7 @@ if($iColClass > 0){
                             }
                             $sJobNameV9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionV7;
+                            $vTasks[] = array("JobName" => $sJobNameV9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
                             break;
                     }
                 }
@@ -645,27 +759,6 @@ if($iColClass > 0){
                             break;
                     }
                 }
-            }
-
-            function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
-                $sSqlQueryProgramForYear4 = "SELECT
-                   ProgramForYear.f11710 AS Week
-                FROM
-                    " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
-                WHERE
-                   ProgramForYear.f11700 = '".$sProgramAgeX2."'
-                   AND ProgramForYear.f12590 = '".$sJobCode."'
-                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
-                   AND ProgramForYear.status = 0";
-                $i = 0;
-                if($vProgramForYearData4 = sql_query($sSqlQueryProgramForYear4)){
-                    while ($vProgramForYearRow4 = sql_fetch_assoc($vProgramForYearData4)) {
-                        $i++;
-                        if(intval($vProgramForYearRow4['Week']) == $iWeek)
-                            return $i;
-                    }
-                }
-                return 0;
             }
 
             $sSqlQueryProgramForYear2 = "SELECT
@@ -746,22 +839,6 @@ if($iColClass > 0){
                     }
                 }
             }
-
-            //Комментарий с предыдущего занятия.
-            $sSqlQueryPreviosComment = "SELECT
-                   PreviosComment.f12600 AS PreviosCommentLesson
-                FROM
-                    " . DATA_TABLE . get_table_id(780) . " AS PreviosComment
-                WHERE
-                   PreviosComment.f13010 = '".$iGroupId."'
-                   AND PreviosComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f13010 = '".$iGroupId."' AND PP.status = 0)
-                   AND PreviosComment.status = 0";
-            if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
-                if ($vPreviosCommentRow = sql_fetch_assoc($vPreviosCommentData)) {
-                    $sPreviosCommentJ33 = $vProgramForYearRow['PreviosCommentLesson'];
-                }
-            }
-
         }
     }
 
@@ -982,6 +1059,38 @@ $smarty->assign("sTaskR35", $sTaskR35);
 $smarty->assign("sTaskV35", $sTaskV35);
 
 $smarty->assign("vTeachers", $vTeachers);
+$smarty->assign("vGifts", $vGifts);
+$smarty->assign("vWhatDidLearnJ28", $vWhatDidLearnJ28);
+$smarty->assign("vWhatDidLearnN28", $vWhatDidLearnN28);
+$smarty->assign("vWhatDidLearnR28", $vWhatDidLearnR28);
+$smarty->assign("vWhatDidLearnV28", $vWhatDidLearnV28);
+
+$smarty->assign("vRecomendationJ44", $vRecomendationJ44);
+$smarty->assign("vRecomendationN44", $vRecomendationN44);
+$smarty->assign("vRecomendationR44", $vRecomendationR44);
+$smarty->assign("vRecomendationV44", $vRecomendationV44);
+$smarty->assign("vTasks", $vTasks);
+
 $smarty->assign("sAcademicYearU2", $sAcademicYearU2);
 $smarty->assign("sProgramAgeX2", $sProgramAgeX2);
 
+function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
+    $sSqlQueryProgramForYear4 = "SELECT
+                   ProgramForYear.f11710 AS Week
+                FROM
+                    " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
+                WHERE
+                   ProgramForYear.f11700 = '".$sProgramAgeX2."'
+                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.status = 0";
+    $i = 0;
+    if($vProgramForYearData4 = sql_query($sSqlQueryProgramForYear4)){
+        while ($vProgramForYearRow4 = sql_fetch_assoc($vProgramForYearData4)) {
+            $i++;
+            if(intval($vProgramForYearRow4['Week']) == $iWeek)
+                return $i;
+        }
+    }
+    return 0;
+}
