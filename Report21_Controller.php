@@ -395,7 +395,8 @@ if($iColClass > 0){
     }
 
     $sSqlQueryProgramForYear1 = "SELECT
-           Tasks.f12530 AS JobCode
+           Tasks.Id AS JobId
+           , Tasks.f12530 AS JobCode
         FROM
             " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
                 INNER JOIN " . DATA_TABLE . get_table_id(620) . " AS Tasks
@@ -409,6 +410,7 @@ if($iColClass > 0){
         $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'";
 
     $i = 0;
+    $sJobId  = 0;
     if($vProgramForYearData1 = sql_query($sSqlQueryProgramForYear1)){
         while ($vProgramForYearRow1 = sql_fetch_assoc($vProgramForYearData1)) {
             $i++;
@@ -417,6 +419,7 @@ if($iColClass > 0){
                 case 1:
                     $sJobCodeJ11 = $vProgramForYearRow1['JobCode'];
                     $sJobCode = $sJobCodeJ11;
+                    $sJobId = $vProgramForYearRow1['JobId'];
                     //Комментарий по заданию
                     $sSqlQueryTaskComment = "SELECT
                                TaskComment.f12750 AS TaskCommentDate
@@ -443,7 +446,7 @@ if($iColClass > 0){
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
-                               Recomendations.f12570 = '".$sJobCode."'
+                               Recomendations.f12570 = '".$sJobId."'
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
@@ -454,6 +457,7 @@ if($iColClass > 0){
                     break;
                 case 2:
                     $sJobCodeN11 = $vProgramForYearRow1['JobCode'];
+                    $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeN11;
                     //Комментарий по заданию
                     $sSqlQueryTaskComment = "SELECT
@@ -481,7 +485,7 @@ if($iColClass > 0){
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
-                               Recomendations.f12570 = '".$sJobCode."'
+                               Recomendations.f12570 = '".$sJobId."'
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
@@ -491,6 +495,7 @@ if($iColClass > 0){
                     break;
                 case 3:
                     $sJobCodeR11 = $vProgramForYearRow1['JobCode'];
+                    $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeR11;
                     //Комментарий по заданию
                     $sSqlQueryTaskComment = "SELECT
@@ -518,7 +523,7 @@ if($iColClass > 0){
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
-                               Recomendations.f12570 = '".$sJobCode."'
+                               Recomendations.f12570 = '".$sJobId."'
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
@@ -528,6 +533,7 @@ if($iColClass > 0){
                     break;
                 case 4:
                     $sJobCodeV11 = $vProgramForYearRow1['JobCode'];
+                    $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeV11;
                     //Комментарий по заданию
                     $sSqlQueryTaskComment = "SELECT
@@ -555,7 +561,7 @@ if($iColClass > 0){
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
-                               Recomendations.f12570 = '".$sJobCode."'
+                               Recomendations.f12570 = '".$sJobId."'
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
@@ -836,7 +842,7 @@ if($iColClass > 0){
                         FROM
                             " . DATA_TABLE . get_table_id(640) . " AS WhatDidLearn
                         WHERE
-                           WhatDidLearn.f12580 = '".$sJobCode."'
+                           WhatDidLearn.f12580 = '".$sJobId."'
                            AND WhatDidLearn.status = 0";
             if($vWhatDidLearnData = sql_query($sSqlQueryWhatDidLearn)){
                 while ($vWhatDidLearnRow = sql_fetch_assoc($vWhatDidLearnData)) {
@@ -906,10 +912,11 @@ if($iColClass > 0){
             $vTableData['ChildrenFIO'] = form_display($vStudentRow['ChildrenFIO']);
             $vTableData['nn'] = $vStudentRow['nn'];
             if(intval($vStudentRow['nn']) == -1){
-                $vTableData['iPos'] = $iPos;
+                $vTableData['iPosn'] = $iPos;
             } else{
-                $vTableData['iPos'] = "н";
+                $vTableData['iPosn'] = "н";
             }
+            $vTableData['iPos'] = $iPos;
             $vTableData['ClassGroup'] = $vStudentRow['ClassGroup'];
             $vTableData['PickGivesName'] = $vStudentRow['PickGivesName'];
             $vTableData['Stars'] = $vStudentRow['Stars'];
@@ -1092,10 +1099,24 @@ $smarty->assign("vWhatDidLearnN28", $vWhatDidLearnN28);
 $smarty->assign("vWhatDidLearnR28", $vWhatDidLearnR28);
 $smarty->assign("vWhatDidLearnV28", $vWhatDidLearnV28);
 
+$smarty->assign("iWhatDidLearnJ28Count", count($vWhatDidLearnJ28));
+$smarty->assign("iWhatDidLearnN28Count", count($vWhatDidLearnN28));
+$smarty->assign("iWhatDidLearnR28Count", count($vWhatDidLearnR28));
+$smarty->assign("iWhatDidLearnV28Count", count($vWhatDidLearnV28));
+
 $smarty->assign("vRecomendationJ44", $vRecomendationJ44);
 $smarty->assign("vRecomendationN44", $vRecomendationN44);
 $smarty->assign("vRecomendationR44", $vRecomendationR44);
 $smarty->assign("vRecomendationV44", $vRecomendationV44);
+
+$smarty->assign("iRecomendationJ44Count", count($vRecomendationJ44));
+$smarty->assign("iRecomendationN44Count", count($vRecomendationN44));
+$smarty->assign("iRecomendationR44Count", count($vRecomendationR44));
+$smarty->assign("iRecomendationV44Count", count($vRecomendationV44));
+$smarty->assign("iChildrensCount", count($vLines));
+
+
+
 $smarty->assign("vTasks", $vTasks);
 
 $smarty->assign("sAcademicYearU2", $sAcademicYearU2);

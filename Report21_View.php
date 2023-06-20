@@ -1,15 +1,148 @@
 {literal}
     <script type="text/javascript">
-        $(function () {
-            var $start = $('#sDateT1');
+  //      $(function () {
+  //          var $start = $('#sDateT1');
 
-            $start.datepicker({
-                maxDate: '+ 1 month',
-                onSelect: function (selectedDate) {
-					return SubmitData();
-                }
-            });
-        });
+  //          $start.datepicker({
+  //              maxDate: '+ 1 month',
+  //              onSelect: function (selectedDate) {
+		//			return SubmitData();
+  //              }
+  //          });
+		//});
+		//iAction 1 - установка рекомендации, 2-убрать рекомендацию
+		function ChangeRecomendation(sRecId, iRecCount, iPos, iAction) {
+			var vRecom = document.getElementById(sRecId + iPos);
+			if (iAction == 1) {
+				if (vRecom.value == '0') {
+					if (iRecCount > 0) {
+						if (iRecCount == 1) {
+							vRecom.selectedIndex = 1;
+							vRecom.style.backgroundColor = "#93C47D";
+						} else {
+							vRecom.value = '-2';
+							vRecom.style.backgroundColor = "yellow";
+						}
+					} else {
+						vRecom.value = '-1';
+						vRecom.style.backgroundColor="white";
+					}
+				}
+			} else {
+				vRecom.value = '0';
+				vRecom.style.backgroundColor="white";
+			}
+		}
+
+		function ChangeWhatDidLearn() {
+
+		}
+
+		function Validation(sValName, sRecId, iRecCount, iPos) {
+			//debugger;
+			if (sValName == 'iJ' || sValName == 'iL') {
+				if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '')
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				else
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+			}
+
+			if (sValName == 'iN' || sValName == 'iP') {
+				if (document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '')
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				else
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+			}
+
+			if (sValName == 'iR' || sValName == 'iT') {
+				if (document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '')
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				else
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+			}
+
+			if (sValName == 'iV' || sValName == 'iX') {
+				if (document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '')
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				else
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+			}
+
+			//убираем н если есть оценки
+			if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '' && document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '' && document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '' && document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '') {
+				document.getElementById('iI' + iPos).value = 'н';
+			} else {
+				document.getElementById('iI' + iPos).value = '';
+			}
+			CheckPay();
+		}
+
+
+
+		function ChangeFactRecomendation(sRecomendation){
+			var vRecom = document.getElementById(sRecomendation);
+			switch (vRecom.value) {
+				case '0':
+				case '-1':
+					vRecom.style.backgroundColor="white";
+					break;
+				case '-2':
+					vRecom.style.backgroundColor="yellow";
+					break;
+				default:
+					vRecom.style.backgroundColor="#93C47D";
+            }
+		}
+
+		function CheckPay() {
+			if (document.getElementById("iPayFact_F28").value == '') {
+				bIsPay = false;
+				for (var i = 1; i <= iChildrensCount; i++) {
+					if (document.getElementById('iJ' + i).value != '' || document.getElementById('iL' + i).value != ''
+						|| document.getElementById('iN' + i).value != '' || document.getElementById('iP' + i).value != ''
+						|| document.getElementById('iR' + i).value != '' || document.getElementById('iT' + i).value != ''
+						|| document.getElementById('iV' + i).value != '' || document.getElementById('iX' + i).value != '') {
+						bIsPay = true;
+						break;
+					}
+				}
+				let vPayPlan = document.getElementById("iPayPlan_F28");
+				let vPayPlanText = document.getElementById("iPayPlan_F28_Text");
+				if (bIsPay) {
+					vPayPlan.value = 'Оплата';
+					vPayPlanText.text = 'Оплата';
+					vPayPlanText.style.backgroundColor = "#93C47D";
+				} else {
+					vPayPlan.value = 'Неоплата';
+					vPayPlanText.text = 'Неоплата';
+					vPayPlanText.style.backgroundColor = "#FF0000";
+				}
+			}
+		}
+		function ChangePay() {
+			let vPayFact = document.getElementById("iPayFact_F28");
+
+			let vPayPlan = document.getElementById("iPayPlan_F28");
+			let vPayPlanText = document.getElementById("iPayPlan_F28_Text");
+			if (vPayFact.value == '') {
+				CheckPay();
+				vPayFact.style.backgroundColor = "white";
+			} else {
+				if (vPayFact.value == 'Оплата') {
+					vPayPlan.value = 'Оплата';
+					vPayPlanText.text = 'Оплата';
+					vPayPlanText.style.backgroundColor = "#93C47D";
+					vPayFact.style.backgroundColor = "#93C47D";
+				} else {
+					vPayPlan.value = 'Неоплата';
+					vPayPlanText.text = 'Неоплата';
+					vPayPlanText.style.backgroundColor = "#FF0000";
+					vPayFact.style.backgroundColor = "#FF0000";
+				}
+			}
+		}
+
+
         function CreateAllReport() {
             sConfirm = "Создать всё?";
 
@@ -37,8 +170,19 @@
 
     </script>
 <style type="text/css">
+	.fullproc {
+		width:85%;
+		padding: 2px;
+		height:100%;
+	}
 	.yellowbk{
-		background-color:yellow;
+		background-color:#FFFF00 !important;
+	}
+	.redbk{
+		background-color:#FF0000 !important;
+	}
+	.greenbk{
+		background-color:#B6D7A8 !important;
 	}
 	.title {
         margin: 20px 0px;
@@ -206,15 +350,17 @@
 	}
 
 	.ritz .waffle .s54 {
-		border-bottom: 1px SOLID #ffffff;
+		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
+		border-left: 1px SOLID #000000;
+		border-top: 1px SOLID #000000;
 		background-color: #ffffff;
-		text-align: right;
+		text-align: center;
 		font-weight: bold;
 		color: #000000;
 		font-family: 'Times New Roman';
 		font-size: 10pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: nowrap;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
@@ -256,14 +402,15 @@
 	.ritz .waffle .s42 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #ffffff;
+		background-color: #FFF2CC;
 		text-align: center;
 		font-style: italic;
 		color: #000000;
 		font-family: 'Times New Roman';
 		font-size: 10pt;
 		vertical-align: middle;
-		white-space: nowrap;
+		white-space:  normal;
+		word-wrap: break-word;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
 	}
@@ -279,6 +426,8 @@
 
 	.ritz .waffle .s4 {
 		border-bottom: 1px SOLID #000000;
+		border-right: 1px SOLID #000000;
+		border-left: 1px SOLID #000000;
 		background-color: #ffffff;
 		text-align: center;
 		color: #000000;
@@ -598,6 +747,7 @@
 	.ritz .waffle .s62 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
+		border-left: 1px SOLID #000000;
 		background-color: #93c47d;
 		text-align: left;
 		color: #000000;
@@ -704,8 +854,6 @@
 	}
 
 	.ritz .waffle .s53 {
-		border-bottom: 1px SOLID #ffffff;
-		border-right: 1px SOLID #ffffff;
 		background-color: #ffffff;
 	}
 
@@ -748,7 +896,7 @@
 		color: #000000;
 		font-family: 'Arial';
 		font-size: 10pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: nowrap;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
@@ -777,7 +925,7 @@
 		color: #000000;
 		font-family: 'Times New Roman';
 		font-size: 10pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: nowrap;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
@@ -835,7 +983,7 @@
 	.ritz .waffle .s46 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #b6d7a8;
+		background-color: #ffffff;
 		text-align: center;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -1036,6 +1184,7 @@
 	.ritz .waffle .s65 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
+		border-left: 1px SOLID #000000;
 		background-color: #fff2cc;
 		text-align: center;
 		color: #000000;
@@ -1243,12 +1392,12 @@
 	.ritz .waffle .s30 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+		background-color: #ffffff;
 		text-align: left;
 		color: #000000;
 		font-family: 'Arial';
 		font-size: 9pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: normal;
 		overflow: hidden;
 		word-wrap: break-word;
@@ -1315,7 +1464,9 @@
 	}
 </style>
 {/literal}
-
+<script type="text/javascript">
+	let iChildrensCount = {$iChildrensCount};
+</script>
 <div class="title">
 <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
       <a class="header__user-item header__user-item_img" href="javascript:window.print()"><img src="images/print.gif" title="Печать отчёта"></a>
@@ -1354,7 +1505,7 @@
 						<th style="width:22px;" class="column-headers-background"/>
 						<th style="width:230px;" class="column-headers-background"/>
 						<th style="width:65px;" class="column-headers-background"/>
-						<th style="width:96px;" class="column-headers-background"/>
+						<th style="width:120px;" class="column-headers-background"/>
 						<th style="width:36px;" class="column-headers-background"/>
 						<th style="width:44px;" class="column-headers-background"/>
 						<th style="width:139px;" class="column-headers-background"/>
@@ -1390,7 +1541,7 @@
 						<td class="s1"
 						    dir="ltr"
 						    colspan="2" id="sGroupname" >
-                <select name="iGroupId" onchange="return  SubmitData();">
+                <select class="fullproc" name="iGroupId" onchange="return  SubmitData();">
                     {foreach from=$vGroups item=data name="rows"}
                         {if $data.GroupId == $iGroupId}
                             <option selected value="{$data.GroupId}">{$data.GroupName}</option>
@@ -1417,7 +1568,7 @@
 						<td class="s1"
 						    dir="ltr">
 							{if $bIsAdmin}
-								<select name="sFormatFactO1" onchange="return  SubmitData();">
+								<select class="fullproc" name="sFormatFactO1" onchange="return  SubmitData();">
 									{$vForms = ['очно', 'онлайн']}
 									{foreach $vForms as $vForm}
 										{if $vForm == $sFormatPlanL1}
@@ -1457,7 +1608,7 @@
 						<td class="s7"
 						    dir="ltr"
 						    colspan="2">Преподаватель 1</td>
-						<td class="s8"
+						<td class="s7"
 						    dir="ltr"
 						    colspan="3">{$sTeacherFioFactD2}</td>
 						<td class="s9"
@@ -1501,11 +1652,11 @@
 						<td class="s7"
 						    dir="ltr"
 						    colspan="2">Преподаватель 2</td>
-						<td class="s3"
+						<td class="s8"
 						    dir="ltr"
 						    colspan="3">
 							{if $bIsAdmin}
-								<select name="iTeacherId2">
+								<select class="fullproc" name="iTeacherId2">
 									{foreach from=$vTeachers item=data name="rows"}
 										<option value="{$data.TeacherId}">{$data.TeacherName}</option>
 									{/foreach}
@@ -1762,8 +1913,8 @@
 						    style="height: 20px;"
 						    class="row-headers-background">
 						</th>
-						<td class="s27"
-						    dir="ltr">{$data.iPos}<input name="iB{$data.iPos}" type="hidden" value=""/></td>
+						<td class="s27{if $data.iPosn=='н'} redbk{/if}"
+						    dir="ltr">{$data.iPosn}<input id="iB{$data.iPos}" name="iB{$data.iPos}" type="hidden" value="{$data.ChildrenId}"/></td>
 						<td class="s28"
 						    dir="ltr">{$data.ChildrenFIO}</td>
 						<td class="s12"
@@ -1771,7 +1922,7 @@
 						<td class="s12">{$data.PickGivesName}</td>
 						<td class="s12" dir="ltr">{$data.Stars}</td>
 						<td class="s12" dir="ltr">
-							<select name="iG{$data.iPos}">
+							<select name="iG{$data.iPos}" class="fullproc">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="-">-</option>
@@ -1790,7 +1941,7 @@
 							/{$data.WorkingOff}
 						</td>
 						<td class="s12" dir="ltr">
-							<select name="iI{$data.iPos}">
+							<select id="iI{$data.iPos}" name="iI{$data.iPos}" class="fullproc">
 								<option value="н" selected>н</option>
 								<option value=""></option>
 							</select>
@@ -1798,7 +1949,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iJ{$data.iPos}">
+							<select class="fullproc" id="iJ{$data.iPos}" name="iJ{$data.iPos}" onchange="return Validation('iJ','iJ44_',{$iRecomendationJ44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1808,7 +1959,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iL{$data.iPos}">
+							<select class="fullproc" id="iL{$data.iPos}" name="iL{$data.iPos}" onchange="return Validation('iL','iJ44_',{$iRecomendationJ44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1818,7 +1969,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iN{$data.iPos}">
+							<select class="fullproc" id="iN{$data.iPos}" name="iN{$data.iPos}" onchange="return Validation('iN','iN44_',{$iRecomendationN44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1828,7 +1979,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iP{$data.iPos}">
+							<select class="fullproc" id="iP{$data.iPos}" name="iP{$data.iPos}" onchange="return Validation('iP','iN44_',{$iRecomendationN44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1838,7 +1989,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iR{$data.iPos}">
+							<select class="fullproc" id="iR{$data.iPos}" name="iR{$data.iPos}" onchange="return Validation('iR','iR44_',{$iRecomendationR44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1848,7 +1999,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iT{$data.iPos}">
+							<select class="fullproc" id="iT{$data.iPos}" name="iT{$data.iPos}" onchange="return Validation('iT','iR44_',{$iRecomendationR44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1858,7 +2009,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iV{$data.iPos}">
+							<select class="fullproc" id="iV{$data.iPos}" name="iV{$data.iPos}" onchange="return Validation('iV','iV44_',{$iRecomendationV44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1868,7 +2019,7 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="2">
-							<select name="iX{$data.iPos}">
+							<select class="fullproc" id="iX{$data.iPos}" name="iX{$data.iPos}" onchange="return Validation('iX','iV44_',{$iRecomendationV44Count},{$data.iPos})">
 								<option value="" selected></option>
 								<option value="+">+</option>
 								<option value="+-">+-</option>
@@ -1879,7 +2030,7 @@
 						<td class="s29"
 						    dir="ltr">
 							{if $bIsAdmin}
-								<select name="iZ{$data.iPos}">
+								<select name="iAI{$data.iPos}">
 									{foreach from=$vGifts item=data name="rows"}
 										<option value="{$data.GiftId}">{$data.GiftName}</option>
 									{/foreach}
@@ -1889,72 +2040,98 @@
 						<td class="s26"/>
 					</tr>
 				{/foreach}
-					<tr style="height: 53px">
+					<tr style="height: 40px">
 						<th id="685479336R27"
-						    style="height: 53px;"
+						    style="height: 40px;"
 						    class="row-headers-background">
 						</th>
 						<td class="s11"/>
 						<td class="s32"/>
-						<td class="s33"
-						    dir="ltr"
-						    colspan="2"
-						    rowspan="2">Оплата</td>
 						<td class="s1"
 						    dir="ltr"
-						    colspan="2"
-						    rowspan="2"/>
+						    colspan="2" id="iPayPlan_F28_Text" style="background-color:#FF0000;">Неоплата<input id="iPayPlan_F28" name="iPayPlan_F28" type="hidden" value="Неоплата"/></td>
+						<td class="s1"
+						    dir="ltr"
+						    colspan="2">
+							<select class="fullproc" name="iPayFact_F28" id="iPayFact_F28" onchange="ChangePay()">
+								<option value="" selected></option>
+								<option value="Оплата" class="greenbk">Оплата</option>
+								<option value="Неоплата" class="redbk">Неоплата</option>
+							</select>
+						</td>
 						<td class="s34"
 						    dir="ltr"
-						    colspan="2"
-						    rowspan="2">Чему учились?</td>
+						    colspan="2">
+						Чему учились?
+						</td>
 						<td class="s17"
 						    dir="ltr"
-						    colspan="4"
-						    rowspan="2">
-								<select name="iJ28">
-									{foreach from=$vWhatDidLearnJ28 item=data name="rows"}
-										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
-									{/foreach}
-								</select></td>
-						<td class="s35"
-						    dir="ltr"
-						    colspan="4"
-						    rowspan="2">								<select name="iJ28">
-									{foreach from=$vWhatDidLearnN28 item=data name="rows"}
-										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
-									{/foreach}
-								</select></td>
+						    colspan="4">
+								<select class="fullproc" name="iJ28" onchange="ChangeWhatDidLearn('iJ28')">
+									<option value="0"></option>
+									{if $iWhatDidLearnJ28Count > 0}
+										{if $iWhatDidLearnJ28Count > 1}
+											<option value="-2" style="background-color:yellow">Выберите текст</option>
+										{/if}
+										{foreach from=$vWhatDidLearnJ28 item=data name="rows"}
+											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+										{/foreach}
+									{else}
+										<option value="-1">Нет данных в базе</option>
+									{/if}
+								</select>
+						</td>
 						<td class="s17"
 						    dir="ltr"
-						    colspan="4"
-						    rowspan="2">								<select name="iJ28">
-									{foreach from=$vWhatDidLearnR28 item=data name="rows"}
-										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
-									{/foreach}
-								</select></td>
+						    colspan="4">
+								<select class="fullproc" name="iN28" onchange="ChangeWhatDidLearn('iN28')">
+									<option value="0"></option>
+									{if $iWhatDidLearnN28Count > 0}
+										{if $iWhatDidLearnN28Count > 1}
+											<option value="-2" style="background-color:yellow">Выберите текст</option>
+										{/if}
+										{foreach from=$vWhatDidLearnN28 item=data name="rows"}
+											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+										{/foreach}
+									{else}
+										<option value="-1">Нет данных в базе</option>
+									{/if}
+								</select>
+						</td>
 						<td class="s17"
 						    dir="ltr"
-						    colspan="4"
-						    rowspan="2">								<select name="iJ28">
-									{foreach from=$vWhatDidLearnV28 item=data name="rows"}
-										<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
-									{/foreach}
-								</select></td>
-						<td class="s36"
-						    dir="ltr"/>
-						<td class="s11"
-						    dir="ltr"/>
-						<td class="s11"
-						    dir="ltr"/>
-					</tr>
-					<tr style="height: 2px">
-						<th id="685479336R28"
-						    style="height: 2px;"
-						    class="row-headers-background">
-						</th>
-						<td class="s11"/>
-						<td class="s32"/>
+						    colspan="4">
+								<select class="fullproc" name="iR28" onchange="ChangeWhatDidLearn('iR28')">
+									<option value="0"></option>
+									{if $iWhatDidLearnR28Count > 0}
+										{if $iWhatDidLearnR28Count > 1}
+											<option value="-2" style="background-color:yellow">Выберите текст</option>
+										{/if}
+										{foreach from=$vWhatDidLearnR28 item=data name="rows"}
+											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+										{/foreach}
+									{else}
+										<option value="-1">Нет данных в базе</option>
+									{/if}
+								</select>
+						</td>
+						<td class="s17"
+						    dir="ltr"
+						    colspan="4">
+								<select class="fullproc" name="iV28" onchange="ChangeWhatDidLearn('iV28')">
+									<option value="0"></option>
+									{if $iWhatDidLearnV28Count > 0}
+										{if $iWhatDidLearnV28Count > 1}
+											<option value="-2" style="background-color:yellow">Выберите текст</option>
+										{/if}
+										{foreach from=$vWhatDidLearnV28 item=data name="rows"}
+											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+										{/foreach}
+									{else}
+										<option value="-1">Нет данных в базе</option>
+									{/if}
+								</select>
+						</td>
 						<td class="s36"
 						    dir="ltr"/>
 						<td class="s11"
@@ -2078,7 +2255,7 @@
 						<td class="s9"
 						    dir="ltr"
 						    colspan="6">Комментарий с предыдущего занятия.</td>
-						<td class="s46"
+						<td class="s3{if $sPreviosCommentJ33!=''} greenbk{/if}"
 						    dir="ltr"
 						    colspan="4">{$sPreviosCommentJ33}</td>
 							<td class="s24"/>
@@ -2109,14 +2286,14 @@
 							<td class="s9"
 							    dir="ltr"
 							    colspan="6">Комментарий по теме</td>
-							<td class="s3"
+							<td class="s3{if $sThemeJ34!=''} greenbk{/if}"
 							    colspan="4">{$sThemeJ34}</td>
-							<td class="s46"
+							<td class="s3{if $sThemeN34!=''} greenbk{/if}"
 							    dir="ltr"
 							    colspan="4">{$sThemeN34}</td>
-								<td class="s3"
+								<td class="s3{if $sThemeR34!=''} greenbk{/if}"
 								    colspan="4">{$sThemeR34}</td>
-								<td class="s3"
+								<td class="s3{if $sThemeV34!=''} greenbk{/if}"
 								    colspan="4">{$sThemeV34}</td>
 								<td class="s11"/>
 								<td class="s11"
@@ -2136,13 +2313,13 @@
 								<td class="s9"
 								    dir="ltr"
 								    colspan="6">Комментарий по заданию</td>
-								<td class="s3"
+								<td class="s3{if $sTaskJ35!=''} greenbk{/if}"
 								    colspan="4">{$sTaskJ35}</td>
-								<td class="s3"
+								<td class="s3{if $sTaskN35!=''} greenbk{/if}"
 								    colspan="4">{$sTaskN35}</td>
-								<td class="s3"
+								<td class="s3{if $sTaskR35!=''} greenbk{/if}"
 								    colspan="4">{$sTaskR35}</td>
-								<td class="s46"
+								<td class="s3{if $sTaskV35!=''} greenbk{/if}"
 								    dir="ltr"
 								    colspan="4">{$sTaskV35}</td>
 									<td class="s11"/>
@@ -2400,60 +2577,93 @@
 										<div class="row-header-wrapper"
 										     style="line-height: 20px"></div>
 									</th>
-									<td class="s53"/>
-									<td class="s54">{$data.iPos}</td>
+									<td class="s53" colspan="2"/>
+									<td class="s54{if $data.iPosn=='н'} redbk{/if}">{$data.iPosn}</td>
 									<td class="s29"
-									    colspan="6">{$data.ChildrenFIO}</td>
+									    colspan="5">{$data.ChildrenFIO}</td>
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select name="iJ44_{$data.iPos}">
-											{foreach from=$vRecomendationJ44 item=data name="rows"}
-												{if $data.RecomendationLink == ""}
-													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-												{else}
-													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+										<select id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
+											<option value="0"></option>
+											{if $iRecomendationJ44Count > 0}
+												{if $iRecomendationJ44Count > 1}
+													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
-											{/foreach}
+												{foreach from=$vRecomendationJ44 item=data name="rows"}
+													{if $data.RecomendationLink == ""}
+														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+													{else}
+														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+													{/if}
+												{/foreach}
+											{else}
+												<option value="-1">Нет рекомендации в базе</option>
+											{/if}
 										</select>
 									</td>
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select name="iN44_{$data.iPos}">
-											{foreach from=$vRecomendationN44 item=data name="rows"}
-												{if $data.RecomendationLink == ""}
-													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-												{else}
-													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+										<select id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
+											<option value="0"></option>
+											{if $iRecomendationN44Count > 0}
+												{if $iRecomendationN44Count > 1}
+													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
-											{/foreach}
+												{foreach from=$vRecomendationN44 item=data name="rows"}
+													{if $data.RecomendationLink == ""}
+														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+													{else}
+														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+													{/if}
+												{/foreach}
+											{else}
+												<option value="-1">Нет рекомендации в базе</option>
+											{/if}
 										</select>
 									</td>
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select name="iR44_{$data.iPos}">
-											{foreach from=$vRecomendationR44 item=data name="rows"}
-												{if $data.RecomendationLink == ""}
-													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-												{else}
-													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+
+										<select id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
+											<option value="0"></option>
+											{if $iRecomendationR44Count > 0}
+												{if $iRecomendationR44Count > 1}
+													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
-											{/foreach}
+												{foreach from=$vRecomendationR44 item=data name="rows"}
+													{if $data.RecomendationLink == ""}
+														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+													{else}
+														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+													{/if}
+												{/foreach}
+											{else}
+												<option value="-1">Нет рекомендации в базе</option>
+											{/if}
 										</select>
 									</td>
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select name="iV44_{$data.iPos}">
-											{foreach from=$vRecomendationV44 item=data name="rows"}
-												{if $data.RecomendationLink == ""}
-													<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-												{else}
-													<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+										<select id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
+											<option value="0"></option>
+											{if $iRecomendationV44Count > 0}
+												{if $iRecomendationV44Count > 1}
+													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
-											{/foreach}
+												{foreach from=$vRecomendationV44 item=data name="rows"}
+													{if $data.RecomendationLink == ""}
+														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
+													{else}
+														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
+													{/if}
+												{/foreach}
+											{else}
+												<option value="-1">Нет рекомендации в базе</option>
+											{/if}
 										</select>
 									</td>
 									<td class="s55"
@@ -2567,12 +2777,12 @@
 									<td class="s16"/>
 								</tr>
 
-								<tr style="height: 67px">
+								<tr style="height: 30px">
 									<th id="685479336R49"
-									    style="height: 67px;"
+									    style="height: 30px;"
 									    class="row-headers-background">
 										<div class="row-header-wrapper"
-										     style="line-height: 67px"></div>
+										     style="line-height: 30px"></div>
 									</th>
 									<td class="s62"/>
 									<td class="s63"
@@ -2611,18 +2821,18 @@
 									    colspan="11"
 									    rowspan="2">{$data.JobDescription}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit1Name}</td>
+											    dir="ltr">{$data.JobRekvizit1Name}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit2Name}</td>
+											    dir="ltr">{$data.JobRekvizit2Name}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit3Name}</td>
+											    dir="ltr">{$data.JobRekvizit3Name}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit4Name}</td>
+											    dir="ltr">{$data.JobRekvizit4Name}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit5Name}</td>
+											    dir="ltr">{$data.JobRekvizit5Name}</td>
 											<td class="s8"
-											    dir="ltr">{$data.Rekvizit6Name}</td>
-											<td class="s67"
+											    dir="ltr">{$data.JobRekvizit6Name}</td>
+											<td class="s68"
 											    dir="ltr"
 											    rowspan="2">
 											{if $data.JobPrintPDF != ""}
@@ -2658,38 +2868,38 @@
 											<td class="s69">{$data.JobCode}</td>
 											<td class="s70"
 											    dir="ltr">
-											{if $data.Rekvizit1Link != ""}
-											<a target="_blank" href="{$data.Rekvizit1Link}">ссылка</a>
+											{if $data.JobRekvizit1Link != ""}
+											<a target="_blank" href="{$data.JobRekvizit1Link}">ссылка</a>
 											{/if}
 											</td>
 											<td class="s70"
 											    dir="ltr">
-											{if $data.Rekvizit3Link != ""}
-											<a target="_blank" href="{$data.Rekvizit2Link}">ссылка</a>
+											{if $data.JobRekvizit2Link != ""}
+											<a target="_blank" href="{$dataJob.Rekvizit2Link}">ссылка</a>
 											{/if}
 											</td>
-											<td class="s71"
+											<td class="s70"
 											    dir="ltr">
-													{if $data.Rekvizit3Link != ""}
-													<a target="_blank" href="{$data.Rekvizit3Link}">ссылка</a>
+													{if $data.JobRekvizit3Link != ""}
+													<a target="_blank" href="{$data.JobRekvizit3Link}">ссылка</a>
 													{/if}
 												</td>
-											<td class="s71"
+											<td class="s70"
 											    dir="ltr">
-													{if $data.Rekvizit4Link != ""}
-													<a target="_blank" href="{$data.Rekvizit4Link}">ссылка</a>
+													{if $data.JobRekvizit4Link != ""}
+													<a target="_blank" href="{$data.JobRekvizit4Link}">ссылка</a>
 													{/if}
 												</td>
-											<td class="s71"
+											<td class="s70"
 											    dir="ltr">
-													{if $data.Rekvizit5Link != ""}
-													<a target="_blank" href="{$data.Rekvizit5Link}">ссылка</a>
+													{if $data.JobRekvizit5Link != ""}
+													<a target="_blank" href="{$data.JobRekvizit5Link}">ссылка</a>
 													{/if}
 												</td>
-											<td class="s71"
+											<td class="s70"
 											    dir="ltr">
-													{if $data.Rekvizit6Link != ""}
-													<a target="_blank" href="{$data.Rekvizit6Link}">ссылка</a>
+													{if $data.JobRekvizit6Link != ""}
+													<a target="_blank" href="{$data.JobRekvizit6Link}">ссылка</a>
 													{/if}
 												</td>
 											<td class="s60"/>
@@ -2698,9 +2908,9 @@
 										</tr>
 								{/foreach}
 
-																</tbody>
-															</table>
-														</div>
+									</tbody>
+								</table>
+							</div>
 
 
 
