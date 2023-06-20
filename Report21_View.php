@@ -34,38 +34,46 @@
 			}
 		}
 
-		function ChangeWhatDidLearn() {
-
-		}
-
 		function Validation(sValName, sRecId, iRecCount, iPos) {
 			//debugger;
 			if (sValName == 'iJ' || sValName == 'iL') {
-				if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '')
+				if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-				else
+					ChangeRecomendation('iJ28', iWhatDidLearnJ28Count, '', 2);
+				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+					ChangeRecomendation('iJ28', iWhatDidLearnJ28Count, '', 1);
+				}
 			}
 
 			if (sValName == 'iN' || sValName == 'iP') {
-				if (document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '')
+				if (document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-				else
+					ChangeRecomendation('iN28', iWhatDidLearnN28Count, '', 2);
+				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+					ChangeRecomendation('iN28', iWhatDidLearnN28Count, '', 1);
+				}
 			}
 
 			if (sValName == 'iR' || sValName == 'iT') {
-				if (document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '')
+				if (document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-				else
+					ChangeRecomendation('iR28', iWhatDidLearnR28Count, '', 2);
+				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+					ChangeRecomendation('iR28', iWhatDidLearnR28Count, '', 1);
+				}
 			}
 
 			if (sValName == 'iV' || sValName == 'iX') {
-				if (document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '')
+				if (document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-				else
+					ChangeRecomendation('iV28', iWhatDidLearnV28Count, '', 2);
+				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
+					ChangeRecomendation('iV28', iWhatDidLearnV28Count, '', 1);
+				}
 			}
 
 			//убираем н если есть оценки
@@ -79,7 +87,8 @@
 
 
 
-		function ChangeFactRecomendation(sRecomendation){
+		function ChangeFactRecomendation(sRecomendation) {
+			//debugger;
 			var vRecom = document.getElementById(sRecomendation);
 			switch (vRecom.value) {
 				case '0':
@@ -110,16 +119,17 @@
 				let vPayPlanText = document.getElementById("iPayPlan_F28_Text");
 				if (bIsPay) {
 					vPayPlan.value = 'Оплата';
-					vPayPlanText.text = 'Оплата';
+					vPayPlanText.textContent = 'Оплата';
 					vPayPlanText.style.backgroundColor = "#93C47D";
 				} else {
 					vPayPlan.value = 'Неоплата';
-					vPayPlanText.text = 'Неоплата';
+					vPayPlanText.textContent = 'Неоплата';
 					vPayPlanText.style.backgroundColor = "#FF0000";
 				}
 			}
 		}
 		function ChangePay() {
+			//debugger;
 			let vPayFact = document.getElementById("iPayFact_F28");
 
 			let vPayPlan = document.getElementById("iPayPlan_F28");
@@ -130,12 +140,12 @@
 			} else {
 				if (vPayFact.value == 'Оплата') {
 					vPayPlan.value = 'Оплата';
-					vPayPlanText.text = 'Оплата';
+					vPayPlanText.textContent = 'Оплата';
 					vPayPlanText.style.backgroundColor = "#93C47D";
 					vPayFact.style.backgroundColor = "#93C47D";
 				} else {
 					vPayPlan.value = 'Неоплата';
-					vPayPlanText.text = 'Неоплата';
+					vPayPlanText.textContent = 'Неоплата';
 					vPayPlanText.style.backgroundColor = "#FF0000";
 					vPayFact.style.backgroundColor = "#FF0000";
 				}
@@ -171,8 +181,14 @@
     </script>
 <style type="text/css">
 	.fullproc {
-		width:85%;
+		width: 87%;
 		padding: 2px;
+		max-width: 100%;
+		white-space: pre-wrap;
+	}
+	.full100 {
+		width: 100%;
+		padding: 1px;
 		height:100%;
 	}
 	.yellowbk{
@@ -369,7 +385,6 @@
 	.ritz .waffle .s68 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
 		text-align: center;
 		text-decoration: underline;
 		-webkit-text-decoration-skip: none;
@@ -402,7 +417,7 @@
 	.ritz .waffle .s42 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #FFF2CC;
+
 		text-align: center;
 		font-style: italic;
 		color: #000000;
@@ -539,7 +554,7 @@
 	.ritz .waffle .s19 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: left;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -600,7 +615,7 @@
 	.ritz .waffle .s66 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		text-decoration: underline;
 		-webkit-text-decoration-skip: none;
@@ -715,7 +730,7 @@
 	.ritz .waffle .s8 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -840,7 +855,7 @@
 	.ritz .waffle .s69 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		font-style: italic;
 		color: #000000;
@@ -949,7 +964,7 @@
 	.ritz .waffle .s17 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		font-style: italic;
 		color: #000000;
@@ -1026,7 +1041,7 @@
 	.ritz .waffle .s71 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: left;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -1102,7 +1117,7 @@
 	.ritz .waffle .s70 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		text-decoration: underline;
 		-webkit-text-decoration-skip: none;
@@ -1185,7 +1200,7 @@
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
 		border-left: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: center;
 		color: #000000;
 		font-family: 'Arial';
@@ -1327,7 +1342,7 @@
 	.ritz .waffle .s67 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: left;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -1452,7 +1467,7 @@
 	.ritz .waffle .s18 {
 		border-bottom: 1px SOLID #000000;
 		border-right: 1px SOLID #000000;
-		background-color: #fff2cc;
+
 		text-align: left;
 		color: #000000;
 		font-family: 'Times New Roman';
@@ -1466,6 +1481,10 @@
 {/literal}
 <script type="text/javascript">
 	let iChildrensCount = {$iChildrensCount};
+	let iWhatDidLearnJ28Count = {$iWhatDidLearnJ28Count};
+	let iWhatDidLearnN28Count = {$iWhatDidLearnN28Count};
+	let iWhatDidLearnR28Count = {$iWhatDidLearnR28Count};
+	let iWhatDidLearnV28Count = {$iWhatDidLearnV28Count};
 </script>
 <div class="title">
 <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
@@ -1500,12 +1519,13 @@
 			<table class="waffle mainTable"
 			       cellspacing="0"
 			       cellpadding="0">
+				<tbody>
 					<tr style="height:0px;">
 						<th />
 						<th style="width:22px;" class="column-headers-background"/>
 						<th style="width:230px;" class="column-headers-background"/>
-						<th style="width:65px;" class="column-headers-background"/>
-						<th style="width:120px;" class="column-headers-background"/>
+						<th style="width:80px;" class="column-headers-background"/>
+						<th style="width:140px;" class="column-headers-background"/>
 						<th style="width:36px;" class="column-headers-background"/>
 						<th style="width:44px;" class="column-headers-background"/>
 						<th style="width:139px;" class="column-headers-background"/>
@@ -1528,8 +1548,8 @@
 						<th  style="width:62px;" class="column-headers-background"/>
 						<th  style="width:76px;" class="column-headers-background"/>
 						<th style="width:91px;" class="column-headers-background"/>
+
 					</tr>
-			<tbody>
 					<tr style="height: 28px">
 						<th id="685479336R0"
 						    style="height: 28px;"
@@ -1597,8 +1617,6 @@
 						    dir="ltr"/>
 						<td class="s6"
 						    dir="ltr"/>
-						<td class="s6"
-						    dir="ltr"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R1"
@@ -1642,7 +1660,6 @@
 						    colspan="2">{$sProgramAgeX2}</td>
 						<td class="s6"/>
 						<td class="s11"/>
-						<td class="s6"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R2"
@@ -1682,7 +1699,6 @@
 						</td>
 						<td class="s15"/>
 						<td class="s16"/>
-						<td class="s16"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R3"
@@ -1696,25 +1712,23 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="3"
-						    rowspan="5"/>
+						    rowspan="5"><textarea style="width:234px;height:168px;" name="CommentNextClass"></textarea></td>
 						<td class="s9"
 						    dir="ltr"
 						    colspan="3">Комментарий по уровню темы</td>
 						<td class="s18"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="CommentTopicLevelJ4"></textarea></td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="CommentTopicLevelN4"></textarea></td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="CommentTopicLevelR4"></textarea></td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="CommentTopicLevelV4"></textarea></td>
 						<td class="s15"
-						    dir="ltr"/>
-						<td class="s11"
 						    dir="ltr"/>
 						<td class="s11"
 						    dir="ltr"/>
@@ -1729,27 +1743,26 @@
 						    colspan="3">Комментарий по уровню задачи</td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="3"/>
+						    colspan="3"><textarea class="full100" name="CommentTaskLevelJ5"></textarea></td>
 						<td class="s13{if $sM5=='нужно'} yellowbk{/if}"
 						    dir="ltr">{$sM5}</td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="3"/>
+						    colspan="3"><textarea class="full100" name="CommentTaskLevelN5"></textarea></td>
 						<td class="s13{if $sQ5=='нужно'} yellowbk{/if}"
 						    dir="ltr">{$sQ5}</td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="3"/>
+						    colspan="3"><textarea class="full100" name="CommentTaskLevelR5"></textarea></td>
 						<td class="s13{if $sU5=='нужно'} yellowbk{/if}"
 						    dir="ltr">{$sU5}</td>
 						<td class="s19"
 						    dir="ltr"
-						    colspan="3"/>
+						    colspan="3"><textarea class="full100" name="CommentTaskLevelV5"></textarea></td>
 						<td class="s13{if $sY5=='нужно'} yellowbk{/if}"
 						    dir="ltr">{$sY5}</td>
 						<td class="s21"
 						    dir="ltr"/>
-						<td class="s11"/>
 						<td class="s11"/>
 					</tr>
 					<tr style="height: 20px">
@@ -1769,7 +1782,6 @@
 						<td class="s12"
 						    colspan="4">{$sSectionV6}</td>
 						<td class="s22"/>
-						<td class="s11"/>
 						<td class="s11"/>
 					</tr>
 					<tr style="height: 20px">
@@ -1791,8 +1803,6 @@
 						<td class="s22"/>
 						<td class="s11"
 						    dir="ltr"/>
-						<td class="s11"
-						    dir="ltr"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R7"
@@ -1812,8 +1822,6 @@
 						    colspan="4">{$sTopicV8}</td>
 						<td class="s23"/>
 						<td class="s24"
-						    dir="ltr"/>
-						<td class="s11"
 						    dir="ltr"/>
 					</tr>
 					<tr style="height: 49px">
@@ -1877,14 +1885,12 @@
 						<td class="s25"
 						    dir="ltr"
 						    rowspan="3">Заказ подарков (доставка)</td>
-						<td class="s11"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R9"
 						    style="height: 20px;"
 						    class="row-headers-background">
 						</th>
-						<td class="s11"/>
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R10"
@@ -1905,7 +1911,6 @@
 						<td class="s12"
 						    dir="ltr"
 						    colspan="4">Код задания {$sJobCodeV11}</td>
-						<td class="s26"/>
 					</tr>
 				{foreach from=$lines item=data name="rows"}
 					<tr style="height: 20px">
@@ -2037,19 +2042,19 @@
 								</select>
 							{/if}
 						</td>
-						<td class="s26"/>
 					</tr>
 				{/foreach}
-					<tr style="height: 40px">
+					<tr style="height: 70px">
 						<th id="685479336R27"
-						    style="height: 40px;"
+						    style="height: 70px;"
 						    class="row-headers-background">
 						</th>
 						<td class="s11"/>
-						<td class="s32"/>
+						<td class="s32"><input id="iPayPlan_F28" name="iPayPlan_F28" type="hidden" value="Неоплата"/></td>
 						<td class="s1"
 						    dir="ltr"
-						    colspan="2" id="iPayPlan_F28_Text" style="background-color:#FF0000;">Неоплата<input id="iPayPlan_F28" name="iPayPlan_F28" type="hidden" value="Неоплата"/></td>
+						    colspan="2" id="iPayPlan_F28_Text" style="background-color:#FF0000;">Неоплата</td>
+
 						<td class="s1"
 						    dir="ltr"
 						    colspan="2">
@@ -2067,7 +2072,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
-								<select class="fullproc" name="iJ28" onchange="ChangeWhatDidLearn('iJ28')">
+								<select class="fullproc" id="iJ28" name="iJ28" onchange="ChangeFactRecomendation('iJ28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnJ28Count > 0}
 										{if $iWhatDidLearnJ28Count > 1}
@@ -2084,7 +2089,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
-								<select class="fullproc" name="iN28" onchange="ChangeWhatDidLearn('iN28')">
+								<select class="fullproc" id="iN28" name="iN28" onchange="ChangeFactRecomendation('iN28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnN28Count > 0}
 										{if $iWhatDidLearnN28Count > 1}
@@ -2101,7 +2106,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
-								<select class="fullproc" name="iR28" onchange="ChangeWhatDidLearn('iR28')">
+								<select class="fullproc" id="iR28" name="iR28" onchange="ChangeFactRecomendation('iR28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnR28Count > 0}
 										{if $iWhatDidLearnR28Count > 1}
@@ -2118,7 +2123,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
-								<select class="fullproc" name="iV28" onchange="ChangeWhatDidLearn('iV28')">
+								<select class="fullproc" id="iV28" name="iV28" onchange="ChangeFactRecomendation('iV28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnV28Count > 0}
 										{if $iWhatDidLearnV28Count > 1}
@@ -2133,8 +2138,6 @@
 								</select>
 						</td>
 						<td class="s36"
-						    dir="ltr"/>
-						<td class="s11"
 						    dir="ltr"/>
 						<td class="s11"
 						    dir="ltr"/>
@@ -2172,7 +2175,6 @@
 						<td class="s39"
 						    dir="ltr"/>
 						<td class="s11"/>
-						<td class="s11"/>
 					</tr>
 					<tr style="height: 40px">
 						<th id="685479336R30"
@@ -2188,19 +2190,17 @@
 						    colspan="4">Замечания по заданиям</td>
 						<td class="s42"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="NotesJ31"></textarea></td>
 						<td class="s42"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="NotesN31"></textarea></td>
 						<td class="s42"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="NotesR31"></textarea></td>
 						<td class="s42"
 						    dir="ltr"
-						    colspan="4"/>
+						    colspan="4"><textarea class="full100" name="NotesV31"></textarea></td>
 						<td class="s40"/>
-						<td class="s11"
-						    dir="ltr"/>
 						<td class="s11"
 						    dir="ltr"/>
 					</tr>
@@ -2240,8 +2240,6 @@
 						<td class="s40"/>
 						<td class="s11"
 						    dir="ltr"/>
-						<td class="s11"
-						    dir="ltr"/>
 					</tr>
 					<tr style="height: 58px">
 						<th id="685479336R32"
@@ -2272,7 +2270,6 @@
 							<td class="s24"/>
 							<td class="s40"/>
 							<td class="s11"/>
-							<td class="s11"/>
 						</tr>
 						<tr style="height: 39px">
 							<th id="685479336R33"
@@ -2298,8 +2295,6 @@
 								<td class="s11"/>
 								<td class="s11"
 								    dir="ltr"/>
-								<td class="s11"
-								    dir="ltr"/>
 							</tr>
 							<tr style="height: 51px">
 								<th id="685479336R34"
@@ -2322,7 +2317,6 @@
 								<td class="s3{if $sTaskV35!=''} greenbk{/if}"
 								    dir="ltr"
 								    colspan="4">{$sTaskV35}</td>
-									<td class="s11"/>
 									<td class="s11"/>
 									<td class="s11"/>
 								</tr>
@@ -2360,8 +2354,6 @@
 									<td class="s11"/>
 									<td class="s47"
 									    dir="ltr"/>
-									<td class="s47"
-									    dir="ltr"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R36"
@@ -2396,7 +2388,6 @@
 									<td class="s11"/>
 									<td class="s11"/>
 									<td class="s11"/>
-									<td class="s47"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R37"
@@ -2437,7 +2428,6 @@
 									    colspan="3"/>
 									<td class="s51"
 									    dir="ltr"/>
-									<td class="s11"/>
 									<td class="s11"/>
 									<td class="s11"/>
 								</tr>
@@ -2497,7 +2487,6 @@
 									    dir="ltr"/>
 									<td class="s11"/>
 									<td class="s11"/>
-									<td class="s11"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R40"
@@ -2533,7 +2522,6 @@
 									<td class="s5"
 									    dir="ltr"/>
 									<td class="s11"/>
-									<td class="s11"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R41"
@@ -2566,9 +2554,7 @@
 									<td class="s5"
 									    dir="ltr"/>
 									<td class="s11"/>
-									<td class="s11"/>
 								</tr>
-
 				{foreach from=$lines item=data name="rows"}
 							<tr style="height: 20px">
 									<th id="685479336R43"
@@ -2584,7 +2570,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
+										<select class="fullproc" id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationJ44Count > 0}
 												{if $iRecomendationJ44Count > 1}
@@ -2605,7 +2591,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
+										<select class="fullproc" id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationN44Count > 0}
 												{if $iRecomendationN44Count > 1}
@@ -2627,7 +2613,7 @@
 									    dir="ltr"
 									    colspan="4">
 
-										<select id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
+										<select class="fullproc" id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationR44Count > 0}
 												{if $iRecomendationR44Count > 1}
@@ -2648,7 +2634,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-										<select id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
+										<select class="fullproc" id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationV44Count > 0}
 												{if $iRecomendationV44Count > 1}
@@ -2666,9 +2652,8 @@
 											{/if}
 										</select>
 									</td>
-									<td class="s55"
+									<td class="s11"
 									    dir="ltr"/>
-									<td class="s40"/>
 									<td class="s11"/>
 									<td class="s11"/>
 								</tr>
@@ -2707,7 +2692,6 @@
 									<td class="s60"
 									    dir="ltr"/>
 									<td class="s16"/>
-									<td class="s16"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R47"
@@ -2742,7 +2726,6 @@
 									<td class="s11"/>
 									<td class="s61"/>
 									<td class="s16"/>
-									<td class="s16"/>
 								</tr>
 								<tr style="height: 20px">
 									<th id="685479336R48"
@@ -2774,7 +2757,6 @@
 									<td class="s43"/>
 									<td class="s61"/>
 									<td class="s16"/>
-									<td class="s16"/>
 								</tr>
 
 								<tr style="height: 30px">
@@ -2801,7 +2783,6 @@
 									    dir="ltr"
 									    colspan="3">Видео инструкция</td>
 									<td class="s60"/>
-									<td class="s16"/>
 									<td class="s16"/>
 								</tr>
 						{foreach from=$vTasks item=data name="rows"}
@@ -2856,7 +2837,6 @@
 											</td>
 											<td class="s61"/>
 											<td class="s16"/>
-											<td class="s16"/>
 										</tr>
 										<tr style="height: 16px">
 											<th id="685479336R51"
@@ -2903,7 +2883,6 @@
 													{/if}
 												</td>
 											<td class="s60"/>
-											<td class="s16"/>
 											<td class="s16"/>
 										</tr>
 								{/foreach}

@@ -167,9 +167,6 @@ if ($iTeacherId != 0) {
 
 $sSqlQueryGroup = $sSqlQueryGroup . " ORDER BY GroupName";
 
-if($bdebug) echo $sSqlQueryGroup."--3<br>";
-
-
 $vGroups = [];
 $iGroupTeacherId = 0;
 if($vGroupData = sql_query($sSqlQueryGroup)){
@@ -349,7 +346,14 @@ if($iColClass > 0){
             " . DATA_TABLE . get_table_id(780) . " AS PreviosComment
         WHERE
            PreviosComment.f12870 = '".$iGroupId."'
-           AND PreviosComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f13010 = '".$iGroupId."' AND PP.status = 0)
+           AND PreviosComment.f12750 = (
+            SELECT MAX(PP.f12750)
+                FROM " . DATA_TABLE . get_table_id(780) . " AS PP
+                WHERE PP.f12870 = '".$iGroupId."'
+                    AND PP.f13010 <> ''
+                    AND NOT PP.f13010 IS NULL AND PP.status = 0)
+           AND PreviosComment.f13010 <> ''
+           AND NOT PreviosComment.f13010 IS NULL
            AND PreviosComment.status = 0";
     if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
         if ($vPreviosCommentRow = sql_fetch_assoc($vPreviosCommentData)) {
@@ -429,8 +433,20 @@ if($iColClass > 0){
                             WHERE
                                TaskComment.f12870 = '".$iGroupId."'
                                AND TaskComment.f12930 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f12930 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.f12750 = (SELECT
+                                        MAX(PP.f12750)
+                                    FROM
+                                        " . DATA_TABLE . get_table_id(780) . " AS PP
+                                    WHERE
+                                        PP.f12870 = '".$iGroupId."'
+                                        AND PP.f12930 = '".$sJobCode."'
+                                        AND PP.f12960 <> ''
+                                        AND NOT PP.f12960 IS NULL
+                                        AND PP.status = 0)
+                               AND TaskComment.f12960 <> ''
+                               AND NOT TaskComment.f12960 IS NULL
                                AND TaskComment.status = 0";
+                    //echo $sSqlQueryTaskComment."---";
                     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
                         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
                             $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
@@ -468,7 +484,16 @@ if($iColClass > 0){
                             WHERE
                                TaskComment.f12870 = '".$iGroupId."'
                                AND TaskComment.f13260 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13260 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.f12750 = (SELECT
+                                   MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP
+                               WHERE
+                                    PP.f12870 = '".$iGroupId."'
+                                    AND PP.f13260 = '".$sJobCode."'
+                                    AND PP.f13280 <> ''
+                                    AND NOT PP.f13280 IS NULL
+                                    AND PP.status = 0)
+                               AND TaskComment.f13280 <> ''
+                               AND NOT TaskComment.f13280 IS NULL
                                AND TaskComment.status = 0";
                     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
                         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
@@ -506,7 +531,15 @@ if($iColClass > 0){
                             WHERE
                                TaskComment.f12870 = '".$iGroupId."'
                                AND TaskComment.f13330 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13330 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750)
+                                FROM " . DATA_TABLE . get_table_id(780) . " AS PP
+                                WHERE PP.f12870 = '".$iGroupId."'
+                                   AND PP.f13360 <> ''
+                                   AND NOT PP.f13360 IS NULL
+
+                                AND PP.f13330 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.f13360 <> ''
+                               AND NOT TaskComment.f13360 IS NULL
                                AND TaskComment.status = 0";
                     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
                         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
@@ -544,7 +577,16 @@ if($iColClass > 0){
                             WHERE
                                TaskComment.f12870 = '".$iGroupId."'
                                AND TaskComment.f13410  = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f13410 = '".$sJobCode."' AND PP.status = 0)
+                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750)
+                                    FROM " . DATA_TABLE . get_table_id(780) . " AS PP
+                                    WHERE
+                                        PP.f12870 = '".$iGroupId."'
+                                        AND PP.f13410 = '".$sJobCode."'
+                                        AND PP.f13430 <> ''
+                                        AND NOT PP.f13430 IS NULL
+                                        AND PP.status = 0)
+                               AND TaskComment.f13430 <> ''
+                               AND NOT TaskComment.f13430 IS NULL
                                AND TaskComment.status = 0";
                     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
                         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
@@ -762,9 +804,10 @@ if($iColClass > 0){
                     " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
-                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f12590 = '".$sJobId."'
                    AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
                    AND ProgramForYear.status = 0";
+            //if($bdebug) echo $sSqlQueryProgramForYear3;
             if($vProgramForYearData3 = sql_query($sSqlQueryProgramForYear3)){
                 if ($vProgramForYearRow3 = sql_fetch_assoc($vProgramForYearData3)) {
                     switch ($i)
@@ -791,7 +834,7 @@ if($iColClass > 0){
                     " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
-                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f12590 = '".$sJobId."'
                    AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
                    AND ProgramForYear.status = 0";
             if($vProgramForYearData2 = sql_query($sSqlQueryProgramForYear2)){
