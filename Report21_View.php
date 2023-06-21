@@ -152,32 +152,125 @@
 			}
 		}
 
+		function CheckSave() {
+			var href_post = confirm('Загрузить?');
+			if (href_post) {
+				var vGroup = document.getElementById('iGroupId');
+				if (vGroup != null && vGroup.value != '0' && vGroup.value != '') {
+					var bIsCheckRecomendation = true;
+					var bIsCheckWhatDidLearnJ = false;
+					var bIsCheckWhatDidLearnN = false;
+					var bIsCheckWhatDidLearnR = false;
+					var bIsCheckWhatDidLearnV = false;
 
-        function CreateAllReport() {
-            sConfirm = "Создать всё?";
+					for (var i = 1; i <= iChildrensCount; i++) {
+						if ((document.getElementById('iJ' + i).value != '' || document.getElementById('iL' + i).value != '')) {
+							bIsCheckWhatDidLearnJ = true;
+							if (!(document.getElementById('iJ44_' + i).value == -1 || document.getElementById('iJ44_' + i).value > 0)) {
+								bIsCheckRecomendation = false;
+							}
+						}
+						if ((document.getElementById('iN' + i).value != '' || document.getElementById('iP' + i).value != '')) {
+							bIsCheckWhatDidLearnN = true;
+							if (!(document.getElementById('iN44_' + i).value == -1 || document.getElementById('iN44_' + i).value > 0)) {
+								bIsCheckRecomendation = false;
+							}
+						}
+						if ((document.getElementById('iR' + i).value != '' || document.getElementById('iT' + i).value != '')) {
+							bIsCheckWhatDidLearnR = true;
+							if (!(document.getElementById('iR44_' + i).value == -1 || document.getElementById('iR44_' + i).value > 0)) {
+								bIsCheckRecomendation = false;
+							}
+						}
+						if ((document.getElementById('iV' + i).value != '' || document.getElementById('iX' + i).value != '')) {
+							bIsCheckWhatDidLearnV = true;
+							if (!(document.getElementById('iV44_' + i).value == -1 || document.getElementById('iV44_' + i).value > 0)) {
+								bIsCheckRecomendation = false;
+							}
+						}
+					}
+					if ((!bIsCheckWhatDidLearnJ || (bIsCheckWhatDidLearnJ && (document.getElementById('iJ28').value == -1 || document.getElementById('iJ28').value > 0)))
+						&& (!bIsCheckWhatDidLearnN || (bIsCheckWhatDidLearnN && (document.getElementById('iN28').value == -1 || document.getElementById('iN28').value > 0)))
+						&& (!bIsCheckWhatDidLearnR || (bIsCheckWhatDidLearnR && (document.getElementById('iR28').value == -1 || document.getElementById('iR28').value > 0)))
+						&& (!bIsCheckWhatDidLearnV || (bIsCheckWhatDidLearnV && (document.getElementById('iV28').value == -1 || document.getElementById('iV28').value > 0)))
+					) {
+						if (bIsCheckRecomendation) {
+							var bIsSave = true;
+							if (document.getElementById('upload1').value == "" && document.getElementById('upload2').value == "") {
+								bIsSave = false;
+							}
+							if (!bIsSave && confirm('Не прикреплено ни одной фотографии. Вы уверены, что хотите загрузить отчет?'))
+								bIsSave = true;
+							if (bIsSave) {
+								document.getElementById('SaveReport').value = '1';
+								document.getElementById('report_form').submit();
+								document.getElementById('SaveReport').value = '0';
+							}
+						} else {
+							alert('Выберете рекомендацию!');
+						}
+					} else {
+						alert('Не заполнены поля “Чему учились”!');
+					}
+				} else {
+					alert('Укажите группу!');
+				}
+			}
 
-            href_post = confirm(sConfirm);
-            if (href_post) {
-                document.getElementById('Report').value = '0';
-                document.getElementById('SendReport').value = '0';
-                document.getElementById('ChildrenId').value = '0';
-                document.getElementById('SendAllReport').value = '0';
-                document.getElementById('CreateAllReport').value = '1';
-                document.getElementById('report_form').submit();
-                document.getElementById('CreateAllReport').value = '0';
-            }
-            return href_post;
-        }
+		}
+		function ChangeWeekLesson() {
+			var href_post = confirm('Изменить Недклю/Урок?');
+			if (href_post) {
 
+			}
+		}
 
-        function SubmitData() {
+		//0-- только группа
+		//1-- группа и Формат образования
+		//2-- группа и другой день недели
+		function SubmitData(iType) {
             //document.getElementById('Report').value = '0';
             //document.getElementById('SendReport').value = '0';
             //document.getElementById('ChildrenId').value = '0'
+			if (iType == 0) {
+				document.getElementById('FormaFact').value = '0';
+				document.getElementById('WeekLesson').value = '0';
+			} else {
+				if (iType == 1)
+					document.getElementById('FormaFact').value = '1';
+				if (iType == 2)
+					document.getElementById('WeekLesson').value = '1';
+			}
             document.getElementById('report_form').submit();
             return false;
         }
-
+		$(function () {
+			ChangeWeekLesson = $("#ChangeWeekLesson");
+			document.getElementById('report_form').enctype = "multipart/form-data";
+			vWeekLessonDialog = $("#WeekLessonDialog").dialog({
+				autoOpen: false,
+				title: "Укажите неделю.урок",
+				resizable: false,
+				closeText: 'Отмена',
+				modal: true,
+				buttons: {
+					"Изменить": function () {
+						if (/^\d{1,2}\.\d{1}$/.test(ChangeWeekLesson.val())) {
+							document.getElementById('sWeekLessonR2').value = ChangeWeekLesson.val();
+							SubmitData(2);
+						} else {
+							alert('Укажите значение в формате (номер недели.номер урока)');
+						}
+					},
+					"Отмена": function () {
+						vWeekLessonDialog.dialog("close");
+					}
+				},
+			});
+			$("#WeekLessonSelect").on("click", function() {
+				vWeekLessonDialog.dialog("open");
+			});
+		});
     </script>
 <style type="text/css">
 	.fullproc {
@@ -1479,6 +1572,11 @@
 	}
 </style>
 {/literal}
+	<div id="WeekLessonDialog" title="Выбор новой Недели/урока">
+		<p><input id="ChangeWeekLesson" type="text"></p>
+	</div>
+
+
 <script type="text/javascript">
 	let iChildrensCount = {$iChildrensCount};
 	let iWhatDidLearnJ28Count = {$iWhatDidLearnJ28Count};
@@ -1497,8 +1595,8 @@
     <table style="margin: 0px auto;">
         <tr>
             <td>&nbsp;&nbsp;
-                <input type="submit" value="Обновить" class="no_print btn btn-default btn-sm"
-                       onclick="return SubmitData();"/>
+                <input type="button" value="Обновить" class="no_print btn btn-default btn-sm"
+                       onclick="return SubmitData(0);"/>
 			&nbsp;&nbsp;
             </td>
 			<td>
@@ -1509,7 +1607,7 @@
 			</td>
             <td>
 				&nbsp;&nbsp;
-				<input type="submit" value="Загрузить" class="no_print btn btn-default btn-sm" onclick="return SubmitData();"/>
+				<input type="button" value="Загрузить" class="no_print btn btn-default btn-sm" onclick="return CheckSave();"/>
             </td>
         </tr>
     </table>
@@ -1561,7 +1659,7 @@
 						<td class="s1"
 						    dir="ltr"
 						    colspan="2" id="sGroupname" >
-                <select class="fullproc" name="iGroupId" onchange="return  SubmitData();">
+                <select class="fullproc" id="iGroupId" name="iGroupId" onchange="return  SubmitData(0);">
                     {foreach from=$vGroups item=data name="rows"}
                         {if $data.GroupId == $iGroupId}
                             <option selected value="{$data.GroupId}">{$data.GroupName}</option>
@@ -1588,7 +1686,7 @@
 						<td class="s1"
 						    dir="ltr">
 							{if $bIsAdmin}
-								<select class="fullproc" name="sFormatFactO1" onchange="return  SubmitData();">
+								<select class="fullproc" name="sFormatFactO1" onchange="return  SubmitData(1);">
 									{$vForms = ['очно', 'онлайн']}
 									{foreach $vForms as $vForm}
 										{if $vForm == $sFormatPlanL1}
@@ -1604,7 +1702,7 @@
 						</td>
 						<td class="s0"
 						    dir="ltr"
-						    colspan="4">Информация по занятию</td>
+						    colspan="4">Информация по занятию<input type=hidden name="sDateTimeT1" id="sDateTimeT1" value="{$sDateTimeT1}"/></td>
 						<td class="s4"
 						    colspan="2">{$sDateTimeT1}
 						<!--<input type="text" name="sDateT1" id="sDateT1" value="{$sDateT1}" size="10" class="datepicker form-control form-control-160"/>-->
@@ -1625,7 +1723,7 @@
 						</th>
 						<td class="s7"
 						    dir="ltr"
-						    colspan="2">Преподаватель 1</td>
+						    colspan="2">Преподаватель 1<input id="iTeacherFioFactId" name="iTeacherFioFactId" type="hidden" value="{$iTeacherFioFactId}"/></td>
 						<td class="s7"
 						    dir="ltr"
 						    colspan="3">{$sTeacherFioFactD2}</td>
@@ -1646,15 +1744,16 @@
 						    dir="ltr"
 						    colspan="2">Неделя/Урок</td>
 						<td class="s10"
-						    dir="ltr">{$sWeekLessonR2}</td>
+						    dir="ltr">{$sWeekLessonR2}
+							<input type=hidden name="sWeekLessonR2" id="sWeekLessonR2" value="{$sWeekLessonR2}"/></td>
 						<td class="s10"
-						    dir="ltr">{$sWeekLessonR2}</td>
+						    dir="ltr"><a href="#" id="WeekLessonSelect" title="Изменить Недлю/урок">{$sWeekLessonR2}</a></td>
 						<td class="s0"
-						    dir="ltr">Учебный год</td>
+						    dir="ltr">Учебный год<input type=hidden name="sAcademicYearU2" id="sAcademicYearU2" value="{$sAcademicYearU2}"/></td>
 						<td class="s1">{$sAcademicYearU2}</td>
 						<td class="s9"
 						    dir="ltr"
-						    colspan="2">Возраст</td>
+						    colspan="2">Возраст<input type=hidden name="sProgramAgeX2" id="sProgramAgeX2" value="{$sProgramAgeX2}"/></td>
 						<td class="s9"
 						    dir="ltr"
 						    colspan="2">{$sProgramAgeX2}</td>
@@ -1673,7 +1772,7 @@
 						    dir="ltr"
 						    colspan="3">
 							{if $bIsAdmin}
-								<select class="fullproc" name="iTeacherId2">
+								<select class="fullproc" id="iTeacherFioFactId2" name="iTeacherFioFactId2">
 									{foreach from=$vTeachers item=data name="rows"}
 										<option value="{$data.TeacherId}">{$data.TeacherName}</option>
 									{/foreach}
@@ -1682,7 +1781,7 @@
 						</td>
 						<td class="s7"
 						    dir="ltr"
-						    colspan="2">ДЗ</td>
+						    colspan="2">ДЗ<input type=hidden name="sProgramForYearL3" id="sProgramForYearL3" value="{$sProgramForYearL3}"/></td>
 						<td class="s12"
 						    colspan="4">Код задания {$sProgramForYearL3}</td>
 						<td class="s13"
@@ -1813,13 +1912,13 @@
 						    dir="ltr"
 						    colspan="3">Тема</td>
 						<td class="s12"
-						    colspan="4">{$sTopicJ8}</td>
+						    colspan="4"><input type=hidden name="sTopicJ8" id="sTopicJ8" value="{$sTopicJ8}"/>{$sTopicJ8}</td>
 						<td class="s12"
-						    colspan="4">{$sTopicN8}</td>
+						    colspan="4"><input type=hidden name="sTopicN8" id="sTopicN8" value="{$sTopicN8}"/>{$sTopicN8}</td>
 						<td class="s12"
-						    colspan="4">{$sTopicR8}</td>
+						    colspan="4"><input type=hidden name="sTopicR8" id="sTopicR8" value="{$sTopicR8}"/>{$sTopicR8}</td>
 						<td class="s12"
-						    colspan="4">{$sTopicV8}</td>
+						    colspan="4"><input type=hidden name="sTopicV8" id="sTopicV8" value="{$sTopicV8}"/>{$sTopicV8}</td>
 						<td class="s23"/>
 						<td class="s24"
 						    dir="ltr"/>
@@ -1901,16 +2000,16 @@
 						    dir="ltr">ID</td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания {$sJobCodeJ11}</td>
+						    colspan="4">Код задания {$sJobCodeJ11}<input type=hidden name="sJobCodeJ11" id="sJobCodeJ11" value="{$sJobCodeJ11}"/></td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания {$sJobCodeN11}</td>
+						    colspan="4">Код задания {$sJobCodeN11}<input type=hidden name="sJobCodeN11" id="sJobCodeN11" value="{$sJobCodeN11}"/></td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания {$sJobCodeR11}</td>
+						    colspan="4">Код задания {$sJobCodeR11}<input type=hidden name="sJobCodeR11" id="sJobCodeR11" value="{$sJobCodeR11}"/></td>
 						<td class="s12"
 						    dir="ltr"
-						    colspan="4">Код задания {$sJobCodeV11}</td>
+						    colspan="4">Код задания {$sJobCodeV11}<input type=hidden name="sJobCodeV11" id="sJobCodeV11" value="{$sJobCodeV11}"/></td>
 					</tr>
 				{foreach from=$lines item=data name="rows"}
 					<tr style="height: 20px">
@@ -1944,6 +2043,7 @@
 								{/if}
 							</select>
 							/{$data.WorkingOff}
+							<input type=hidden name="iHH{$data.iPos}" id="iHH{$data.iPos}" value="{$data.WorkingOff}"/>
 						</td>
 						<td class="s12" dir="ltr">
 							<select id="iI{$data.iPos}" name="iI{$data.iPos}" class="fullproc">
@@ -2890,9 +2990,8 @@
 									</tbody>
 								</table>
 							</div>
-
-
-
-<input type=hidden name="Report" id="Report" value="0"/>
-
+<input type=hidden name="SaveReport" id="SaveReport" value="0"/>
+<input type=hidden name="FormaFact" id="FormaFact" value="0"/>
+<input type=hidden name="WeekLesson" id="WeekLesson" value="0"/>
+<input type=hidden name="iChildrensCount" id="iChildrensCount" value="{$iChildrensCount}"/>
 <input type=hidden name=csrf value='{$csrf}'/>

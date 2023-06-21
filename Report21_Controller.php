@@ -1,6 +1,6 @@
 <?php
 $bdebug = false;
-if($bdebug) "<pre>".var_dump($_REQUEST)."</pre><br>";
+if($bdebug) echo "<pre>".var_dump($_REQUEST)."</pre><br>";
 //if ($_REQUEST['sDateT1']) {
 //    $sDateT1 = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateT1'])));
 //} else {
@@ -12,6 +12,33 @@ if ($_REQUEST['iGroupId']) {
 
 } else {
     $iGroupId = 0;
+}
+
+//сохраняем данные
+if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
+   // data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
+
+    //[Foto1] => Array ( [name] => 2896b.jpg [type] => image/jpeg [tmp_name] => /home/crm149992/tmp/apache/phpkdgGMg [error] => 0 [size] => 29059
+    //[iGroupId] => 268 [sFormatFactO1] => очно [sWeekLessonR2] => 10.1 [iTeacherId2] => 0 [CommentNextClass] => [CommentTopicLevelJ4] =>
+    //    [CommentTopicLevelN4] => [CommentTopicLevelR4] => [CommentTopicLevelV4] => [CommentTaskLevelJ5] => [CommentTaskLevelN5] =>
+    //    [CommentTaskLevelR5] => [CommentTaskLevelV5] =>
+    //    [iB1] => 87 [iG1] => [iH1] => [iI1] => [iJ1] => + [iL1] => [iN1] => [iP1] => [iR1] => [iT1] => [iV1] => [iX1] => [iAI1] => 0
+    //    [iB2] => 248 [iG2] => [iH2] => [iI2] => н [iJ2] => [iL2] => [iN2] => [iP2] => [iR2] => [iT2] => [iV2] => [iX2] => [iAI2] => 0
+    //    [iB3] => 207 [iG3] => [iH3] => [iI3] => н [iJ3] => [iL3] => [iN3] => [iP3] => [iR3] => [iT3] => [iV3] => [iX3] => [iAI3] => 0
+    //    [iB4] => 202 [iG4] => [iH4] => [iI4] => н [iJ4] => [iL4] => [iN4] => [iP4] => [iR4] => [iT4] => [iV4] => [iX4] => [iAI4] => 0
+    //    [iB5] => 231 [iG5] => [iH5] => [iI5] => н [iJ5] => [iL5] => [iN5] => [iP5] => [iR5] => [iT5] => [iV5] => [iX5] => [iAI5] => 0
+    //    [iPayPlan_F28] => Оплата [iPayFact_F28] =>
+    //    [iJ28] => 619 [iN28] => 0 [iR28] => 0 [iV28] => 0 [NotesJ31] => [NotesN31] => [NotesR31] => [NotesV31] =>
+    //    [iJ44_1] => 783 [iN44_1] => 0 [iR44_1] => 0 [iV44_1] => 0
+    //    [iJ44_2] => 0 [iN44_2] => 0 [iR44_2] => 0 [iV44_2] => 0
+    //    [iJ44_3] => 0 [iN44_3] => 0 [iR44_3] => 0 [iV44_3] => 0
+    //    [iJ44_4] => 0 [iN44_4] => 0 [iR44_4] => 0 [iV44_4] => 0
+    //    [iJ44_5] => 0 [iN44_5] => 0 [iR44_5] => 0 [iV44_5] => 0
+    //    [SaveReport] => 1 [FormaFact] => 0 [WeekLesson] => 0
+    //занятие 780
+
+    echo "<pre>".print_r($_REQUEST)."</pre><br>";
+    echo "<pre>".print_r($_FILES)."</pre><br>";
 }
 
 $sDateZero = '0000-00-00 00:00:00';
