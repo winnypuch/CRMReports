@@ -16,7 +16,118 @@ if ($_REQUEST['iGroupId']) {
 
 //сохраняем данные
 if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
-   // data_insert(940, array('status'=>'0', 'f17430'=>$iUserId, 'f17480' => intval($_REQUEST['update_teacherid']),'f17420'=>$sDateNow, 'f17470'=>'ЗП', 'f17450' => intval($_REQUEST['update_sum'])));
+    $aWeekLessonR2 = explode(".", $_REQUEST['sWeekLessonR2']);
+    if(is_array($aWeekLessonR2) && count($aWeekLessonR2) == 2) {
+        $sClassDate = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])));
+        data_insert(780,
+            EVENTS_ENABLE,
+            array('status'=>'0'
+            , 'f12750'=> date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])))
+            , 'f12770' => $_REQUEST['sAcademicYearU2']
+            , 'f12790' => $_REQUEST['iTeacherFioFactId']
+            , 'f12850' => $_REQUEST['iTeacherFioFactId2']
+            , 'f12810' => $_REQUEST['sProgramAgeX2']
+            , 'f13470' => $_REQUEST['iPayPlan_F28']
+            , 'f12820' => $_REQUEST['sFormatFactO1']
+            , 'f12870' => $_REQUEST['iGroupId']
+            , 'f13020' => $aWeekLessonR2[0]
+            , 'f13340' => $aWeekLessonR2[1]
+            , 'f13010' => $_REQUEST['CommentNextClass']
+            , 'f12890' => $_REQUEST['sProgramForYearL3']
+            , 'f16430' => $_REQUEST['sTopicJ8']
+            , 'f12930' => $_REQUEST['sJobCodeJ11']
+            , 'f13180' => $_REQUEST['CommentTopicLevelJ4']
+            , 'f12960' => $_REQUEST['CommentTaskLevelJ5']
+            , 'f13030' => $_REQUEST['NotesJ31']
+            , 'f17950' => $_REQUEST['iJ28_Text']
+            , 'f13260' => $_REQUEST['sJobCodeN11']
+            , 'f16440' => $_REQUEST['sTopicN8']
+            , 'f13250' => $_REQUEST['CommentTopicLevelN4']
+            , 'f13280' => $_REQUEST['CommentTaskLevelN5']
+            , 'f13290' => $_REQUEST['NotesN31']
+            , 'f17960' => $_REQUEST['iN28_Text']
+            , 'f13330' => $_REQUEST['sJobCodeR11']
+            , 'f16450' => $_REQUEST['sTopicR8']
+            , 'f13320' => $_REQUEST['CommentTopicLevelR4']
+            , 'f13360' => $_REQUEST['CommentTaskLevelR5']
+            , 'f13370' => $_REQUEST['NotesR31']
+            , 'f17970' => $_REQUEST['iR28_Text']
+            , 'f13410' => $_REQUEST['sJobCodeV11']
+            , 'f16460' => $_REQUEST['sTopicV8']
+            , 'f13400' => $_REQUEST['CommentTopicLevelV4']
+            , 'f13430' => $_REQUEST['CommentTaskLevelV5']
+            , 'f13440' => $_REQUEST['NotesV31']
+            , 'f17980' => $_REQUEST['iV28_Text']
+            ));
+        for ($i = 1; $i <= $_REQUEST['iChildrensCount']; $i++)
+        {
+            //отработка
+            $sWorkingOut = $_REQUEST['iHH'.strval($i)];
+            $iDisc = 0;
+            $iPriceClassPlan = 0;
+            $iPriceMonthPlan = 0;
+            $sWhereToPay = "";
+            $iSelectGroup = $_REQUEST['iGroupId'];
+            if($sWorkingOut != ""){{
+                $sWorkingOut = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['iHH'.strval($i)])));
+                if($vGroup = data_select_field(820, "f14920 AS GroupId", "f15070='", $sClassDate, "' AND f14960='", $iSelectGroup, "' AND f14890='", $_REQUEST['iB'.strval($i)], "' AND status='0'")) {
+                    if($vRowGroup = sql_fetch_assoc($vGroup)){
+                        $iSelectGroup = $vRowGroup['GroupId'];
+                    } else {
+                        $iSelectGroup = 0;
+                    }
+                } else {
+                    $iSelectGroup = 0;
+                }
+            }
+            if($result2 = data_select_field(720, "f11540 AS Disk, f15460 AS WhereToPay", "f11480='", $iSelectGroup, "' AND f11460='", $_REQUEST['iB'.strval($i)], "' AND status='0'")) {
+                if($row2 = sql_fetch_assoc($result2)){
+                    $iDisc = $row2['Disk'];
+                    $sWhereToPay = $row2['WhereToPay'];
+                }
+            }
+            if($result2 = data_select_field(700, "f11310 AS PriceClassPlan, f11320 AS ", "f11090='", $iSelectGroup, "' AND status='0'")) {
+                if($row2 = sql_fetch_assoc($result2)){
+                    $iPriceClassPlan = $row2['PriceClassPlan'];
+                    $iPriceMonthPlan = $row2['PriceMonthPlan'];
+                }
+            }
+
+            data_insert(780,
+             EVENTS_ENABLE,
+             array('status'=>'0'
+             , 'f14820'=> date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])))
+             , 'f14680' => $_REQUEST['iB'.strval($i)]
+             , 'f14700' => $_REQUEST['iI'.strval($i)]
+             , 'f14670' => $_REQUEST['iH'.strval($i)]
+             , 'f14710' => $sWorkingOut
+             , 'f14690' => $_REQUEST['iG'.strval($i)]
+             , 'f14170' => $_REQUEST['sJobCodeJ11']
+             , 'f14470' => $_REQUEST['iJ'.strval($i)]
+             , 'f14480' => $_REQUEST['iL'.strval($i)]
+             , 'f14720' => $_REQUEST['iJ44_'.strval($i)]
+             , 'f14460' => $_REQUEST['sJobCodeN11']
+             , 'f14490' => $_REQUEST['iN'.strval($i)]
+             , 'f14500' => $_REQUEST['iP'.strval($i)]
+             , 'f14730' => $_REQUEST['iN44_'.strval($i)]
+             , 'f14310' => $_REQUEST['sJobCodeR11']
+             , 'f14510' => $_REQUEST['iR'.strval($i)]
+             , 'f14520' => $_REQUEST['iT'.strval($i)]
+             , 'f14740' => $_REQUEST['iR44_'.strval($i)]
+             , 'f14380' => $_REQUEST['sJobCodeV11']
+             , 'f14530' => $_REQUEST['iV'.strval($i)]
+             , 'f14540' => $_REQUEST['iX'.strval($i)]
+             , 'f14750' => $_REQUEST['iV44_'.strval($i)]
+             , 'f14770' => $iDisc
+             , 'f14810' => $iPriceClassPlan
+             , 'f14790' => $iPriceMonthPlan
+             , 'f16290' => $sWhereToPay
+             ));
+        }
+        //iChildrensCount
+    } else {
+        echo "Ошибка данных Неделя.урок -- " .$_REQUEST['sWeekLessonR2']."<br>";
+    }
 
     //[Foto1] => Array ( [name] => 2896b.jpg [type] => image/jpeg [tmp_name] => /home/crm149992/tmp/apache/phpkdgGMg [error] => 0 [size] => 29059
     //[iGroupId] => 268 [sFormatFactO1] => очно [sWeekLessonR2] => 10.1 [iTeacherId2] => 0 [CommentNextClass] => [CommentTopicLevelJ4] =>
@@ -228,10 +339,13 @@ if($vGroupData = sql_query($sSqlQueryGroup)){
 //$aDaysEn = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
 $aDays = array('Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота');
 $aDaysToEng = array('Воскресенье' => 'sunday', 'Понедельник' => 'monday', 'Вторник' => 'tuesday', 'Среда' => 'wednesday', 'Четверг' => 'thursday', 'Пятница' => 'friday', 'Суббота' => 'saturday');
+//echo "----".$sMaxClassesDate."----";
 if($sMaxClassesDate == ""){
     $sStartDate = $sClassStartDate;
 }else{
-    $sStartDate = $sMaxClassesDate;
+    $dMaxClassesDate = new DateTime($sMaxClassesDate);
+    $dMaxClassesDate->modify('+1 day');
+    $sStartDate = $dMaxClassesDate->format("Y-m-d 00:00:00");
 }
 $dStartDate = new DateTime($sStartDate);
 $sStartWeekDay = strtolower(date("l", strtotime($sStartDate)));
@@ -315,7 +429,7 @@ if($iColClass > 0){
             $iWeek = intval($vRowClassesData['Week']);
             if ($vResLessonData = sql_query("SELECT MAX(f13340) AS Lesson FROM " . DATA_TABLE . get_table_id(780) ." WHERE f13020 = '".$iWeek."' AND f12870='" . $iGroupId . "' AND status='0'")) {
                 if ($vRowLessonData = sql_fetch_assoc($vResLessonData)) {
-                    $iLesson = intval($vRowLessonData['Week']);
+                    $iLesson = intval($vRowLessonData['Lesson']);
                     if($iColClass == 1) {
                         $iWeek++;
                         $iLesson = 1;
@@ -439,6 +553,7 @@ if($iColClass > 0){
            AND ProgramForYear.status = 0";
     if($iColClass  > 1)
         $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'";
+    $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." ORDER BY Tasks.Id";
 
     $i = 0;
     $sJobId  = 0;
@@ -1184,6 +1299,7 @@ $smarty->assign("iRecomendationN44Count", count($vRecomendationN44));
 $smarty->assign("iRecomendationR44Count", count($vRecomendationR44));
 $smarty->assign("iRecomendationV44Count", count($vRecomendationV44));
 $smarty->assign("iChildrensCount", count($vLines));
+$smarty->assign("iTeacherFioFactId", $iGroupTeacherId);
 
 
 

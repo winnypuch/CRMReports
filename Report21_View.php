@@ -18,20 +18,17 @@
 					if (iRecCount > 0) {
 						if (iRecCount == 1) {
 							vRecom.selectedIndex = 1;
-							vRecom.style.backgroundColor = "#93C47D";
 						} else {
 							vRecom.value = '-2';
-							vRecom.style.backgroundColor = "yellow";
 						}
 					} else {
 						vRecom.value = '-1';
-						vRecom.style.backgroundColor="white";
 					}
 				}
 			} else {
 				vRecom.value = '0';
-				vRecom.style.backgroundColor="white";
 			}
+			ChangeFactRecomendation(sRecId + iPos);
 		}
 
 		function Validation(sValName, sRecId, iRecCount, iPos) {
@@ -90,6 +87,8 @@
 		function ChangeFactRecomendation(sRecomendation) {
 			//debugger;
 			var vRecom = document.getElementById(sRecomendation);
+			var vRecomText = document.getElementById(sRecomendation + '_Text');
+			vRecomText.value = vRecom.options[vRecom.selectedIndex].text
 			switch (vRecom.value) {
 				case '0':
 				case '-1':
@@ -218,13 +217,6 @@
 			}
 
 		}
-		function ChangeWeekLesson() {
-			var href_post = confirm('Изменить Недклю/Урок?');
-			if (href_post) {
-
-			}
-		}
-
 		//0-- только группа
 		//1-- группа и Формат образования
 		//2-- группа и другой день недели
@@ -1746,7 +1738,7 @@
 						<td class="s10"
 						    dir="ltr">{$sWeekLessonR2}
 							<input type=hidden name="sWeekLessonR2" id="sWeekLessonR2" value="{$sWeekLessonR2}"/></td>
-						<td class="s10"
+						<td class="s14"
 						    dir="ltr"><a href="#" id="WeekLessonSelect" title="Изменить Недлю/урок">{$sWeekLessonR2}</a></td>
 						<td class="s0"
 						    dir="ltr">Учебный год<input type=hidden name="sAcademicYearU2" id="sAcademicYearU2" value="{$sAcademicYearU2}"/></td>
@@ -2137,7 +2129,7 @@
 							{if $bIsAdmin}
 								<select name="iAI{$data.iPos}">
 									{foreach from=$vGifts item=data name="rows"}
-										<option value="{$data.GiftId}">{$data.GiftName}</option>
+										<option value="{$data.GiftName}">{$data.GiftName}</option>
 									{/foreach}
 								</select>
 							{/if}
@@ -2172,6 +2164,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
+								<input type=hidden name="iJ28_Text" id="iJ28_Text" value=""/>
 								<select class="fullproc" id="iJ28" name="iJ28" onchange="ChangeFactRecomendation('iJ28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnJ28Count > 0}
@@ -2189,6 +2182,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
+								<input type=hidden name="iN28_Text" id="iN28_Text" value=""/>
 								<select class="fullproc" id="iN28" name="iN28" onchange="ChangeFactRecomendation('iN28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnN28Count > 0}
@@ -2206,6 +2200,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
+								<input type=hidden name="iR28_Text" id="iR28_Text" value=""/>
 								<select class="fullproc" id="iR28" name="iR28" onchange="ChangeFactRecomendation('iR28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnR28Count > 0}
@@ -2223,6 +2218,7 @@
 						<td class="s17"
 						    dir="ltr"
 						    colspan="4">
+								<input type=hidden name="iV28_Text" id="iV28_Text" value=""/>
 								<select class="fullproc" id="iV28" name="iV28" onchange="ChangeFactRecomendation('iV28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnV28Count > 0}
@@ -2670,6 +2666,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
+										<input type=hidden name="iJ44_{$data.iPos}_Text" id="iJ44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationJ44Count > 0}
@@ -2691,6 +2688,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
+										<input type=hidden name="iN44_{$data.iPos}_Text" id="iN44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationN44Count > 0}
@@ -2712,7 +2710,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
-
+										<input type=hidden name="iR44_{$data.iPos}_Text" id="iR44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationR44Count > 0}
@@ -2734,6 +2732,7 @@
 									<td class="s55"
 									    dir="ltr"
 									    colspan="4">
+										<input type=hidden name="iV44_{$data.iPos}_Text" id="iV44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
 											<option value="0"></option>
 											{if $iRecomendationV44Count > 0}
