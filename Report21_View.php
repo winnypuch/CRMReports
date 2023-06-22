@@ -309,7 +309,7 @@
 			});
 			$("#WeekLessonSelect").on("click", function() {
 				vWeekLessonDialog.dialog("open");
-				ChangeWeekLesson.val() = document.getElementById('sWeekLessonR2').value;
+				ChangeWeekLesson.val(document.getElementById('sWeekLessonR2').value);
 			});
 		});
     </script>
