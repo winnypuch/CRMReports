@@ -31,45 +31,66 @@
 			ChangeFactRecomendation(sRecId + iPos);
 		}
 
+		function ChangeWhatDidLearn(sRecId, iRecCount, iPos, iAction) {
+			var vRecom = document.getElementById(sRecId + iPos);
+			if (iAction == 1) {
+				if (vRecom.value == '0') {
+					if (iRecCount > 0) {
+						if (iRecCount == 1) {
+							vRecom.selectedIndex = 1;
+						} else {
+							vRecom.value = '-2';
+						}
+					} else {
+						vRecom.value = '-1';
+					}
+				}
+			} else {
+				vRecom.value = '0';
+			}
+			ChangeWhatDidLearnColor(sRecId + iPos);
+		}
+
+
 		function Validation(sValName, sRecId, iRecCount, iPos) {
 			//debugger;
 			if (sValName == 'iJ' || sValName == 'iL') {
 				if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-					ChangeRecomendation('iJ28', iWhatDidLearnJ28Count, '', 2);
+					ChangeWhatDidLearn('iJ28', iWhatDidLearnJ28Count, '', 2);
 				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
-					ChangeRecomendation('iJ28', iWhatDidLearnJ28Count, '', 1);
+					ChangeWhatDidLearn('iJ28', iWhatDidLearnJ28Count, '', 1);
 				}
 			}
 
 			if (sValName == 'iN' || sValName == 'iP') {
 				if (document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-					ChangeRecomendation('iN28', iWhatDidLearnN28Count, '', 2);
+					ChangeWhatDidLearn('iN28', iWhatDidLearnN28Count, '', 2);
 				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
-					ChangeRecomendation('iN28', iWhatDidLearnN28Count, '', 1);
+					ChangeWhatDidLearn('iN28', iWhatDidLearnN28Count, '', 1);
 				}
 			}
 
 			if (sValName == 'iR' || sValName == 'iT') {
 				if (document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-					ChangeRecomendation('iR28', iWhatDidLearnR28Count, '', 2);
+					ChangeWhatDidLearn('iR28', iWhatDidLearnR28Count, '', 2);
 				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
-					ChangeRecomendation('iR28', iWhatDidLearnR28Count, '', 1);
+					ChangeWhatDidLearn('iR28', iWhatDidLearnR28Count, '', 1);
 				}
 			}
 
 			if (sValName == 'iV' || sValName == 'iX') {
 				if (document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '') {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
-					ChangeRecomendation('iV28', iWhatDidLearnV28Count, '', 2);
+					ChangeWhatDidLearn('iV28', iWhatDidLearnV28Count, '', 2);
 				} else {
 					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
-					ChangeRecomendation('iV28', iWhatDidLearnV28Count, '', 1);
+					ChangeWhatDidLearn('iV28', iWhatDidLearnV28Count, '', 1);
 				}
 			}
 
@@ -82,13 +103,36 @@
 			CheckPay();
 		}
 
+		function ChangeWhatDidLearnColor(sRecomendation) {
+			//debugger;
+			var vRecom = document.getElementById(sRecomendation);
+			var vRecomText = document.getElementById(sRecomendation + '_Text');
+			vRecomText.value = vRecom.options[vRecom.selectedIndex].text
+			switch (vRecom.value) {
+				case '0':
+				case '-1':
+					vRecom.style.backgroundColor="white";
+					break;
+				case '-2':
+					vRecom.style.backgroundColor="yellow";
+					break;
+				default:
+					vRecom.style.backgroundColor="#93C47D";
+            }
+		}
 
 
 		function ChangeFactRecomendation(sRecomendation) {
 			//debugger;
 			var vRecom = document.getElementById(sRecomendation);
 			var vRecomText = document.getElementById(sRecomendation + '_Text');
-			vRecomText.value = vRecom.options[vRecom.selectedIndex].text
+			vRecomText.value = vRecom.options[vRecom.selectedIndex].dataset.reccode;
+			var vRecomLink = document.getElementById(sRecomendation + '_Link');
+			if (vRecom.options[vRecom.selectedIndex].dataset.reclink != '') {
+				vRecomLink.innerHTML = "<a target = \"_blank\" href = \""+vRecom.options[vRecom.selectedIndex].dataset.reclink+"\">ссылка</a>";
+			} else {
+				vRecomLink.innerHTML = '';
+			}
 			switch (vRecom.value) {
 				case '0':
 				case '-1':
@@ -118,12 +162,16 @@
 				let vPayPlanText = document.getElementById("iPayPlan_F28_Text");
 				if (bIsPay) {
 					vPayPlan.value = 'Оплата';
-					vPayPlanText.textContent = 'Оплата';
-					vPayPlanText.style.backgroundColor = "#93C47D";
+					if (bIsAdmin) {
+						vPayPlanText.textContent = 'Оплата';
+						vPayPlanText.style.backgroundColor = "#93C47D";
+					}
 				} else {
 					vPayPlan.value = 'Неоплата';
-					vPayPlanText.textContent = 'Неоплата';
-					vPayPlanText.style.backgroundColor = "#FF0000";
+					if (bIsAdmin) {
+						vPayPlanText.textContent = 'Неоплата';
+						vPayPlanText.style.backgroundColor = "#FF0000";
+					}
 				}
 			}
 		}
@@ -261,6 +309,7 @@
 			});
 			$("#WeekLessonSelect").on("click", function() {
 				vWeekLessonDialog.dialog("open");
+				ChangeWeekLesson.val() = document.getElementById('sWeekLessonR2').value;
 			});
 		});
     </script>
@@ -1466,7 +1515,7 @@
 		color: #000000;
 		font-family: 'Times New Roman';
 		font-size: 10pt;
-		vertical-align: bottom;
+		vertical-align: middle;
 		white-space: nowrap;
 		direction: ltr;
 		padding: 2px 3px 2px 3px;
@@ -1568,13 +1617,13 @@
 		<p><input id="ChangeWeekLesson" type="text"></p>
 	</div>
 
-
 <script type="text/javascript">
 	let iChildrensCount = {$iChildrensCount};
 	let iWhatDidLearnJ28Count = {$iWhatDidLearnJ28Count};
 	let iWhatDidLearnN28Count = {$iWhatDidLearnN28Count};
 	let iWhatDidLearnR28Count = {$iWhatDidLearnR28Count};
 	let iWhatDidLearnV28Count = {$iWhatDidLearnV28Count};
+	let bIsAdmin = {if $bIsAdmin}true{else}false{/if};
 </script>
 <div class="title">
 <span style="float: right; font-size: 12px; margin-top: 5px;" class="no_print">
@@ -2016,22 +2065,22 @@
 						<td class="s12"
 						    dir="ltr">{$data.ClassGroup}</td>
 						<td class="s12">{$data.PickGivesName}</td>
-						<td class="s12" dir="ltr">{$data.Stars}</td>
-						<td class="s12" dir="ltr">
-							<select name="iG{$data.iPos}" class="fullproc">
-								<option value="" selected></option>
-								<option value="+">+</option>
-								<option value="-">-</option>
-							</select>
+						<td class="s12" dir="ltr">{if $bIsAdmin}{$data.Stars}{/if}</td>
+						<td class="s12" dir="ltr" style="width:40px">
+							{if $bIsAdmin}
+							<input id="iG{$data.iPos}" style="width:30px" name="iG{$data.iPos}" type="number" value=""/>
+							{else}
+							<input id="iG{$data.iPos}" style="width:30px" name="iG{$data.iPos}" type="hidden" value=""/>
+							{/if}
 						</td>
 						<td class="s29">
 							<select name="iH{$data.iPos}">
-								{if $data.Trial=='Пробное' || $data.Trial=='пробное'}
+								{if $data.Trial=='пробное'}
 									<option value=""></option>
-									<option value="Пробное" selected style="background-color:green;">Пробное</option>
+									<option value="пробное" selected style="background-color:green;">пробное</option>
 								{else}
 									<option value="" selected></option>
-									<option value="Пробное" style="background-color:green;">Пробное</option>
+									<option value="пробное" style="background-color:green;">пробное</option>
 								{/if}
 							</select>
 							/{$data.WorkingOff}
@@ -2145,16 +2194,20 @@
 						<td class="s32"><input id="iPayPlan_F28" name="iPayPlan_F28" type="hidden" value="Неоплата"/></td>
 						<td class="s1"
 						    dir="ltr"
-						    colspan="2" id="iPayPlan_F28_Text" style="background-color:#FF0000;">Неоплата</td>
+						    colspan="2" id="iPayPlan_F28_Text" {if $bIsAdmin}style="background-color:#FF0000;"{/if}>{if $bIsAdmin}Неоплата{/if}</td>
 
 						<td class="s1"
 						    dir="ltr"
 						    colspan="2">
+							{if $bIsAdmin}
 							<select class="fullproc" name="iPayFact_F28" id="iPayFact_F28" onchange="ChangePay()">
 								<option value="" selected></option>
 								<option value="Оплата" class="greenbk">Оплата</option>
 								<option value="Неоплата" class="redbk">Неоплата</option>
 							</select>
+							{else}
+							<input id="iPayFact_F28" name="iPayFact_F28" type="hidden" value=""/>
+							{/if}
 						</td>
 						<td class="s34"
 						    dir="ltr"
@@ -2165,7 +2218,7 @@
 						    dir="ltr"
 						    colspan="4">
 								<input type=hidden name="iJ28_Text" id="iJ28_Text" value=""/>
-								<select class="fullproc" id="iJ28" name="iJ28" onchange="ChangeFactRecomendation('iJ28')">
+								<select class="fullproc" id="iJ28" name="iJ28" onchange="ChangeWhatDidLearnColor('iJ28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnJ28Count > 0}
 										{if $iWhatDidLearnJ28Count > 1}
@@ -2183,7 +2236,7 @@
 						    dir="ltr"
 						    colspan="4">
 								<input type=hidden name="iN28_Text" id="iN28_Text" value=""/>
-								<select class="fullproc" id="iN28" name="iN28" onchange="ChangeFactRecomendation('iN28')">
+								<select class="fullproc" id="iN28" name="iN28" onchange="ChangeWhatDidLearnColor('iN28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnN28Count > 0}
 										{if $iWhatDidLearnN28Count > 1}
@@ -2201,7 +2254,7 @@
 						    dir="ltr"
 						    colspan="4">
 								<input type=hidden name="iR28_Text" id="iR28_Text" value=""/>
-								<select class="fullproc" id="iR28" name="iR28" onchange="ChangeFactRecomendation('iR28')">
+								<select class="fullproc" id="iR28" name="iR28" onchange="ChangeWhatDidLearnColor('iR28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnR28Count > 0}
 										{if $iWhatDidLearnR28Count > 1}
@@ -2219,7 +2272,7 @@
 						    dir="ltr"
 						    colspan="4">
 								<input type=hidden name="iV28_Text" id="iV28_Text" value=""/>
-								<select class="fullproc" id="iV28" name="iV28" onchange="ChangeFactRecomendation('iV28')">
+								<select class="fullproc" id="iV28" name="iV28" onchange="ChangeWhatDidLearnColor('iV28')">
 									<option value="0"></option>
 									{if $iWhatDidLearnV28Count > 0}
 										{if $iWhatDidLearnV28Count > 1}
@@ -2665,7 +2718,7 @@
 									    colspan="5">{$data.ChildrenFIO}</td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="4">
+									    colspan="3">
 										<input type=hidden name="iJ44_{$data.iPos}_Text" id="iJ44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
 											<option value="0"></option>
@@ -2674,20 +2727,19 @@
 													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationJ44 item=data name="rows"}
-													{if $data.RecomendationLink == ""}
-														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-													{else}
-														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
-													{/if}
+													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
 												<option value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
+									<td class="s68"
+										dir="ltr"
+										id="iJ44_{$data.iPos}_Link"></td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="4">
+									    colspan="3">
 										<input type=hidden name="iN44_{$data.iPos}_Text" id="iN44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
 											<option value="0"></option>
@@ -2696,20 +2748,19 @@
 													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationN44 item=data name="rows"}
-													{if $data.RecomendationLink == ""}
-														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-													{else}
-														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
-													{/if}
+													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
 												<option value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
+									<td class="s68"
+										dir="ltr"
+										id="iN44_{$data.iPos}_Link"></td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="4">
+									    colspan="3">
 										<input type=hidden name="iR44_{$data.iPos}_Text" id="iR44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
 											<option value="0"></option>
@@ -2718,20 +2769,19 @@
 													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationR44 item=data name="rows"}
-													{if $data.RecomendationLink == ""}
-														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-													{else}
-														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
-													{/if}
+													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
 												<option value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
+									<td class="s68"
+										dir="ltr"
+										id="iR44_{$data.iPos}_Link"></td>
 									<td class="s55"
 									    dir="ltr"
-									    colspan="4">
+									    colspan="3">
 										<input type=hidden name="iV44_{$data.iPos}_Text" id="iV44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
 											<option value="0"></option>
@@ -2740,17 +2790,16 @@
 													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationV44 item=data name="rows"}
-													{if $data.RecomendationLink == ""}
-														<option value="{$data.RecomendationId}">{$data.RecomendationText}</option>
-													{else}
-														<option value="{$data.RecomendationId}"><a target="_blank" href="{$data.RecomendationLink}">{$data.RecomendationText}</a></option>
-													{/if}
+													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
 												<option value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
+									<td class="s68"
+										dir="ltr"
+										id="iV44_{$data.iPos}_Link"></td>
 									<td class="s11"
 									    dir="ltr"/>
 									<td class="s11"/>
@@ -2990,7 +3039,7 @@
 								</table>
 							</div>
 <input type=hidden name="SaveReport" id="SaveReport" value="0"/>
-<input type=hidden name="FormaFact" id="FormaFact" value="0"/>
-<input type=hidden name="WeekLesson" id="WeekLesson" value="0"/>
+<input type=hidden name="FormaFact" id="FormaFact" value="{$FormaFact}"/>
+<input type=hidden name="WeekLesson" id="WeekLesson" value="{$WeekLesson}"/>
 <input type=hidden name="iChildrensCount" id="iChildrensCount" value="{$iChildrensCount}"/>
 <input type=hidden name=csrf value='{$csrf}'/>

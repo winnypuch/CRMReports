@@ -13,13 +13,14 @@ if ($_REQUEST['iGroupId']) {
 } else {
     $iGroupId = 0;
 }
-
+$bIsSave = false;
 //сохраняем данные
 if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
+    $bIsSave = true;
     $aWeekLessonR2 = explode(".", $_REQUEST['sWeekLessonR2']);
     if(is_array($aWeekLessonR2) && count($aWeekLessonR2) == 2) {
         $sClassDate = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])));
-        data_insert(780,
+        $iInsertId = data_insert(780,
             EVENTS_ENABLE,
             array('status'=>'0'
             , 'f12750'=> date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])))
@@ -59,6 +60,8 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
             , 'f13440' => $_REQUEST['NotesV31']
             , 'f17980' => $_REQUEST['iV28_Text']
             ));
+
+
         for ($i = 1; $i <= $_REQUEST['iChildrensCount']; $i++)
         {
             //отработка
@@ -68,7 +71,7 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
             $iPriceMonthPlan = 0;
             $sWhereToPay = "";
             $iSelectGroup = $_REQUEST['iGroupId'];
-            if($sWorkingOut != ""){{
+            if($sWorkingOut != ""){
                 $sWorkingOut = date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['iHH'.strval($i)])));
                 if($vGroup = data_select_field(820, "f14920 AS GroupId", "f15070='", $sClassDate, "' AND f14960='", $iSelectGroup, "' AND f14890='", $_REQUEST['iB'.strval($i)], "' AND status='0'")) {
                     if($vRowGroup = sql_fetch_assoc($vGroup)){
@@ -86,14 +89,17 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
                     $sWhereToPay = $row2['WhereToPay'];
                 }
             }
-            if($result2 = data_select_field(700, "f11310 AS PriceClassPlan, f11320 AS ", "f11090='", $iSelectGroup, "' AND status='0'")) {
+            if($result2 = data_select_field(700, "f11310 AS PriceClassPlan, f11320 AS PriceMonthPlan", "f11090='", $iSelectGroup, "' AND status='0'")) {
                 if($row2 = sql_fetch_assoc($result2)){
                     $iPriceClassPlan = $row2['PriceClassPlan'];
                     $iPriceMonthPlan = $row2['PriceMonthPlan'];
                 }
             }
-
-            data_insert(780,
+            //INSERT INTO f_data780 (status, f14820, f14680, f14670, f14690, f14170, f14470, f14480, f14720, f14460, f14490, f14500, f14730,
+            //f14310, f14510, f14520, f14740, f14380, f14530, f14540, f14750, f14770, f16290, user_id, add_time, f12770, f17500, f17490, r)
+            //VALUES ('0', '2023-09-11 00:00:00', '1081', 'Пробное', '+', '3.1.1|5969', '+', '+-', '3.1.1|5969:468', '2.5.2|6005', '+-', '+-', '2.5.2|6005:483',
+            //'2.5.1|6006', '+', '+-', '2.5.1|6006:454', '1.4.3|6054', '+', '+-', '1.4.3|6054:487', '0.00', '0', '10', '2023-06-22 15:49:02', '0', '0', '0', '1')
+            data_insert(810,
              EVENTS_ENABLE,
              array('status'=>'0'
              , 'f14820'=> date("Y-m-d 00:00:00", strtotime(form_eng_time($_REQUEST['sDateTimeT1'])))
@@ -102,29 +108,34 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
              , 'f14670' => $_REQUEST['iH'.strval($i)]
              , 'f14710' => $sWorkingOut
              , 'f14690' => $_REQUEST['iG'.strval($i)]
+             , 'f14760' => $_REQUEST['iAI'.strval($i)]
              , 'f14170' => $_REQUEST['sJobCodeJ11']
              , 'f14470' => $_REQUEST['iJ'.strval($i)]
              , 'f14480' => $_REQUEST['iL'.strval($i)]
-             , 'f14720' => $_REQUEST['iJ44_'.strval($i)]
+             , 'f14720' => $_REQUEST['iJ44_'.strval($i).'_Text']
              , 'f14460' => $_REQUEST['sJobCodeN11']
              , 'f14490' => $_REQUEST['iN'.strval($i)]
              , 'f14500' => $_REQUEST['iP'.strval($i)]
-             , 'f14730' => $_REQUEST['iN44_'.strval($i)]
+             , 'f14730' => $_REQUEST['iN44_'.strval($i).'_Text']
              , 'f14310' => $_REQUEST['sJobCodeR11']
              , 'f14510' => $_REQUEST['iR'.strval($i)]
              , 'f14520' => $_REQUEST['iT'.strval($i)]
-             , 'f14740' => $_REQUEST['iR44_'.strval($i)]
+             , 'f14740' => $_REQUEST['iR44_'.strval($i).'_Text']
              , 'f14380' => $_REQUEST['sJobCodeV11']
              , 'f14530' => $_REQUEST['iV'.strval($i)]
              , 'f14540' => $_REQUEST['iX'.strval($i)]
-             , 'f14750' => $_REQUEST['iV44_'.strval($i)]
+             , 'f14750' => $_REQUEST['iV44_'.strval($i).'_Text']
              , 'f14770' => $iDisc
              , 'f14810' => $iPriceClassPlan
              , 'f14790' => $iPriceMonthPlan
              , 'f16290' => $sWhereToPay
              ));
         }
-        //iChildrensCount
+
+        SaveFoto($iInsertId, 'Foto1', '13480');
+        SaveFoto($iInsertId, 'Foto2', '13490');
+
+
     } else {
         echo "Ошибка данных Неделя.урок -- " .$_REQUEST['sWeekLessonR2']."<br>";
     }
@@ -147,9 +158,6 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
     //    [iJ44_5] => 0 [iN44_5] => 0 [iR44_5] => 0 [iV44_5] => 0
     //    [SaveReport] => 1 [FormaFact] => 0 [WeekLesson] => 0
     //занятие 780
-
-    echo "<pre>".print_r($_REQUEST)."</pre><br>";
-    echo "<pre>".print_r($_FILES)."</pre><br>";
 }
 
 $sDateZero = '0000-00-00 00:00:00';
@@ -230,7 +238,8 @@ $vRecomendationN44 = [];
 $vRecomendationR44 = [];
 $vRecomendationV44 = [];
 $vTasks =[];
-
+$FormaFact = 0;
+$WeekLesson = 0;
 //методисты 2
 //педагоги таблица  520
 //педагоги 790 f9660 ФИО педагога сокр.
@@ -413,6 +422,12 @@ if($iColClass > 0){
             $sLessonTimeX1 = form_display($vScheduleRow['LessonTime']);
         }
     }
+//заменяем $sFormatPlanL1 из страницы
+    if (!$bIsSave && array_key_exists('FormaFact', $_REQUEST) && $_REQUEST['FormaFact'] == 1 && array_key_exists('sFormatFactO1', $_REQUEST)){
+            $sFormatPlanL1 = $_REQUEST['sFormatFactO1'];
+            $FormaFact = 1;
+    }
+
     //Учебный год
     $dTrainingBeg = new DateTime();
     $dTrainingBeg->setDate(intval($dSearchDate->format("Y")) - 1, 9, 1);
@@ -446,6 +461,14 @@ if($iColClass > 0){
             }
         }
     }
+    if (!$bIsSave && array_key_exists('WeekLesson', $_REQUEST) && $_REQUEST['WeekLesson'] == 1 && array_key_exists('sWeekLessonR2', $_REQUEST)){
+        $sWeekLessonR2 = $_REQUEST['sWeekLessonR2'];
+        $aWeekLessonR2 = explode(".", $_REQUEST['sWeekLessonR2']);
+        $iWeek = $aWeekLessonR2[0];
+        $iLesson = $aWeekLessonR2[1];
+        $WeekLesson = 1;
+    }
+
     //учителя
     $sSqlQueryTeachers = "SELECT
            Teachers.id AS TeacherId
@@ -601,6 +624,7 @@ if($iColClass > 0){
                                Recomendations.Id AS RecomendationId
                                , Recomendations.f10610 AS RecomendationText
                                , Recomendations.f10620 AS RecomendationLink
+                               , Recomendations.f13870 AS RecomendationCode
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
@@ -608,7 +632,7 @@ if($iColClass > 0){
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
-                            $vRecomendationJ44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                            $vRecomendationJ44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink'], "RecomendationCode" => $vRecomendationRow['RecomendationCode']);
                         }
                     }
 
@@ -649,6 +673,7 @@ if($iColClass > 0){
                                Recomendations.Id AS RecomendationId
                                , Recomendations.f10610 AS RecomendationText
                                , Recomendations.f10620 AS RecomendationLink
+                               , Recomendations.f13870 AS RecomendationCode
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
@@ -656,7 +681,7 @@ if($iColClass > 0){
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
-                            $vRecomendationN44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                            $vRecomendationN44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink'], "RecomendationCode" => $vRecomendationRow['RecomendationCode']);
                         }
                     }
                     break;
@@ -695,6 +720,7 @@ if($iColClass > 0){
                                Recomendations.Id AS RecomendationId
                                , Recomendations.f10610 AS RecomendationText
                                , Recomendations.f10620 AS RecomendationLink
+                               , Recomendations.f13870 AS RecomendationCode
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
@@ -702,7 +728,7 @@ if($iColClass > 0){
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
-                            $vRecomendationR44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                            $vRecomendationR44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink'], "RecomendationCode" => $vRecomendationRow['RecomendationCode']);
                         }
                     }
                     break;
@@ -742,6 +768,7 @@ if($iColClass > 0){
                                Recomendations.Id AS RecomendationId
                                , Recomendations.f10610 AS RecomendationText
                                , Recomendations.f10620 AS RecomendationLink
+                               , Recomendations.f13870 AS RecomendationCode
                             FROM
                                 " . DATA_TABLE . get_table_id(630) . " AS Recomendations
                             WHERE
@@ -749,7 +776,7 @@ if($iColClass > 0){
                                AND Recomendations.status = 0";
                     if($vRecomendationData = sql_query($sSqlQueryRecomendations)){
                         while ($vRecomendationRow = sql_fetch_assoc($vRecomendationData)) {
-                            $vRecomendationV44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink']);
+                            $vRecomendationV44[] = array("RecomendationId" => $vRecomendationRow['RecomendationId'], "RecomendationText" => $vRecomendationRow['RecomendationText'], "RecomendationLink" => $vRecomendationRow['RecomendationLink'], "RecomendationCode" => $vRecomendationRow['RecomendationCode']);
                         }
                     }
                     break;
@@ -1307,6 +1334,8 @@ $smarty->assign("vTasks", $vTasks);
 
 $smarty->assign("sAcademicYearU2", $sAcademicYearU2);
 $smarty->assign("sProgramAgeX2", $sProgramAgeX2);
+$smarty->assign("FormaFact", $FormaFact);
+$smarty->assign("WeekLesson", $WeekLesson);
 
 function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
     $sSqlQueryProgramForYear4 = "SELECT
@@ -1327,4 +1356,23 @@ function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
         }
     }
     return 0;
+}
+
+function SaveFoto($iInsertId, $sFileFileldName, $sFiledId) {
+    if(array_key_exists($sFileFileldName, $_FILES) && $_FILES[$sFileFileldName]['tmp_name'])
+    {
+        $sFileName = $_FILES[$sFileFileldName]["name"];
+        $sContent = file_get_contents($_FILES[$sFileFileldName]['tmp_name']);//Если файл писать в базу
+        //unlink($sFilePath.$sFilePath);
+
+        if($iInsertId && !empty($sContent))
+        {
+            data_update(780,array('f'.$sFiledId=>$sFileName),"id=".$iInsertId);
+            //  save_data_file($field_id,$line_id,$fname,$data)
+            save_data_file($sFiledId, $iInsertId, $sFileName, $sContent);
+        } else{
+            echo "<h4><font color=red>Error. Ошибка! Не удалось загрузить файл на сервер!</font></h4>".$sFileName."<br>";
+        }
+
+    }
 }
