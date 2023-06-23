@@ -1635,11 +1635,6 @@
 <div class="top input_element">
     <table style="margin: 0px auto;">
         <tr>
-            <td>&nbsp;&nbsp;
-                <input type="button" value="Обновить" class="no_print btn btn-default btn-sm"
-                       onclick="return SubmitData(0);"/>
-			&nbsp;&nbsp;
-            </td>
 			<td>
 				<input type="file" id="upload1" name="Foto1" class="no_print btn btn-default btn-sm" title="Добавить фото 1"/>
 			</td>

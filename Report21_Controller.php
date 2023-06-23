@@ -439,10 +439,10 @@ if($iColClass > 0){
     $iWeek = 0;
     $iLesson = 0;
     //Из таблицы Занятия 780 по полю Название группы f12870 вычисляем по полям № недели f13020 и № урока f13340 номер последнего занятия (сначала макс по неделе, потом макс по уроку).
-    if ($vResClassesData = sql_query("SELECT MAX(f13020) AS Week FROM " . DATA_TABLE . get_table_id(780) ." WHERE f12870='" . $iGroupId . "' AND status='0'")) {
+    if ($vResClassesData = sql_query("SELECT MAX(CAST(f13020 AS SIGNED)) AS Week FROM " . DATA_TABLE . get_table_id(780) ." WHERE f12870='" . $iGroupId . "' AND status='0'")) {
         if ($vRowClassesData = sql_fetch_assoc($vResClassesData)) {
             $iWeek = intval($vRowClassesData['Week']);
-            if ($vResLessonData = sql_query("SELECT MAX(f13340) AS Lesson FROM " . DATA_TABLE . get_table_id(780) ." WHERE f13020 = '".$iWeek."' AND f12870='" . $iGroupId . "' AND status='0'")) {
+            if ($vResLessonData = sql_query("SELECT MAX(CAST(f13340 AS SIGNED)) AS Lesson FROM " . DATA_TABLE . get_table_id(780) ." WHERE f13020 = '".$iWeek."' AND f12870='" . $iGroupId . "' AND status='0'")) {
                 if ($vRowLessonData = sql_fetch_assoc($vResLessonData)) {
                     $iLesson = intval($vRowLessonData['Lesson']);
                     if($iColClass == 1) {
@@ -998,7 +998,7 @@ if($iColClass > 0){
             }
 
             $sSqlQueryProgramForYear2 = "SELECT
-                   SUM(ProgramForYear.id) AS JobCode
+                   COUNT(ProgramForYear.id) AS JobCode
                 FROM
                     " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
                 WHERE
@@ -1011,7 +1011,7 @@ if($iColClass > 0){
                     switch ($i)
                     {
                         case 1:
-                            $iJobCodeM9_2 = intval($vProgramForYearRow1['JobCode']);
+                            $iJobCodeM9_2 = intval($vProgramForYearRow2['JobCode']);
                             if($iJobCodeM9_1 < $iJobCodeM9_2) {
                                 $sM5 = "нужно";
                             } else {
@@ -1019,7 +1019,7 @@ if($iColClass > 0){
                             }
                             break;
                         case 2:
-                            $iJobCodeQ9_2 = intval($vProgramForYearRow1['JobCode']);
+                            $iJobCodeQ9_2 = intval($vProgramForYearRow2['JobCode']);
                             if($iJobCodeQ9_1 < $iJobCodeQ9_2) {
                                 $sQ5 = "нужно";
                             } else {
@@ -1027,7 +1027,7 @@ if($iColClass > 0){
                             }
                             break;
                         case 3:
-                            $iJobCodeU9_2 = intval($vProgramForYearRow1['JobCode']);
+                            $iJobCodeU9_2 = intval($vProgramForYearRow2['JobCode']);
                             if($iJobCodeU9_1 < $iJobCodeU9_2) {
                                 $sU5 = "нужно";
                             } else {
@@ -1035,7 +1035,7 @@ if($iColClass > 0){
                             }
                             break;
                         case 4:
-                            $iJobCodeY9_2 = intval($vProgramForYearRow1['JobCode']);
+                            $iJobCodeY9_2 = intval($vProgramForYearRow2['JobCode']);
                             if($iJobCodeY9_1 < $iJobCodeY9_2) {
                                 $sY5 = "нужно";
                             } else {
@@ -1081,7 +1081,7 @@ if($iColClass > 0){
     //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
     $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
                         , ClienCards.f9750 as ChildrenFIO
-                        , IFNULL((SELECT MAX(WorkingOff2.id) FROM " . DATA_TABLE . get_table_id(820) . " AS WorkingOff2  WHERE WorkingOff2.f14920 = '" . $iGroupId . "' AND WorkingOff2.f14890 = ClienCards.id AND WorkingOff2.status = 0),-1) AS nn
+                        , IFNULL((SELECT MAX(WorkingOff2.id) FROM " . DATA_TABLE . get_table_id(820) . " AS WorkingOff2  WHERE WorkingOff2.f14920 = '" . $iGroupId . "' AND WorkingOff2.f14900 = '".$sSearchDate."' AND WorkingOff2.f14890 = ClienCards.id AND WorkingOff2.status = 0),-1) AS nn
                         , Students.f11490 AS ClassGroup
                         , IFNULL(PickGives.f11410, '') AS PickGivesName
                         , IFNULL((SELECT SUM(ClassGrades.f14690) FROM " . DATA_TABLE . get_table_id(810) . " AS ClassGrades WHERE ClassGrades.f14680 = ClienCards.id AND ClassGrades.status = 0),0) AS Stars
