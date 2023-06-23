@@ -594,36 +594,6 @@ if($iColClass > 0){
                     $sJobCodeJ11 = $vProgramForYearRow1['JobCode'];
                     $sJobCode = $sJobCodeJ11;
                     $sJobId = $vProgramForYearRow1['JobId'];
-                    //Комментарий по заданию
-                    $sSqlQueryTaskComment = "SELECT
-                               TaskComment.f12750 AS TaskCommentDate
-                               , TaskComment.f12960 AS TaskCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
-                            WHERE
-                               TaskComment.f12870 = '".$iGroupId."'
-                               AND TaskComment.f12930 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT
-                                        MAX(PP.f12750)
-                                    FROM
-                                        " . DATA_TABLE . get_table_id(780) . " AS PP
-                                    WHERE
-                                        PP.f12870 = '".$iGroupId."'
-                                        AND PP.f12930 = '".$sJobCode."'
-                                        AND PP.f12960 <> ''
-                                        AND NOT PP.f12960 IS NULL
-                                        AND PP.status = 0)
-                               AND TaskComment.f12960 <> ''
-                               AND NOT TaskComment.f12960 IS NULL
-                               AND TaskComment.status = 0";
-                    //echo $sSqlQueryTaskComment."---";
-                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                            $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
-                        }
-                    }
-
                     //Рекомендации
                     $sSqlQueryRecomendations = "SELECT
                                Recomendations.Id AS RecomendationId
@@ -646,33 +616,6 @@ if($iColClass > 0){
                     $sJobCodeN11 = $vProgramForYearRow1['JobCode'];
                     $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeN11;
-                    //Комментарий по заданию
-                    $sSqlQueryTaskComment = "SELECT
-                               TaskComment.f12750 AS TaskCommentDate
-                               , TaskComment.f13280 AS TaskCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
-                            WHERE
-                               TaskComment.f12870 = '".$iGroupId."'
-                               AND TaskComment.f13260 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT
-                                   MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP
-                               WHERE
-                                    PP.f12870 = '".$iGroupId."'
-                                    AND PP.f13260 = '".$sJobCode."'
-                                    AND PP.f13280 <> ''
-                                    AND NOT PP.f13280 IS NULL
-                                    AND PP.status = 0)
-                               AND TaskComment.f13280 <> ''
-                               AND NOT TaskComment.f13280 IS NULL
-                               AND TaskComment.status = 0";
-                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                            $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
-                        }
-                    }
-
                     //Рекомендации
                     $sSqlQueryRecomendations = "SELECT
                                Recomendations.Id AS RecomendationId
@@ -694,32 +637,6 @@ if($iColClass > 0){
                     $sJobCodeR11 = $vProgramForYearRow1['JobCode'];
                     $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeR11;
-                    //Комментарий по заданию
-                    $sSqlQueryTaskComment = "SELECT
-                               TaskComment.f12750 AS TaskCommentDate
-                               , TaskComment.f13360 AS TaskCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
-                            WHERE
-                               TaskComment.f12870 = '".$iGroupId."'
-                               AND TaskComment.f13330 = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750)
-                                FROM " . DATA_TABLE . get_table_id(780) . " AS PP
-                                WHERE PP.f12870 = '".$iGroupId."'
-                                   AND PP.f13360 <> ''
-                                   AND NOT PP.f13360 IS NULL
-
-                                AND PP.f13330 = '".$sJobCode."' AND PP.status = 0)
-                               AND TaskComment.f13360 <> ''
-                               AND NOT TaskComment.f13360 IS NULL
-                               AND TaskComment.status = 0";
-                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                            $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
-                        }
-                    }
-
                     //Рекомендации
                     $sSqlQueryRecomendations = "SELECT
                                Recomendations.Id AS RecomendationId
@@ -741,33 +658,6 @@ if($iColClass > 0){
                     $sJobCodeV11 = $vProgramForYearRow1['JobCode'];
                     $sJobId = $vProgramForYearRow1['JobId'];
                     $sJobCode = $sJobCodeV11;
-                    //Комментарий по заданию
-                    $sSqlQueryTaskComment = "SELECT
-                               TaskComment.f12750 AS TaskCommentDate
-                               , TaskComment.f13430 AS TaskCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment
-                            WHERE
-                               TaskComment.f12870 = '".$iGroupId."'
-                               AND TaskComment.f13410  = '".$sJobCode."'
-                               AND TaskComment.f12750 = (SELECT MAX(PP.f12750)
-                                    FROM " . DATA_TABLE . get_table_id(780) . " AS PP
-                                    WHERE
-                                        PP.f12870 = '".$iGroupId."'
-                                        AND PP.f13410 = '".$sJobCode."'
-                                        AND PP.f13430 <> ''
-                                        AND NOT PP.f13430 IS NULL
-                                        AND PP.status = 0)
-                               AND TaskComment.f13430 <> ''
-                               AND NOT TaskComment.f13430 IS NULL
-                               AND TaskComment.status = 0";
-                    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-                        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-                            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                            $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
-                        }
-                    }
-
                     //Рекомендации
                     $sSqlQueryRecomendations = "SELECT
                                Recomendations.Id AS RecomendationId
@@ -834,26 +724,6 @@ if($iColClass > 0){
                             $sSubsectionJ7 = $vTasksRow1['Subsection'];
                             $sTopicJ8 = $vTasksRow1['Topic'];
 
-                            //Комментарий по теме
-                            $sSqlQueryThemeComment = "SELECT
-                               ThemeComment.f12750 AS ThemeCommentDate
-                               , IFNULL(ThemeComment.f13180, '') AS ThemeCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
-                            WHERE
-                               ThemeComment.f12870 = '".$iGroupId."'
-                               AND ThemeComment.f16430 = '".$sTopicJ8."'
-                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16430 = '".$sTopicJ8."' AND PP.status = 0)
-                               AND ThemeComment.status = 0";
-                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-                                    if($vThemeCommentRow['ThemeCommentText'] != "") {
-                                        $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                                        $sThemeJ34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
-                                    }
-                                }
-                            }
-
                             $sJobNameJ9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionJ7;
                             $vTasks[] = array("iPos"=> $i, "JobName" => $sJobNameJ9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
@@ -862,26 +732,6 @@ if($iColClass > 0){
                         case 2:
                             $sSubsectionN7 = $vTasksRow1['Subsection'];
                             $sTopicN8 = $vTasksRow1['Topic'];
-                            //Комментарий по теме
-                            $sSqlQueryThemeComment = "SELECT
-                               ThemeComment.f12750 AS ThemeCommentDate
-                               , IFNULL(ThemeComment.f13250, '') AS ThemeCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
-                            WHERE
-                               ThemeComment.f12870 = '".$iGroupId."'
-                               AND ThemeComment.f16440 = '".$sTopicN8."'
-                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16440 = '".$sTopicN8."' AND PP.status = 0)
-                               AND ThemeComment.status = 0";
-                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-                                    if($vThemeCommentRow['ThemeCommentText'] != "") {
-                                        $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                                        $sThemeN34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
-                                    }
-                                }
-                            }
-
                             $sJobNameN9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionN7;
                             $vTasks[] = array("iPos"=> $i, "JobName" => $sJobNameN9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
@@ -889,26 +739,6 @@ if($iColClass > 0){
                         case 3:
                             $sSubsectionR7 = $vTasksRow1['Subsection'];
                             $sTopicR8 = $vTasksRow1['Topic'];
-                            //Комментарий по теме
-                            $sSqlQueryThemeComment = "SELECT
-                               ThemeComment.f12750 AS ThemeCommentDate
-                               , IFNULL(ThemeComment.f13320, '') AS ThemeCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
-                            WHERE
-                               ThemeComment.f12870 = '".$iGroupId."'
-                               AND ThemeComment.f16450 = '".$sTopicR8."'
-                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16450 = '".$sTopicR8."' AND PP.status = 0)
-                               AND ThemeComment.status = 0";
-                            //echo $sSqlQueryThemeComment."<br>";
-                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-                                    if($vThemeCommentRow['ThemeCommentText'] != "") {
-                                        $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                                        $sThemeR34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
-                                    }
-                                }
-                            }
                             $sJobNameR9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionR7;
                             $vTasks[] = array("iPos"=> $i, "JobName" => $sJobNameR9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
@@ -916,25 +746,6 @@ if($iColClass > 0){
                         case 4:
                             $sSubsectionV7 = $vTasksRow1['Subsection'];
                             $sTopicV8 = $vTasksRow1['Topic'];
-                            //Комментарий по теме
-                            $sSqlQueryThemeComment = "SELECT
-                               ThemeComment.f12750 AS ThemeCommentDate
-                               , IFNULL(ThemeComment.f13400, '') AS ThemeCommentText
-                            FROM
-                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment
-                            WHERE
-                               ThemeComment.f12870 = '".$iGroupId."'
-                               AND ThemeComment.f16460 = '".$sTopicV8."'
-                               AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16460 = '".$sTopicV8."' AND PP.status = 0)
-                               AND ThemeComment.status = 0";
-                            if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-                                if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-                                    if($vThemeCommentRow['ThemeCommentText'] != "") {
-                                        $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                                        $sThemeV34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
-                                    }
-                                }
-                            }
                             $sJobNameV9 = $vTasksRow1['JobName'];
                             $sSubsection = $sSubsectionV7;
                             $vTasks[] = array("iPos"=> $i, "JobName" => $sJobNameV9, "JobCode" => $sJobCode, "JobDescription" => $vTasksRow1['Description'], "JobPrintPDF" => $vTasksRow1['PrintPDF'], "JobCardPDF" => $vTasksRow1['CardPDF'], "JobVideo" => $vTasksRow1['Video'], "JobRekvizit1Name" => $vTasksRow1['Rekvizit1Name'], "JobRekvizit1Link" => $vTasksRow1['Rekvizit1Link'], "JobRekvizit2Name" => $vTasksRow1['Rekvizit2Name'], "JobRekvizit2Link" => $vTasksRow1['Rekvizit2Link'], "JobRekvizit3Name" => $vTasksRow1['Rekvizit3Name'], "JobRekvizit3Link" => $vTasksRow1['Rekvizit3Link'], "JobRekvizit4Name" => $vTasksRow1['Rekvizit4Name'], "JobRekvizit4Link" => $vTasksRow1['Rekvizit4Link'], "JobRekvizit5Name" => $vTasksRow1['Rekvizit5Name'], "JobRekvizit5Link" => $vTasksRow1['Rekvizit5Link'], "JobRekvizit6Name" => $vTasksRow1['Rekvizit6Name'], "JobRekvizit6Link" => $vTasksRow1['Rekvizit6Link']);
@@ -1085,10 +896,492 @@ if($iColClass > 0){
         }
     }
     /// ТУТ ИТОГОВЫЕ КОММЕНТАРИИ
+    //Комментарий по теме
+    $sSqlQueryThemeComment = "SELECT
+                                ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
+                                , ThemeCommentData.ThemeCommentText AS ThemeCommentText
+                            FROM (SELECT
+                               ThemeComment1.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment1.f13180, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment1
+                            WHERE
+                               ThemeComment1.f12870 = '".$iGroupId."'
+                               AND ThemeComment1.f16430 = '".$sTopicJ8."'
+                               AND ThemeComment1.f13180 <> ''
+                               AND NOT ThemeComment1.f13180 IS NULL
+                               AND ThemeComment1.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment2.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment2.f13250, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment2
+                            WHERE
+                               ThemeComment2.f12870 = '".$iGroupId."'
+                               AND ThemeComment2.f16440 = '".$sTopicJ8."'
+                               AND ThemeComment2.f13250 <> ''
+                               AND NOT ThemeComment2.f13250 IS NULL
+                               AND ThemeComment2.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment3.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment3.f13320, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment3
+                            WHERE
+                               ThemeComment3.f12870 = '".$iGroupId."'
+                               AND ThemeComment3.f16450 = '".$sTopicJ8."'
+                               AND ThemeComment3.f13320 <> ''
+                               AND NOT ThemeComment3.f13320 IS NULL
+                               AND ThemeComment3.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment4.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment4.f13400, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment4
+                            WHERE
+                               ThemeComment4.f12870 = '".$iGroupId."'
+                               AND ThemeComment4.f16460 = '".$sTopicJ8."'
+                               AND ThemeComment4.f13400 <> ''
+                               AND NOT ThemeComment4.f13400 IS NULL
+                               AND ThemeComment4.status = 0
+                            ) AS ThemeCommentData
+                        ORDER BY
+                            ThemeCommentData.ThemeCommentDate DESC LIMIT 1";
+    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+            if($vThemeCommentRow['ThemeCommentText'] != "") {
+                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                $sThemeJ34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+            }
+        }
+    }
+    //Комментарий по теме
+    $sSqlQueryThemeComment = "SELECT
+                                ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
+                                , ThemeCommentData.ThemeCommentText AS ThemeCommentText
+                            FROM (SELECT
+                               ThemeComment1.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment1.f13180, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment1
+                            WHERE
+                               ThemeComment1.f12870 = '".$iGroupId."'
+                               AND ThemeComment1.f16430 = '".$sTopicN8."'
+                               AND ThemeComment1.f13180 <> ''
+                               AND NOT ThemeComment1.f13180 IS NULL
+                               AND ThemeComment1.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment2.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment2.f13250, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment2
+                            WHERE
+                               ThemeComment2.f12870 = '".$iGroupId."'
+                               AND ThemeComment2.f16440 = '".$sTopicN8."'
+                               AND ThemeComment2.f13250 <> ''
+                               AND NOT ThemeComment2.f13250 IS NULL
+                               AND ThemeComment2.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment3.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment3.f13320, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment3
+                            WHERE
+                               ThemeComment3.f12870 = '".$iGroupId."'
+                               AND ThemeComment3.f16450 = '".$sTopicN8."'
+                               AND ThemeComment3.f13320 <> ''
+                               AND NOT ThemeComment3.f13320 IS NULL
+                               AND ThemeComment3.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment4.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment4.f13400, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment4
+                            WHERE
+                               ThemeComment4.f12870 = '".$iGroupId."'
+                               AND ThemeComment4.f16460 = '".$sTopicN8."'
+                               AND ThemeComment4.f13400 <> ''
+                               AND NOT ThemeComment4.f13400 IS NULL
+                               AND ThemeComment4.status = 0
+                            ) AS ThemeCommentData
+                        ORDER BY
+                            ThemeCommentDate DESC LIMIT 1";
+    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+            if($vThemeCommentRow['ThemeCommentText'] != "") {
+                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                $sThemeN34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+            }
+        }
+    }
+    //Комментарий по теме
+    $sSqlQueryThemeComment = "SELECT
+                                ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
+                                , ThemeCommentData.ThemeCommentText AS ThemeCommentText
+                            FROM (SELECT
+                               ThemeComment1.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment1.f13180, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment1
+                            WHERE
+                               ThemeComment1.f12870 = '".$iGroupId."'
+                               AND ThemeComment1.f16430 = '".$sTopicR8."'
+                               AND ThemeComment1.f13180 <> ''
+                               AND NOT ThemeComment1.f13180 IS NULL
+                               AND ThemeComment1.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment2.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment2.f13250, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment2
+                            WHERE
+                               ThemeComment2.f12870 = '".$iGroupId."'
+                               AND ThemeComment2.f16440 = '".$sTopicR8."'
+                               AND ThemeComment2.f13250 <> ''
+                               AND NOT ThemeComment2.f13250 IS NULL
+                               AND ThemeComment2.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment3.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment3.f13320, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment3
+                            WHERE
+                               ThemeComment3.f12870 = '".$iGroupId."'
+                               AND ThemeComment3.f16450 = '".$sTopicR8."'
+                               AND ThemeComment3.f13320 <> ''
+                               AND NOT ThemeComment3.f13320 IS NULL
+                               AND ThemeComment3.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment4.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment4.f13400, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment4
+                            WHERE
+                               ThemeComment4.f12870 = '".$iGroupId."'
+                               AND ThemeComment4.f16460 = '".$sTopicR8."'
+                               AND ThemeComment4.f13400 <> ''
+                               AND NOT ThemeComment4.f13400 IS NULL
+                               AND ThemeComment4.status = 0
+                            ) AS ThemeCommentData
+                        ORDER BY
+                            ThemeCommentDate DESC LIMIT 1";
+    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+            if($vThemeCommentRow['ThemeCommentText'] != "") {
+                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                $sThemeR34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+            }
+        }
+    }
+    //Комментарий по теме
+    $sSqlQueryThemeComment = "SELECT
+                                ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
+                                , ThemeCommentData.ThemeCommentText AS ThemeCommentText
+                            FROM (SELECT
+                               ThemeComment1.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment1.f13180, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment1
+                            WHERE
+                               ThemeComment1.f12870 = '".$iGroupId."'
+                               AND ThemeComment1.f16430 = '".$sTopicV8."'
+                               AND ThemeComment1.f13180 <> ''
+                               AND NOT ThemeComment1.f13180 IS NULL
+                               AND ThemeComment1.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment2.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment2.f13250, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment2
+                            WHERE
+                               ThemeComment2.f12870 = '".$iGroupId."'
+                               AND ThemeComment2.f16440 = '".$sTopicV8."'
+                               AND ThemeComment2.f13250 <> ''
+                               AND NOT ThemeComment2.f13250 IS NULL
+                               AND ThemeComment2.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment3.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment3.f13320, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment3
+                            WHERE
+                               ThemeComment3.f12870 = '".$iGroupId."'
+                               AND ThemeComment3.f16450 = '".$sTopicV8."'
+                               AND ThemeComment3.f13320 <> ''
+                               AND NOT ThemeComment3.f13320 IS NULL
+                               AND ThemeComment3.status = 0
+                            UNION
+                            SELECT
+                               ThemeComment4.f12750 AS ThemeCommentDate
+                               , IFNULL(ThemeComment4.f13400, '') AS ThemeCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS ThemeComment4
+                            WHERE
+                               ThemeComment4.f12870 = '".$iGroupId."'
+                               AND ThemeComment4.f16460 = '".$sTopicV8."'
+                               AND ThemeComment4.f13400 <> ''
+                               AND NOT ThemeComment4.f13400 IS NULL
+                               AND ThemeComment4.status = 0
+                            ) AS ThemeCommentData
+                        ORDER BY
+                            ThemeCommentDate DESC LIMIT 1";
+    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+            if($vThemeCommentRow['ThemeCommentText'] != "") {
+                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                $sThemeV34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+            }
+        }
+    }
 
+    //Комментарий по заданию
+    $sSqlQueryTaskComment = "SELECT
+                                TaskCommentData.TaskCommentDate AS TaskCommentDate
+                                , TaskCommentData.TaskCommentText AS TaskCommentText
+                            FROM (SELECT
+                               TaskComment1.f12750 AS TaskCommentDate
+                               , TaskComment1.f12960 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment1
+                            WHERE
+                               TaskComment1.f12870 = '".$iGroupId."'
+                               AND TaskComment1.f12930 = '".$sJobCodeJ11."'
+                               AND TaskComment1.f12960 <> ''
+                               AND NOT TaskComment1.f12960 IS NULL
+                               AND TaskComment1.status = 0
+                            UNION
+                            SELECT
+                               TaskComment2.f12750 AS TaskCommentDate
+                               , TaskComment2.f13280 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment2
+                            WHERE
+                               TaskComment2.f12870 = '".$iGroupId."'
+                               AND TaskComment2.f13260 = '".$sJobCodeJ11."'
+                               AND TaskComment2.f13280 <> ''
+                               AND NOT TaskComment2.f13280 IS NULL
+                               AND TaskComment2.status = 0
+                            UNION
+                            SELECT
+                               TaskComment3.f12750 AS TaskCommentDate
+                               , TaskComment3.f13360 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment3
+                            WHERE
+                               TaskComment3.f12870 = '".$iGroupId."'
+                               AND TaskComment3.f13330 = '".$sJobCodeJ11."'
+                               AND TaskComment3.f13360 <> ''
+                               AND NOT TaskComment3.f13360 IS NULL
+                               AND TaskComment3.status = 0
+                            UNION
+                            SELECT
+                               TaskComment4.f12750 AS TaskCommentDate
+                               , TaskComment4.f13430 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment4
+                            WHERE
+                               TaskComment4.f12870 = '".$iGroupId."'
+                               AND TaskComment4.f13410  = '".$sJobCodeJ11."'
+                               AND TaskComment4.f13430 <> ''
+                               AND NOT TaskComment4.f13430 IS NULL
+                               AND TaskComment4.status = 0) AS TaskCommentData
+                        ORDER BY
+                            TaskCommentDate DESC LIMIT 1";
+    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+            $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        }
+    }
+    //Комментарий по заданию
+    $sSqlQueryTaskComment = "SELECT
+                                TaskCommentData.TaskCommentDate AS TaskCommentDate
+                                , TaskCommentData.TaskCommentText AS TaskCommentText
+                            FROM (SELECT
+                               TaskComment1.f12750 AS TaskCommentDate
+                               , TaskComment1.f12960 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment1
+                            WHERE
+                               TaskComment1.f12870 = '".$iGroupId."'
+                               AND TaskComment1.f12930 = '".$sJobCodeN11."'
+                               AND TaskComment1.f12960 <> ''
+                               AND NOT TaskComment1.f12960 IS NULL
+                               AND TaskComment1.status = 0
+                            UNION
+                            SELECT
+                               TaskComment2.f12750 AS TaskCommentDate
+                               , TaskComment2.f13280 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment2
+                            WHERE
+                               TaskComment2.f12870 = '".$iGroupId."'
+                               AND TaskComment2.f13260 = '".$sJobCodeN11."'
+                               AND TaskComment2.f13280 <> ''
+                               AND NOT TaskComment2.f13280 IS NULL
+                               AND TaskComment2.status = 0
+                            UNION
+                            SELECT
+                               TaskComment3.f12750 AS TaskCommentDate
+                               , TaskComment3.f13360 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment3
+                            WHERE
+                               TaskComment3.f12870 = '".$iGroupId."'
+                               AND TaskComment3.f13330 = '".$sJobCodeN11."'
+                               AND TaskComment3.f13360 <> ''
+                               AND NOT TaskComment3.f13360 IS NULL
+                               AND TaskComment3.status = 0
+                            UNION
+                            SELECT
+                               TaskComment4.f12750 AS TaskCommentDate
+                               , TaskComment4.f13430 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment4
+                            WHERE
+                               TaskComment4.f12870 = '".$iGroupId."'
+                               AND TaskComment4.f13410  = '".$sJobCodeN11."'
+                               AND TaskComment4.f13430 <> ''
+                               AND NOT TaskComment4.f13430 IS NULL
+                               AND TaskComment4.status = 0) AS TaskCommentData
+                        ORDER BY
+                            TaskCommentDate DESC LIMIT 1";
+    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+            $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        }
+    }
+    //Комментарий по заданию
+    $sSqlQueryTaskComment = "SELECT
+                                TaskCommentData.TaskCommentDate AS TaskCommentDate
+                                , TaskCommentData.TaskCommentText AS TaskCommentText
+                            FROM (SELECT
+                               TaskComment1.f12750 AS TaskCommentDate
+                               , TaskComment1.f12960 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment1
+                            WHERE
+                               TaskComment1.f12870 = '".$iGroupId."'
+                               AND TaskComment1.f12930 = '".$sJobCodeR11."'
+                               AND TaskComment1.f12960 <> ''
+                               AND NOT TaskComment1.f12960 IS NULL
+                               AND TaskComment1.status = 0
+                            UNION
+                            SELECT
+                               TaskComment2.f12750 AS TaskCommentDate
+                               , TaskComment2.f13280 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment2
+                            WHERE
+                               TaskComment2.f12870 = '".$iGroupId."'
+                               AND TaskComment2.f13260 = '".$sJobCodeR11."'
+                               AND TaskComment2.f13280 <> ''
+                               AND NOT TaskComment2.f13280 IS NULL
+                               AND TaskComment2.status = 0
+                            UNION
+                            SELECT
+                               TaskComment3.f12750 AS TaskCommentDate
+                               , TaskComment3.f13360 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment3
+                            WHERE
+                               TaskComment3.f12870 = '".$iGroupId."'
+                               AND TaskComment3.f13330 = '".$sJobCodeR11."'
+                               AND TaskComment3.f13360 <> ''
+                               AND NOT TaskComment3.f13360 IS NULL
+                               AND TaskComment3.status = 0
+                            UNION
+                            SELECT
+                               TaskComment4.f12750 AS TaskCommentDate
+                               , TaskComment4.f13430 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment4
+                            WHERE
+                               TaskComment4.f12870 = '".$iGroupId."'
+                               AND TaskComment4.f13410  = '".$sJobCodeR11."'
+                               AND TaskComment4.f13430 <> ''
+                               AND NOT TaskComment4.f13430 IS NULL
+                               AND TaskComment4.status = 0) AS TaskCommentData
+                        ORDER BY
+                            TaskCommentDate DESC LIMIT 1";
+    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+            $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        }
+    }
 
-
-
+    //Комментарий по заданию
+    $sSqlQueryTaskComment = "SELECT
+                                TaskCommentData.TaskCommentDate AS TaskCommentDate
+                                , TaskCommentData.TaskCommentText AS TaskCommentText
+                            FROM (SELECT
+                               TaskComment1.f12750 AS TaskCommentDate
+                               , TaskComment1.f12960 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment1
+                            WHERE
+                               TaskComment1.f12870 = '".$iGroupId."'
+                               AND TaskComment1.f12930 = '".$sJobCodeV11."'
+                               AND TaskComment1.f12960 <> ''
+                               AND NOT TaskComment1.f12960 IS NULL
+                               AND TaskComment1.status = 0
+                            UNION
+                            SELECT
+                               TaskComment2.f12750 AS TaskCommentDate
+                               , TaskComment2.f13280 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment2
+                            WHERE
+                               TaskComment2.f12870 = '".$iGroupId."'
+                               AND TaskComment2.f13260 = '".$sJobCodeV11."'
+                               AND TaskComment2.f13280 <> ''
+                               AND NOT TaskComment2.f13280 IS NULL
+                               AND TaskComment2.status = 0
+                            UNION
+                            SELECT
+                               TaskComment3.f12750 AS TaskCommentDate
+                               , TaskComment3.f13360 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment3
+                            WHERE
+                               TaskComment3.f12870 = '".$iGroupId."'
+                               AND TaskComment3.f13330 = '".$sJobCodeV11."'
+                               AND TaskComment3.f13360 <> ''
+                               AND NOT TaskComment3.f13360 IS NULL
+                               AND TaskComment3.status = 0
+                            UNION
+                            SELECT
+                               TaskComment4.f12750 AS TaskCommentDate
+                               , TaskComment4.f13430 AS TaskCommentText
+                            FROM
+                                " . DATA_TABLE . get_table_id(780) . " AS TaskComment4
+                            WHERE
+                               TaskComment4.f12870 = '".$iGroupId."'
+                               AND TaskComment4.f13410  = '".$sJobCodeV11."'
+                               AND TaskComment4.f13430 <> ''
+                               AND NOT TaskComment4.f13430 IS NULL
+                               AND TaskComment4.status = 0) AS TaskCommentData
+                        ORDER BY
+                            TaskCommentDate DESC LIMIT 1";
+    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+            $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        }
+    }
 
     //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
     $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
