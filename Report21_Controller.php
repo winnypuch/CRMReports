@@ -298,9 +298,9 @@ $sSqlQueryGroup = "SELECT DISTINCT
         INNER JOIN " . DATA_TABLE . get_table_id(700) . " AS Groups
             ON Schedule.f13550 = Groups.id
         LEFT JOIN " . DATA_TABLE . get_table_id(520) . " AS Teacher
-            ON Groups.f11180 = Teacher.id
+            ON (Groups.f11180 = Teacher.id AND Teacher.status = 0)
         LEFT JOIN " . DATA_TABLE . get_table_id(500) . " AS Departments
-            ON Groups.f11150 = Departments.id
+            ON (Groups.f11150 = Departments.id AND Departments.status = 0)
     WHERE
         Schedule.status = 0
         AND (Groups.f11240 <>'" . $sDateZero . "' AND NOT Groups.f11240 IS NULL AND (Groups.f11270 IS NULL OR Groups.f11270 = '" . $sDateZero . "'
@@ -373,7 +373,10 @@ $sSqlWeekDays = "SELECT
                 INNER JOIN " . DATA_TABLE . get_table_id(600) ." AS WeekDays
                     ON Schedule.f13560 = WeekDays.id
         WHERE
-            Schedule.f13550='" . $iGroupId . "' AND Schedule.status='0' ORDER BY WeekDays.id";
+            Schedule.f13550='" . $iGroupId . "'
+            AND Schedule.status='0'
+            AND WeekDays.status='0'
+         ORDER BY WeekDays.id";
 if ($vResWeekDays = sql_query($sSqlWeekDays)) {
     while ($vRowWeekDays = sql_fetch_assoc($vResWeekDays)) {
         $iColClass++;
@@ -537,7 +540,8 @@ if($iColClass > 0){
            ProgramForYear.f11700 = '".$sProgramAgeX2."'
            AND ProgramForYear.f11710 = '".$iWeek."'
            AND ProgramForYear.f11850 = '".$iLesson."'
-           AND ProgramForYear.status = 0";
+           AND ProgramForYear.status = 0
+           AND Tasks.status = 0";
     if($vProgramForYearData = sql_query($sSqlQueryProgramForYear)){
         if ($vProgramForYearRow = sql_fetch_assoc($vProgramForYearData)) {
             $sProgramForYearId = $vProgramForYearRow['ProgramForYearId'];
@@ -573,7 +577,8 @@ if($iColClass > 0){
            ProgramForYear.f11700 = '".$sProgramAgeX2."'
            AND ProgramForYear.f11710 = '".$iWeek."'
            AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
-           AND ProgramForYear.status = 0";
+           AND ProgramForYear.status = 0
+           AND Tasks.status = 0";
     if($iColClass  > 1)
         $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." AND ProgramForYear.f11850 = '".$iLesson."'";
     $sSqlQueryProgramForYear1 = $sSqlQueryProgramForYear1." ORDER BY Tasks.Id";
@@ -805,21 +810,21 @@ if($iColClass > 0){
                     FROM
                         " . DATA_TABLE . get_table_id(620) . " AS Tasks
                             LEFT JOIN " . DATA_TABLE . get_table_id(570) . " AS Themes
-                                ON Tasks.f10420 = Themes.Id
+                                ON (Tasks.f10420 = Themes.Id AND Themes.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit1
-                                ON Tasks.f10490 = Rekvizit1.Id
+                                ON (Tasks.f10490 = Rekvizit1.Id AND Rekvizit1.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit2
-                                ON Tasks.f10500 = Rekvizit2.Id
+                                ON (Tasks.f10500 = Rekvizit2.Id AND Rekvizit2.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit3
-                                ON Tasks.f10510 = Rekvizit3.Id
+                                ON (Tasks.f10510 = Rekvizit3.Id AND Rekvizit3.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit4
-                                ON Tasks.f10520 = Rekvizit4.Id
+                                ON (Tasks.f10520 = Rekvizit4.Id AND Rekvizit4.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit5
-                                ON Tasks.f10530 = Rekvizit5.Id
+                                ON (Tasks.f10530 = Rekvizit5.Id AND Rekvizit5.status = '0')
                             LEFT JOIN " . DATA_TABLE . get_table_id(580) . " AS Rekvizit6
-                                ON Tasks.f10540 = Rekvizit6.Id
+                                ON (Tasks.f10540 = Rekvizit6.Id AND Rekvizit6.status = '0')
                     WHERE
-                       Tasks.status = 0
+                       Tasks.status = '0'
                        AND Tasks.f12530 = '".$sJobCode."'";
             if($vTasksData1 = sql_query($sSqlQueryTasks1)){
                 if ($vTasksRow1 = sql_fetch_assoc($vTasksData1)) {
@@ -895,6 +900,7 @@ if($iColClass > 0){
                                AND ThemeComment.f16450 = '".$sTopicR8."'
                                AND ThemeComment.f12750 = (SELECT MAX(PP.f12750) FROM " . DATA_TABLE . get_table_id(780) . " AS PP WHERE PP.f12870 = '".$iGroupId."' AND PP.f16450 = '".$sTopicR8."' AND PP.status = 0)
                                AND ThemeComment.status = 0";
+                            //echo $sSqlQueryThemeComment."<br>";
                             if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
                                 if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
                                     if($vThemeCommentRow['ThemeCommentText'] != "") {
@@ -946,7 +952,8 @@ if($iColClass > 0){
                             ON Subsections.f9930 = Sections.id
                     WHERE
                        Subsections.status = 0
-                       AND Subsections.f9940 = '".$sSubsection."'";
+                       AND Subsections.f9940 = '".$sSubsection."'
+                       AND Sections.status = 0";
             if($vSubsectionData = sql_query($sSqlQuerySubsection)){
                 if ($vSubsectionRow = sql_fetch_assoc($vSubsectionData)) {
                     switch ($i)
@@ -982,16 +989,16 @@ if($iColClass > 0){
                     switch ($i)
                     {
                         case 1:
-                            $iJobCodeM9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            $iJobCodeM9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
                             break;
                         case 2:
-                            $iJobCodeQ9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            $iJobCodeQ9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
                             break;
                         case 3:
-                            $iJobCodeU9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            $iJobCodeU9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
                             break;
                         case 4:
-                            $iJobCodeY9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek);
+                            $iJobCodeY9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
                             break;
                     }
                 }
@@ -1077,21 +1084,26 @@ if($iColClass > 0){
             }
         }
     }
+    /// ТУТ ИТОГОВЫЕ КОММЕНТАРИИ
+
+
+
+
 
     //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
     $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
                         , ClienCards.f9750 as ChildrenFIO
                         , IFNULL((SELECT MAX(WorkingOff2.id) FROM " . DATA_TABLE . get_table_id(820) . " AS WorkingOff2  WHERE WorkingOff2.f14920 = '" . $iGroupId . "' AND WorkingOff2.f14900 = '".$sSearchDate."' AND WorkingOff2.f14890 = ClienCards.id AND WorkingOff2.status = 0),-1) AS nn
-                        , Students.f11490 AS ClassGroup
+                        , Students0.f11490 AS ClassGroup
                         , IFNULL(PickGives.f11410, '') AS PickGivesName
                         , IFNULL((SELECT SUM(ClassGrades.f14690) FROM " . DATA_TABLE . get_table_id(810) . " AS ClassGrades WHERE ClassGrades.f14680 = ClienCards.id AND ClassGrades.status = 0),0) AS Stars
                         , IFNULL((SELECT SUM(DelivGifts.f16420) FROM " . DATA_TABLE . get_table_id(850) . " AS DelivGifts WHERE DelivGifts.f15270 = ClienCards.id AND DelivGifts.status = 0),0) AS Gifts
                     FROM
                         " . DATA_TABLE . get_table_id(530) . " AS ClienCards
-                        INNER JOIN " . DATA_TABLE . get_table_id(720) . " AS Students
-                            ON Students.f11460 = ClienCards.id
+                        INNER JOIN " . DATA_TABLE . get_table_id(720) . " AS Students0
+                            ON Students0.f11460 = ClienCards.id
                         LEFT JOIN " . DATA_TABLE . get_table_id(710) . " AS PickGives
-                            ON Students.f11510 = PickGives.id
+                            ON (Students0.f11510 = PickGives.id AND PickGives.status = 0)
                     WHERE
                         ClienCards.id IN (
                             SELECT Students.f11460 as ChildrenId
@@ -1113,7 +1125,9 @@ if($iColClass > 0){
                                                     AND WorkingOff.f15070 = '" . $sSearchDate . "'
                                                     AND WorkingOff.status = 0
                             )
+                        AND Students0.f11480 = '" . $iGroupId . "'
                         AND ClienCards.status = 0
+                        AND Students0.status = 0
                     ORDER BY ChildrenFIO";
     $iPos = 0;
     if($vStudentsData = sql_query($sSqlQueryStudents)) {
@@ -1337,25 +1351,25 @@ $smarty->assign("sProgramAgeX2", $sProgramAgeX2);
 $smarty->assign("FormaFact", $FormaFact);
 $smarty->assign("WeekLesson", $WeekLesson);
 
-function GetWeekPos($sProgramAgeX2, $sJobCode, $sFormatPlanL1, $iWeek){
+function GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek){
     $sSqlQueryProgramForYear4 = "SELECT
-                   ProgramForYear.f11710 AS Week
+                   COUNT(ProgramForYear.f11710) AS Week
                 FROM
                     " . DATA_TABLE . get_table_id(730) . " AS ProgramForYear
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
-                   AND ProgramForYear.f12590 = '".$sJobCode."'
+                   AND ProgramForYear.f12590 = '".$sJobId."'
                    AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND CAST(ProgramForYear.f11710 AS SIGNED) < ".$iWeek."
                    AND ProgramForYear.status = 0";
-    $i = 0;
+    $i = 1;
+    //echo $sSqlQueryProgramForYear4."<br>";
     if($vProgramForYearData4 = sql_query($sSqlQueryProgramForYear4)){
-        while ($vProgramForYearRow4 = sql_fetch_assoc($vProgramForYearData4)) {
-            $i++;
-            if(intval($vProgramForYearRow4['Week']) == $iWeek)
-                return $i;
+        if ($vProgramForYearRow4 = sql_fetch_assoc($vProgramForYearData4)) {
+           return intval($vProgramForYearRow4['Week']) + 1;
         }
     }
-    return 0;
+    return $i;
 }
 
 function SaveFoto($iInsertId, $sFileFileldName, $sFiledId) {

@@ -56,41 +56,57 @@
 			//debugger;
 			if (sValName == 'iJ' || sValName == 'iL') {
 				if (document.getElementById('iJ' + iPos).value == '' && document.getElementById('iL' + iPos).value == '') {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
 					ChangeWhatDidLearn('iJ28', iWhatDidLearnJ28Count, '', 2);
 				} else {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 					ChangeWhatDidLearn('iJ28', iWhatDidLearnJ28Count, '', 1);
+				}
+				if ((document.getElementById('iJ' + iPos).value == '' || document.getElementById('iJ' + iPos).value == '+')
+					&& (document.getElementById('iL' + iPos).value == '' || document.getElementById('iL' + iPos).value == '+')) {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				} else {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 				}
 			}
 
 			if (sValName == 'iN' || sValName == 'iP') {
 				if (document.getElementById('iN' + iPos).value == '' && document.getElementById('iP' + iPos).value == '') {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
 					ChangeWhatDidLearn('iN28', iWhatDidLearnN28Count, '', 2);
 				} else {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 					ChangeWhatDidLearn('iN28', iWhatDidLearnN28Count, '', 1);
+				}
+				if ((document.getElementById('iN' + iPos).value == '' || document.getElementById('iN' + iPos).value == '+')
+					&& (document.getElementById('iP' + iPos).value == '' || document.getElementById('iP' + iPos).value == '+')) {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				} else {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 				}
 			}
 
 			if (sValName == 'iR' || sValName == 'iT') {
 				if (document.getElementById('iR' + iPos).value == '' && document.getElementById('iT' + iPos).value == '') {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
 					ChangeWhatDidLearn('iR28', iWhatDidLearnR28Count, '', 2);
 				} else {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 					ChangeWhatDidLearn('iR28', iWhatDidLearnR28Count, '', 1);
+				}
+				if ((document.getElementById('iR' + iPos).value == '' || document.getElementById('iR' + iPos).value == '+')
+					&& (document.getElementById('iT' + iPos).value == '' || document.getElementById('iT' + iPos).value == '+')) {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				} else {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 				}
 			}
 
 			if (sValName == 'iV' || sValName == 'iX') {
 				if (document.getElementById('iV' + iPos).value == '' && document.getElementById('iX' + iPos).value == '') {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
 					ChangeWhatDidLearn('iV28', iWhatDidLearnV28Count, '', 2);
 				} else {
-					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 					ChangeWhatDidLearn('iV28', iWhatDidLearnV28Count, '', 1);
+				}
+				if ((document.getElementById('iV' + iPos).value == '' || document.getElementById('iV' + iPos).value == '+')
+					&& (document.getElementById('iX' + iPos).value == '' || document.getElementById('iX' + iPos).value == '+')) {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 2);
+				} else {
+					ChangeRecomendation(sRecId, iRecCount, iPos, 1);
 				}
 			}
 
@@ -126,12 +142,18 @@
 			//debugger;
 			var vRecom = document.getElementById(sRecomendation);
 			var vRecomText = document.getElementById(sRecomendation + '_Text');
-			vRecomText.value = vRecom.options[vRecom.selectedIndex].dataset.reccode;
 			var vRecomLink = document.getElementById(sRecomendation + '_Link');
-			if (vRecom.options[vRecom.selectedIndex].dataset.reclink != '') {
-				vRecomLink.innerHTML = "<a target = \"_blank\" href = \""+vRecom.options[vRecom.selectedIndex].dataset.reclink+"\">ссылка</a>";
-			} else {
+			if (vRecom.value == '0') {
+				vRecomText.value = '';
 				vRecomLink.innerHTML = '';
+			} else {
+				vRecomText.value = vRecom.options[vRecom.selectedIndex].dataset.reccode;
+
+				if (vRecom.options[vRecom.selectedIndex].dataset.reclink != '') {
+					vRecomLink.innerHTML = "<a target = \"_blank\" href = \"" + vRecom.options[vRecom.selectedIndex].dataset.reclink + "\">ссылка</a>";
+				} else {
+					vRecomLink.innerHTML = '';
+				}
 			}
 			switch (vRecom.value) {
 				case '0':
@@ -1635,6 +1657,11 @@
 <div class="top input_element">
     <table style="margin: 0px auto;">
         <tr>
+            <td>&nbsp;&nbsp;
+                <input type="button" value="Обновить" class="no_print btn btn-default btn-sm"
+                       onclick="return SubmitData(0);"/>
+			&nbsp;&nbsp;
+            </td>
 			<td>
 				<input type="file" id="upload1" name="Foto1" class="no_print btn btn-default btn-sm" title="Добавить фото 1"/>
 			</td>
@@ -2060,7 +2087,7 @@
 						<td class="s12"
 						    dir="ltr">{$data.ClassGroup}</td>
 						<td class="s12">{$data.PickGivesName}</td>
-						<td class="s12" dir="ltr">{if $bIsAdmin}{$data.Stars}{/if}</td>
+						<td class="s12" dir="ltr">{if $bIsAdmin}{$data.Stars - $data.Gifts}{/if}</td>
 						<td class="s12" dir="ltr" style="width:40px">
 							{if $bIsAdmin}
 							<input id="iG{$data.iPos}" style="width:30px" name="iG{$data.iPos}" type="number" value=""/>
@@ -2998,7 +3025,7 @@
 											<td class="s70"
 											    dir="ltr">
 											{if $data.JobRekvizit2Link != ""}
-											<a target="_blank" href="{$dataJob.Rekvizit2Link}">ссылка</a>
+											<a target="_blank" href="{$data.JobRekvizit2Link}">ссылка</a>
 											{/if}
 											</td>
 											<td class="s70"
