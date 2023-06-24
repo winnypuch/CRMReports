@@ -235,25 +235,25 @@
 					for (var i = 1; i <= iChildrensCount; i++) {
 						if ((document.getElementById('iJ' + i).value != '' || document.getElementById('iL' + i).value != '')) {
 							bIsCheckWhatDidLearnJ = true;
-							if (!(document.getElementById('iJ44_' + i).value == -1 || document.getElementById('iJ44_' + i).value > 0)) {
+							if ((document.getElementById('iJ' + i).value != '+' && document.getElementById('iL' + i).value != '+') && !(document.getElementById('iJ44_' + i).value == -1 || document.getElementById('iJ44_' + i).value > 0)) {
 								bIsCheckRecomendation = false;
 							}
 						}
 						if ((document.getElementById('iN' + i).value != '' || document.getElementById('iP' + i).value != '')) {
 							bIsCheckWhatDidLearnN = true;
-							if (!(document.getElementById('iN44_' + i).value == -1 || document.getElementById('iN44_' + i).value > 0)) {
+							if ((document.getElementById('iN' + i).value != '+' && document.getElementById('iP' + i).value != '+') && !(document.getElementById('iN44_' + i).value == -1 || document.getElementById('iN44_' + i).value > 0)) {
 								bIsCheckRecomendation = false;
 							}
 						}
 						if ((document.getElementById('iR' + i).value != '' || document.getElementById('iT' + i).value != '')) {
 							bIsCheckWhatDidLearnR = true;
-							if (!(document.getElementById('iR44_' + i).value == -1 || document.getElementById('iR44_' + i).value > 0)) {
+							if ((document.getElementById('iR' + i).value != '+' && document.getElementById('iT' + i).value != '+') && !(document.getElementById('iR44_' + i).value == -1 || document.getElementById('iR44_' + i).value > 0)) {
 								bIsCheckRecomendation = false;
 							}
 						}
 						if ((document.getElementById('iV' + i).value != '' || document.getElementById('iX' + i).value != '')) {
 							bIsCheckWhatDidLearnV = true;
-							if (!(document.getElementById('iV44_' + i).value == -1 || document.getElementById('iV44_' + i).value > 0)) {
+							if ((document.getElementById('iV' + i).value != '+' && document.getElementById('iX' + i).value != '+') && !(document.getElementById('iV44_' + i).value == -1 || document.getElementById('iV44_' + i).value > 0)) {
 								bIsCheckRecomendation = false;
 							}
 						}

@@ -910,8 +910,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment1.f12870 = '".$iGroupId."'
                                AND ThemeComment1.f16430 = '".$sTopicJ8."'
-                               AND ThemeComment1.f13180 <> ''
-                               AND NOT ThemeComment1.f13180 IS NULL
                                AND ThemeComment1.status = 0
                             UNION
                             SELECT
@@ -922,8 +920,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment2.f12870 = '".$iGroupId."'
                                AND ThemeComment2.f16440 = '".$sTopicJ8."'
-                               AND ThemeComment2.f13250 <> ''
-                               AND NOT ThemeComment2.f13250 IS NULL
                                AND ThemeComment2.status = 0
                             UNION
                             SELECT
@@ -934,8 +930,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment3.f12870 = '".$iGroupId."'
                                AND ThemeComment3.f16450 = '".$sTopicJ8."'
-                               AND ThemeComment3.f13320 <> ''
-                               AND NOT ThemeComment3.f13320 IS NULL
                                AND ThemeComment3.status = 0
                             UNION
                             SELECT
@@ -946,8 +940,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment4.f12870 = '".$iGroupId."'
                                AND ThemeComment4.f16460 = '".$sTopicJ8."'
-                               AND ThemeComment4.f13400 <> ''
-                               AND NOT ThemeComment4.f13400 IS NULL
                                AND ThemeComment4.status = 0
                             ) AS ThemeCommentData
                         ORDER BY
@@ -972,8 +964,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment1.f12870 = '".$iGroupId."'
                                AND ThemeComment1.f16430 = '".$sTopicN8."'
-                               AND ThemeComment1.f13180 <> ''
-                               AND NOT ThemeComment1.f13180 IS NULL
                                AND ThemeComment1.status = 0
                             UNION
                             SELECT
@@ -984,8 +974,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment2.f12870 = '".$iGroupId."'
                                AND ThemeComment2.f16440 = '".$sTopicN8."'
-                               AND ThemeComment2.f13250 <> ''
-                               AND NOT ThemeComment2.f13250 IS NULL
                                AND ThemeComment2.status = 0
                             UNION
                             SELECT
@@ -996,8 +984,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment3.f12870 = '".$iGroupId."'
                                AND ThemeComment3.f16450 = '".$sTopicN8."'
-                               AND ThemeComment3.f13320 <> ''
-                               AND NOT ThemeComment3.f13320 IS NULL
                                AND ThemeComment3.status = 0
                             UNION
                             SELECT
@@ -1008,8 +994,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment4.f12870 = '".$iGroupId."'
                                AND ThemeComment4.f16460 = '".$sTopicN8."'
-                               AND ThemeComment4.f13400 <> ''
-                               AND NOT ThemeComment4.f13400 IS NULL
                                AND ThemeComment4.status = 0
                             ) AS ThemeCommentData
                         ORDER BY
@@ -1034,8 +1018,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment1.f12870 = '".$iGroupId."'
                                AND ThemeComment1.f16430 = '".$sTopicR8."'
-                               AND ThemeComment1.f13180 <> ''
-                               AND NOT ThemeComment1.f13180 IS NULL
                                AND ThemeComment1.status = 0
                             UNION
                             SELECT
@@ -1046,8 +1028,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment2.f12870 = '".$iGroupId."'
                                AND ThemeComment2.f16440 = '".$sTopicR8."'
-                               AND ThemeComment2.f13250 <> ''
-                               AND NOT ThemeComment2.f13250 IS NULL
                                AND ThemeComment2.status = 0
                             UNION
                             SELECT
@@ -1058,8 +1038,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment3.f12870 = '".$iGroupId."'
                                AND ThemeComment3.f16450 = '".$sTopicR8."'
-                               AND ThemeComment3.f13320 <> ''
-                               AND NOT ThemeComment3.f13320 IS NULL
                                AND ThemeComment3.status = 0
                             UNION
                             SELECT
@@ -1070,8 +1048,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment4.f12870 = '".$iGroupId."'
                                AND ThemeComment4.f16460 = '".$sTopicR8."'
-                               AND ThemeComment4.f13400 <> ''
-                               AND NOT ThemeComment4.f13400 IS NULL
                                AND ThemeComment4.status = 0
                             ) AS ThemeCommentData
                         ORDER BY
@@ -1096,8 +1072,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment1.f12870 = '".$iGroupId."'
                                AND ThemeComment1.f16430 = '".$sTopicV8."'
-                               AND ThemeComment1.f13180 <> ''
-                               AND NOT ThemeComment1.f13180 IS NULL
                                AND ThemeComment1.status = 0
                             UNION
                             SELECT
@@ -1108,8 +1082,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment2.f12870 = '".$iGroupId."'
                                AND ThemeComment2.f16440 = '".$sTopicV8."'
-                               AND ThemeComment2.f13250 <> ''
-                               AND NOT ThemeComment2.f13250 IS NULL
                                AND ThemeComment2.status = 0
                             UNION
                             SELECT
@@ -1120,8 +1092,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment3.f12870 = '".$iGroupId."'
                                AND ThemeComment3.f16450 = '".$sTopicV8."'
-                               AND ThemeComment3.f13320 <> ''
-                               AND NOT ThemeComment3.f13320 IS NULL
                                AND ThemeComment3.status = 0
                             UNION
                             SELECT
@@ -1132,8 +1102,6 @@ if($iColClass > 0){
                             WHERE
                                ThemeComment4.f12870 = '".$iGroupId."'
                                AND ThemeComment4.f16460 = '".$sTopicV8."'
-                               AND ThemeComment4.f13400 <> ''
-                               AND NOT ThemeComment4.f13400 IS NULL
                                AND ThemeComment4.status = 0
                             ) AS ThemeCommentData
                         ORDER BY
@@ -1159,8 +1127,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment1.f12870 = '".$iGroupId."'
                                AND TaskComment1.f12930 = '".$sJobCodeJ11."'
-                               AND TaskComment1.f12960 <> ''
-                               AND NOT TaskComment1.f12960 IS NULL
                                AND TaskComment1.status = 0
                             UNION
                             SELECT
@@ -1171,8 +1137,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment2.f12870 = '".$iGroupId."'
                                AND TaskComment2.f13260 = '".$sJobCodeJ11."'
-                               AND TaskComment2.f13280 <> ''
-                               AND NOT TaskComment2.f13280 IS NULL
                                AND TaskComment2.status = 0
                             UNION
                             SELECT
@@ -1183,8 +1147,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment3.f12870 = '".$iGroupId."'
                                AND TaskComment3.f13330 = '".$sJobCodeJ11."'
-                               AND TaskComment3.f13360 <> ''
-                               AND NOT TaskComment3.f13360 IS NULL
                                AND TaskComment3.status = 0
                             UNION
                             SELECT
@@ -1195,15 +1157,15 @@ if($iColClass > 0){
                             WHERE
                                TaskComment4.f12870 = '".$iGroupId."'
                                AND TaskComment4.f13410  = '".$sJobCodeJ11."'
-                               AND TaskComment4.f13430 <> ''
-                               AND NOT TaskComment4.f13430 IS NULL
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-            $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            if($vTaskCommentRow['TaskCommentText'] != "") {
+                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            }
         }
     }
     //Комментарий по заданию
@@ -1218,8 +1180,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment1.f12870 = '".$iGroupId."'
                                AND TaskComment1.f12930 = '".$sJobCodeN11."'
-                               AND TaskComment1.f12960 <> ''
-                               AND NOT TaskComment1.f12960 IS NULL
                                AND TaskComment1.status = 0
                             UNION
                             SELECT
@@ -1230,8 +1190,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment2.f12870 = '".$iGroupId."'
                                AND TaskComment2.f13260 = '".$sJobCodeN11."'
-                               AND TaskComment2.f13280 <> ''
-                               AND NOT TaskComment2.f13280 IS NULL
                                AND TaskComment2.status = 0
                             UNION
                             SELECT
@@ -1242,8 +1200,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment3.f12870 = '".$iGroupId."'
                                AND TaskComment3.f13330 = '".$sJobCodeN11."'
-                               AND TaskComment3.f13360 <> ''
-                               AND NOT TaskComment3.f13360 IS NULL
                                AND TaskComment3.status = 0
                             UNION
                             SELECT
@@ -1254,15 +1210,15 @@ if($iColClass > 0){
                             WHERE
                                TaskComment4.f12870 = '".$iGroupId."'
                                AND TaskComment4.f13410  = '".$sJobCodeN11."'
-                               AND TaskComment4.f13430 <> ''
-                               AND NOT TaskComment4.f13430 IS NULL
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-            $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            if($vTaskCommentRow['TaskCommentText'] != "") {
+                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            }
         }
     }
     //Комментарий по заданию
@@ -1277,8 +1233,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment1.f12870 = '".$iGroupId."'
                                AND TaskComment1.f12930 = '".$sJobCodeR11."'
-                               AND TaskComment1.f12960 <> ''
-                               AND NOT TaskComment1.f12960 IS NULL
                                AND TaskComment1.status = 0
                             UNION
                             SELECT
@@ -1289,8 +1243,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment2.f12870 = '".$iGroupId."'
                                AND TaskComment2.f13260 = '".$sJobCodeR11."'
-                               AND TaskComment2.f13280 <> ''
-                               AND NOT TaskComment2.f13280 IS NULL
                                AND TaskComment2.status = 0
                             UNION
                             SELECT
@@ -1301,8 +1253,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment3.f12870 = '".$iGroupId."'
                                AND TaskComment3.f13330 = '".$sJobCodeR11."'
-                               AND TaskComment3.f13360 <> ''
-                               AND NOT TaskComment3.f13360 IS NULL
                                AND TaskComment3.status = 0
                             UNION
                             SELECT
@@ -1313,15 +1263,16 @@ if($iColClass > 0){
                             WHERE
                                TaskComment4.f12870 = '".$iGroupId."'
                                AND TaskComment4.f13410  = '".$sJobCodeR11."'
-                               AND TaskComment4.f13430 <> ''
-                               AND NOT TaskComment4.f13430 IS NULL
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
+    //echo $sSqlQueryTaskComment."<br>";
     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-            $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            if($vTaskCommentRow['TaskCommentText'] != "") {
+                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            }
         }
     }
 
@@ -1337,8 +1288,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment1.f12870 = '".$iGroupId."'
                                AND TaskComment1.f12930 = '".$sJobCodeV11."'
-                               AND TaskComment1.f12960 <> ''
-                               AND NOT TaskComment1.f12960 IS NULL
                                AND TaskComment1.status = 0
                             UNION
                             SELECT
@@ -1349,8 +1298,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment2.f12870 = '".$iGroupId."'
                                AND TaskComment2.f13260 = '".$sJobCodeV11."'
-                               AND TaskComment2.f13280 <> ''
-                               AND NOT TaskComment2.f13280 IS NULL
                                AND TaskComment2.status = 0
                             UNION
                             SELECT
@@ -1361,8 +1308,6 @@ if($iColClass > 0){
                             WHERE
                                TaskComment3.f12870 = '".$iGroupId."'
                                AND TaskComment3.f13330 = '".$sJobCodeV11."'
-                               AND TaskComment3.f13360 <> ''
-                               AND NOT TaskComment3.f13360 IS NULL
                                AND TaskComment3.status = 0
                             UNION
                             SELECT
@@ -1373,15 +1318,15 @@ if($iColClass > 0){
                             WHERE
                                TaskComment4.f12870 = '".$iGroupId."'
                                AND TaskComment4.f13410  = '".$sJobCodeV11."'
-                               AND TaskComment4.f13430 <> ''
-                               AND NOT TaskComment4.f13430 IS NULL
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
     if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
         if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-            $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            if($vTaskCommentRow['TaskCommentText'] != "") {
+                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+            }
         }
     }
 
