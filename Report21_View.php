@@ -1752,7 +1752,7 @@
 								<select class="fullproc" name="sFormatFactO1" onchange="return  SubmitData(1);">
 									{$vForms = ['очно', 'онлайн']}
 									{foreach $vForms as $vForm}
-										{if $vForm == $sFormatPlanL1}
+										{if $vForm == $sFormatFactO1}
 											<option selected value="{$vForm}">{$vForm}</option>
 										{else}
 											<option value="{$vForm}">{$vForm}</option>
@@ -1760,7 +1760,7 @@
 									{/foreach}
 								</select>
 							{else}
-								<input type=hidden name="sFormatFactO1" id="sFormatFactO1" value="{$sFormatPlanL1}"/>{$sFormatPlanL1}
+								<input type=hidden name="sFormatFactO1" id="sFormatFactO1" value="{$sFormatFactO1}"/>{$sFormatFactO1}
 							{/if}
 						</td>
 						<td class="s0"

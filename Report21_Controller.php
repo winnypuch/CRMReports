@@ -166,6 +166,7 @@ $sDateNow = date('Y-m-d 00:00:00');
 $bIsAdmin = true;
 $sCabinetH1 = "";
 $sFormatPlanL1 = "";
+$sFormatFactO1 = "";
 $sWeekDayV1 = "";
 $sDateTimeX1 = "";
 $sTeacherFioFactD2 = "";
@@ -421,13 +422,14 @@ if($iColClass > 0){
     if($vScheduleData = sql_query($sSqlQuerySchedule)){
         while ($vScheduleRow = sql_fetch_assoc($vScheduleData)) {
             $sFormatPlanL1 = form_display($vScheduleRow['FormatPlan']);
+            $sFormatFactO1 = $sFormatPlanL1;
             $sCabinetH1 = form_display($vScheduleRow['Cabinet']);
             $sLessonTimeX1 = form_display($vScheduleRow['LessonTime']);
         }
     }
-//заменяем $sFormatPlanL1 из страницы
+    //заменяем $sFormatFactO1 из страницы
     if (!$bIsSave && array_key_exists('FormaFact', $_REQUEST) && $_REQUEST['FormaFact'] == 1 && array_key_exists('sFormatFactO1', $_REQUEST)){
-            $sFormatPlanL1 = $_REQUEST['sFormatFactO1'];
+            $sFormatFactO1 = $_REQUEST['sFormatFactO1'];
             $FormaFact = 1;
     }
 
@@ -576,7 +578,7 @@ if($iColClass > 0){
         WHERE
            ProgramForYear.f11700 = '".$sProgramAgeX2."'
            AND ProgramForYear.f11710 = '".$iWeek."'
-           AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+           AND ProgramForYear.f11720 = '".$sFormatFactO1."'
            AND ProgramForYear.status = 0
            AND Tasks.status = 0";
     if($iColClass  > 1)
@@ -792,7 +794,7 @@ if($iColClass > 0){
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
                    AND ProgramForYear.f12590 = '".$sJobId."'
-                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.f11720 = '".$sFormatFactO1."'
                    AND ProgramForYear.status = 0";
             //if($bdebug) echo $sSqlQueryProgramForYear3;
             if($vProgramForYearData3 = sql_query($sSqlQueryProgramForYear3)){
@@ -800,16 +802,16 @@ if($iColClass > 0){
                     switch ($i)
                     {
                         case 1:
-                            $iJobCodeM9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
+                            $iJobCodeM9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatFactO1, $iWeek);
                             break;
                         case 2:
-                            $iJobCodeQ9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
+                            $iJobCodeQ9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatFactO1, $iWeek);
                             break;
                         case 3:
-                            $iJobCodeU9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
+                            $iJobCodeU9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatFactO1, $iWeek);
                             break;
                         case 4:
-                            $iJobCodeY9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek);
+                            $iJobCodeY9_1 = $vProgramForYearRow3['JobQty'] == 1 ? 1 : GetWeekPos($sProgramAgeX2, $sJobId, $sFormatFactO1, $iWeek);
                             break;
                     }
                 }
@@ -822,7 +824,7 @@ if($iColClass > 0){
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
                    AND ProgramForYear.f12590 = '".$sJobId."'
-                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.f11720 = '".$sFormatFactO1."'
                    AND ProgramForYear.status = 0";
             if($vProgramForYearData2 = sql_query($sSqlQueryProgramForYear2)){
                 if ($vProgramForYearRow2 = sql_fetch_assoc($vProgramForYearData2)) {
@@ -1548,6 +1550,7 @@ $smarty->assign("iGroupId", $iGroupId);
 $smarty->assign("bIsAdmin", $bIsAdmin);
 $smarty->assign("sCabinetH1", $sCabinetH1);
 $smarty->assign("sFormatPlanL1", $sFormatPlanL1);
+$smarty->assign("sFormatFactO1", $sFormatFactO1);
 $smarty->assign("sWeekDayV1", $sWeekDayV1);
 $smarty->assign("sDateTimeT1", $dSearchDate->format("d.m.Y"));
 $smarty->assign("sLessonTimeX1", $sLessonTimeX1);
@@ -1644,7 +1647,7 @@ $smarty->assign("sProgramAgeX2", $sProgramAgeX2);
 $smarty->assign("FormaFact", $FormaFact);
 $smarty->assign("WeekLesson", $WeekLesson);
 
-function GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek){
+function GetWeekPos($sProgramAgeX2, $sJobId, $sFormatFactO1, $iWeek){
     $sSqlQueryProgramForYear4 = "SELECT
                    COUNT(ProgramForYear.f11710) AS Week
                 FROM
@@ -1652,7 +1655,7 @@ function GetWeekPos($sProgramAgeX2, $sJobId, $sFormatPlanL1, $iWeek){
                 WHERE
                    ProgramForYear.f11700 = '".$sProgramAgeX2."'
                    AND ProgramForYear.f12590 = '".$sJobId."'
-                   AND ProgramForYear.f11720 = '".$sFormatPlanL1."'
+                   AND ProgramForYear.f11720 = '".$sFormatFactO1."'
                    AND CAST(ProgramForYear.f11710 AS SIGNED) < ".$iWeek."
                    AND ProgramForYear.status = 0";
     $i = 1;
