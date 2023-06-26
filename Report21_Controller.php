@@ -1340,8 +1340,8 @@ if($iColClass > 0){
                         , IFNULL((SELECT SUM(DelivGifts.f16420) FROM " . DATA_TABLE . get_table_id(850) . " AS DelivGifts WHERE DelivGifts.f15270 = ClienCards.id AND DelivGifts.status = 0),0) AS Gifts
                     FROM
                         " . DATA_TABLE . get_table_id(530) . " AS ClienCards
-                        INNER JOIN " . DATA_TABLE . get_table_id(720) . " AS Students0
-                            ON Students0.f11460 = ClienCards.id
+                        LEFT JOIN " . DATA_TABLE . get_table_id(720) . " AS Students0
+                            ON (Students0.f11460 = ClienCards.id AND Students0.status = 0)
                         LEFT JOIN " . DATA_TABLE . get_table_id(710) . " AS PickGives
                             ON (Students0.f11510 = PickGives.id AND PickGives.status = 0)
                     WHERE
@@ -1365,11 +1365,11 @@ if($iColClass > 0){
                                                     AND WorkingOff.f15070 = '" . $sSearchDate . "'
                                                     AND WorkingOff.status = 0
                             )
-                        AND Students0.f11480 = '" . $iGroupId . "'
                         AND ClienCards.status = 0
-                        AND Students0.status = 0
                     ORDER BY ChildrenFIO";
+    //                        AND Students0.f11480 = '" . $iGroupId . "'
     $iPos = 0;
+   // echo $sSqlQueryStudents;
     if($vStudentsData = sql_query($sSqlQueryStudents)) {
         while ($vStudentRow = sql_fetch_assoc($vStudentsData)) {
             $iPos++;
