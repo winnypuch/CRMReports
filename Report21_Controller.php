@@ -349,7 +349,7 @@ if($vGroupData = sql_query($sSqlQueryGroup)){
 //$aDaysEn = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
 $aDays = array('Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота');
 $aDaysToEng = array('Воскресенье' => 'sunday', 'Понедельник' => 'monday', 'Вторник' => 'tuesday', 'Среда' => 'wednesday', 'Четверг' => 'thursday', 'Пятница' => 'friday', 'Суббота' => 'saturday');
-//echo "----".$sMaxClassesDate."----";
+//echo "----sClassStartDate--".$sClassStartDate."--sMaxClassesDate--".$sMaxClassesDate."----<br>";
 if($sMaxClassesDate == ""){
     $sStartDate = $sClassStartDate;
 }else{
@@ -359,12 +359,13 @@ if($sMaxClassesDate == ""){
 }
 $dStartDate = new DateTime($sStartDate);
 $sStartWeekDay = strtolower(date("l", strtotime($sStartDate)));
-$dSearchDate = $dStartDate;
+$dSearchDate = clone $dStartDate;
 $iWeekDay = 0;
 //$dStartDate->modify('next monday');
 //Расписние 790 Дни недели 600
 //f13560 День недели
 //f10330 Дни недели
+//echo "0----dSearchDate--".$dSearchDate->format('Y-m-d')."--sMaxClassesDate--".$sMaxClassesDate."----<br>";
 $iColClass = 0;
 $sSqlWeekDays = "SELECT
         WeekDays.id AS WeekDayId
@@ -385,18 +386,21 @@ if ($vResWeekDays = sql_query($sSqlWeekDays)) {
         if($sStartWeekDay == $aDaysToEng[$vRowWeekDays['WeekDayName']]) {
             $iWeekDay = $vRowWeekDays['WeekDayId'];
             $sWeekDayV1 = $vRowWeekDays['WeekDayName'];
-            $dSearchDate = $dStartDate;
+            $dSearchDate = clone $dStartDate;
+            //echo "----sStartWeekDay--".$sStartWeekDay."--dSearchDate--".$dSearchDate->format('Y-m-d')."----<br>";
             break;
         } else{
             if($iColClass == 1) {
                 $dSearchDate->modify('next '.$aDaysToEng[$vRowWeekDays['WeekDayName']]);
                 $iWeekDay = $vRowWeekDays['WeekDayId'];
                 $sWeekDayV1 = $vRowWeekDays['WeekDayName'];
+                //echo "1----next--".$aDaysToEng[$vRowWeekDays['WeekDayName']]."--dSearchDate--".$dSearchDate->format('Y-m-d')."----<br>";
             }else{
-                $dCheckDate = $dStartDate;
+                $dCheckDate = clone $dStartDate;
                 $dCheckDate->modify('next '.$aDaysToEng[$vRowWeekDays['WeekDayName']]);
+                //echo "2----next--".$aDaysToEng[$vRowWeekDays['WeekDayName']]."---dCheckDate--".$dCheckDate->format('Y-m-d')."<-dSearchDate--".$dSearchDate->format('Y-m-d')."----<br>";
                 if($dCheckDate < $dSearchDate) {
-                    $dSearchDate = $dCheckDate;
+                    $dSearchDate = clone $dCheckDate;
                     $iWeekDay = $vRowWeekDays['WeekDayId'];
                     $sWeekDayV1 = $vRowWeekDays['WeekDayName'];
                 }
@@ -404,6 +408,7 @@ if ($vResWeekDays = sql_query($sSqlWeekDays)) {
         }
     }
 }
+//echo "dSearchDate--".$dSearchDate->format('Y-m-d')."----sClassStartDate--".$sClassStartDate."--sMaxClassesDate--".$sMaxClassesDate."----<br>";
 if($sWeekDayV1 == ""){
     $sWeekDayV1 = $aDays[date("w", strtotime($dSearchDate->format("Y-m-d")))];
 }
@@ -1397,6 +1402,7 @@ if($iColClass > 0){
                     WHERE
                         WorkingOff3.f14960 = '" . $iGroupId . "'
                         AND WorkingOff3.f14890 = '" . $vStudentRow['ChildrenId'] . "'
+                        AND WorkingOff3.f15070 = '" . $sSearchDate . "'
                         AND WorkingOff3.status = 0";
             if($vTrialData = sql_query($sSqlQueryTrial)){
                 while ($vTrialRow = sql_fetch_assoc($vTrialData)) {
@@ -1404,8 +1410,9 @@ if($iColClass > 0){
                     $vTableData['Trial'] = $vTrialRow['Trial'];
                 }
             }
-            if($iTrialCount > 1)
+            if($iTrialCount > 1){
                 $vTableData['Trial'] = "";
+            }
 
             $iWorkingOffCount = 0;
             $vTableData['WorkingOff'] = "";

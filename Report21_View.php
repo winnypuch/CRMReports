@@ -220,7 +220,13 @@
 				}
 			}
 		}
-
+		function ChangeTrial(sId) {
+			let vTrial = document.getElementById(sId);
+			if (vTrial.value == 'Пробное')
+				vTrial.style.backgroundColor = "#93C47D";
+			else
+				vTrial.style.backgroundColor = "white";
+		}
 		function CheckSave() {
 			var href_post = confirm('Загрузить?');
 			if (href_post) {
@@ -1983,7 +1989,7 @@
 						<td class="s12"
 						    colspan="4"><input type=hidden name="sTopicV8" id="sTopicV8" value="{$sTopicV8}"/>{$sTopicV8}</td>
 						<td class="s23"/>
-						<td class="s24"
+						<td {if $bIsAdmin}class="s24"{/if}
 						    dir="ltr"/>
 					</tr>
 					<tr style="height: 49px">
@@ -2044,9 +2050,13 @@
 						<td class="s25"
 						    dir="ltr"
 						    rowspan="3">Комментарий</td>
+						{if $bIsAdmin}
 						<td class="s25"
 						    dir="ltr"
 						    rowspan="3">Заказ подарков (доставка)</td>
+						{else}
+						<td></td>
+						{/if}
 					</tr>
 					<tr style="height: 20px">
 						<th id="685479336R9"
@@ -2087,22 +2097,18 @@
 						<td class="s12"
 						    dir="ltr">{$data.ClassGroup}</td>
 						<td class="s12">{$data.PickGivesName}</td>
-						<td class="s12" dir="ltr">{if $bIsAdmin}{$data.Stars - $data.Gifts}{/if}</td>
+						<td class="s12" dir="ltr">{$data.Stars - $data.Gifts}</td>
 						<td class="s12" dir="ltr" style="width:40px">
-							{if $bIsAdmin}
 							<input id="iG{$data.iPos}" style="width:30px" name="iG{$data.iPos}" type="number" value=""/>
-							{else}
-							<input id="iG{$data.iPos}" style="width:30px" name="iG{$data.iPos}" type="hidden" value=""/>
-							{/if}
 						</td>
 						<td class="s29">
-							<select name="iH{$data.iPos}">
-								{if $data.Trial=='пробное'}
+							<select name="iH{$data.iPos}" id="iH{$data.iPos}" {if $data.Trial=='Пробное'}style="background-color:#93C47D;"{/if} onchange="ChangeTrial('iH{$data.iPos}')">
+								{if $data.Trial=='Пробное'}
 									<option value=""></option>
-									<option value="пробное" selected style="background-color:green;">пробное</option>
+									<option value="Пробное" selected style="background-color:#93C47D;">Пробное</option>
 								{else}
 									<option value="" selected></option>
-									<option value="пробное" style="background-color:green;">пробное</option>
+									<option value="Пробное" style="background-color:#93C47D;">Пробное</option>
 								{/if}
 							</select>
 							/{$data.WorkingOff}
@@ -2195,16 +2201,18 @@
 							</select>
 						</td>
 						<td class="s30">{$data.WorkingOffReport}</td>
+						{if $bIsAdmin}
 						<td class="s29"
 						    dir="ltr">
-							{if $bIsAdmin}
-								<select name="iAI{$data.iPos}">
-									{foreach from=$vGifts item=data name="rows"}
-										<option value="{$data.GiftName}">{$data.GiftName}</option>
-									{/foreach}
-								</select>
-							{/if}
+							<select name="iAI{$data.iPos}">
+								{foreach from=$vGifts item=data name="rows"}
+									<option value="{$data.GiftName}">{$data.GiftName}</option>
+								{/foreach}
+							</select>
 						</td>
+						{else}
+						<td></td>
+						{/if}
 					</tr>
 				{/foreach}
 					<tr style="height: 70px">

@@ -3,6 +3,16 @@
 $pp = 2;
 $pp++;
 echo $pp;
+$dStartDate = new DateTime("2023-10-21");
+
+$dSearchDate = clone $dStartDate;
+
+    $dSearchDate->modify('next tuesday');
+    $dCheckDate = clone $dStartDate;
+    $dCheckDate->modify('next friday');
+    if($dCheckDate < $dSearchDate) {
+        $dSearchDate = clone $dCheckDate;
+    }
 
 //Подключаем класс для работы с API
 require_once "ClientbaseAPI.php";
