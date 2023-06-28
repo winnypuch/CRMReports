@@ -83,16 +83,28 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
                     $iSelectGroup = 0;
                 }
             }
-            if($result2 = data_select_field(720, "f11540 AS Disk, f15460 AS WhereToPay", "f11480='", $iSelectGroup, "' AND f11460='", $_REQUEST['iB'.strval($i)], "' AND status='0'")) {
+            $sSqlQueryDiskW = "SELECT
+                Students.f11540 AS Disk
+                , IFNULL(WhereToPays.f10990, '') AS WhereToPay
+        FROM
+            " . DATA_TABLE . get_table_id(720) . " AS Students
+            LEFT JOIN " . DATA_TABLE . get_table_id(680) . " AS WhereToPays
+                ON (Students.f15460 = WhereToPays.id AND WhereToPays.status = 0)
+            WHERE
+                Students.f11480='".$iSelectGroup. "'
+                AND Students.f11460='".$_REQUEST['iB'.strval($i)]. "'
+                AND Students.status = 0";
+
+            if($result2 = sql_query($sSqlQueryDiskW)) {
                 if($row2 = sql_fetch_assoc($result2)){
                     $iDisc = $row2['Disk'];
                     $sWhereToPay = $row2['WhereToPay'];
                 }
             }
-            if($result2 = data_select_field(700, "f11310 AS PriceClassPlan, f11320 AS PriceMonthPlan", "f11090='", $iSelectGroup, "' AND status='0'")) {
-                if($row2 = sql_fetch_assoc($result2)){
-                    $iPriceClassPlan = $row2['PriceClassPlan'];
-                    $iPriceMonthPlan = $row2['PriceMonthPlan'];
+            if($result4 = data_select_field(700, "f11310 AS PriceClassPlan, f11320 AS PriceMonthPlan", "id='", $iSelectGroup, "' AND status='0'")) {
+                if($row4 = sql_fetch_assoc($result4)){
+                    $iPriceClassPlan = $row4['PriceClassPlan'];
+                    $iPriceMonthPlan = $row4['PriceMonthPlan'];
                 }
             }
             //INSERT INTO f_data780 (status, f14820, f14680, f14670, f14690, f14170, f14470, f14480, f14720, f14460, f14490, f14500, f14730,
@@ -129,6 +141,7 @@ if (array_key_exists('SaveReport', $_REQUEST) && $_REQUEST['SaveReport'] == 1) {
              , 'f14810' => $iPriceClassPlan
              , 'f14790' => $iPriceMonthPlan
              , 'f16290' => $sWhereToPay
+             , 'f13980' => $iInsertId
              ));
         }
 
@@ -523,16 +536,14 @@ if($iColClass > 0){
            AND PreviosComment.f12750 = (
             SELECT MAX(PP.f12750)
                 FROM " . DATA_TABLE . get_table_id(780) . " AS PP
-                WHERE PP.f12870 = '".$iGroupId."'
-                    AND PP.f13010 <> ''
-                    AND NOT PP.f13010 IS NULL AND PP.status = 0)
-           AND PreviosComment.f13010 <> ''
-           AND NOT PreviosComment.f13010 IS NULL
+                WHERE PP.f12870 = '".$iGroupId."' AND PP.status = 0)
            AND PreviosComment.status = 0";
     if($vPreviosCommentData = sql_query($sSqlQueryPreviosComment)){
         if ($vPreviosCommentRow = sql_fetch_assoc($vPreviosCommentData)) {
-            $dDate1 = new DateTime($vPreviosCommentRow['PreviosCommentDate']);
-            $sPreviosCommentJ33 = $dDate1->format("d.m.Y") ."<br>". $vPreviosCommentRow['PreviosCommentLesson'];
+            if($vPreviosCommentRow['PreviosCommentLesson'] != ""){
+                $dDate1 = new DateTime($vPreviosCommentRow['PreviosCommentDate']);
+                $sPreviosCommentJ33 = $dDate1->format("d.m.Y") ."<br>". $vPreviosCommentRow['PreviosCommentLesson'];
+            }
         }
     }
 
@@ -904,7 +915,8 @@ if($iColClass > 0){
     }
     /// ТУТ ИТОГОВЫЕ КОММЕНТАРИИ
     //Комментарий по теме
-    $sSqlQueryThemeComment = "SELECT
+    if($sJobNameJ9 != ""){
+        $sSqlQueryThemeComment = "SELECT
                                 ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
                                 , ThemeCommentData.ThemeCommentText AS ThemeCommentText
                             FROM (SELECT
@@ -949,16 +961,18 @@ if($iColClass > 0){
                             ) AS ThemeCommentData
                         ORDER BY
                             ThemeCommentData.ThemeCommentDate DESC LIMIT 1";
-    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-            if($vThemeCommentRow['ThemeCommentText'] != "") {
-                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                $sThemeJ34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+        if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+            if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                if($vThemeCommentRow['ThemeCommentText'] != "") {
+                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                    $sThemeJ34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                }
             }
         }
     }
     //Комментарий по теме
-    $sSqlQueryThemeComment = "SELECT
+    if($sJobNameN9 != "") {
+        $sSqlQueryThemeComment = "SELECT
                                 ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
                                 , ThemeCommentData.ThemeCommentText AS ThemeCommentText
                             FROM (SELECT
@@ -1003,16 +1017,18 @@ if($iColClass > 0){
                             ) AS ThemeCommentData
                         ORDER BY
                             ThemeCommentDate DESC LIMIT 1";
-    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-            if($vThemeCommentRow['ThemeCommentText'] != "") {
-                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                $sThemeN34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+        if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+            if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                if($vThemeCommentRow['ThemeCommentText'] != "") {
+                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                    $sThemeN34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                }
             }
         }
     }
-    //Комментарий по теме
-    $sSqlQueryThemeComment = "SELECT
+    if($sJobNameR9 != ""){
+        //Комментарий по теме
+        $sSqlQueryThemeComment = "SELECT
                                 ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
                                 , ThemeCommentData.ThemeCommentText AS ThemeCommentText
                             FROM (SELECT
@@ -1057,16 +1073,18 @@ if($iColClass > 0){
                             ) AS ThemeCommentData
                         ORDER BY
                             ThemeCommentDate DESC LIMIT 1";
-    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-            if($vThemeCommentRow['ThemeCommentText'] != "") {
-                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                $sThemeR34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+        if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+            if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                if($vThemeCommentRow['ThemeCommentText'] != "") {
+                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                    $sThemeR34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                }
             }
         }
     }
-    //Комментарий по теме
-    $sSqlQueryThemeComment = "SELECT
+    if($sJobNameV9 != ""){
+        //Комментарий по теме
+        $sSqlQueryThemeComment = "SELECT
                                 ThemeCommentData.ThemeCommentDate AS ThemeCommentDate
                                 , ThemeCommentData.ThemeCommentText AS ThemeCommentText
                             FROM (SELECT
@@ -1111,17 +1129,18 @@ if($iColClass > 0){
                             ) AS ThemeCommentData
                         ORDER BY
                             ThemeCommentDate DESC LIMIT 1";
-    if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
-        if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
-            if($vThemeCommentRow['ThemeCommentText'] != "") {
-                $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
-                $sThemeV34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+        if($vThemeCommentData = sql_query($sSqlQueryThemeComment)){
+            if ($vThemeCommentRow = sql_fetch_assoc($vThemeCommentData)) {
+                if($vThemeCommentRow['ThemeCommentText'] != "") {
+                    $dDateTheme = new DateTime($vThemeCommentRow['ThemeCommentDate']);
+                    $sThemeV34 = $dDateTheme->format("d.m.Y") ."<br>". $vThemeCommentRow['ThemeCommentText'];
+                }
             }
         }
     }
-
-    //Комментарий по заданию
-    $sSqlQueryTaskComment = "SELECT
+    if($sJobNameJ9 != "") {
+        //Комментарий по заданию
+        $sSqlQueryTaskComment = "SELECT
                                 TaskCommentData.TaskCommentDate AS TaskCommentDate
                                 , TaskCommentData.TaskCommentText AS TaskCommentText
                             FROM (SELECT
@@ -1165,16 +1184,18 @@ if($iColClass > 0){
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
-    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            if($vTaskCommentRow['TaskCommentText'] != "") {
-                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+            if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                if($vTaskCommentRow['TaskCommentText'] != "") {
+                    $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                    $sTaskJ35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                }
             }
         }
     }
-    //Комментарий по заданию
-    $sSqlQueryTaskComment = "SELECT
+    if($sJobNameN9 != ""){
+        //Комментарий по заданию
+        $sSqlQueryTaskComment = "SELECT
                                 TaskCommentData.TaskCommentDate AS TaskCommentDate
                                 , TaskCommentData.TaskCommentText AS TaskCommentText
                             FROM (SELECT
@@ -1218,16 +1239,18 @@ if($iColClass > 0){
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
-    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            if($vTaskCommentRow['TaskCommentText'] != "") {
-                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+            if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                if($vTaskCommentRow['TaskCommentText'] != "") {
+                    $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                    $sTaskN35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                }
             }
         }
     }
-    //Комментарий по заданию
-    $sSqlQueryTaskComment = "SELECT
+    if($sJobNameR9 != ""){
+        //Комментарий по заданию
+        $sSqlQueryTaskComment = "SELECT
                                 TaskCommentData.TaskCommentDate AS TaskCommentDate
                                 , TaskCommentData.TaskCommentText AS TaskCommentText
                             FROM (SELECT
@@ -1271,18 +1294,19 @@ if($iColClass > 0){
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
-    //echo $sSqlQueryTaskComment."<br>";
-    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            if($vTaskCommentRow['TaskCommentText'] != "") {
-                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        //echo $sSqlQueryTaskComment."<br>";
+        if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+            if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                if($vTaskCommentRow['TaskCommentText'] != "") {
+                    $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                    $sTaskR35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                }
             }
         }
     }
-
-    //Комментарий по заданию
-    $sSqlQueryTaskComment = "SELECT
+    if($sJobNameV9 != ""){
+        //Комментарий по заданию
+        $sSqlQueryTaskComment = "SELECT
                                 TaskCommentData.TaskCommentDate AS TaskCommentDate
                                 , TaskCommentData.TaskCommentText AS TaskCommentText
                             FROM (SELECT
@@ -1326,15 +1350,15 @@ if($iColClass > 0){
                                AND TaskComment4.status = 0) AS TaskCommentData
                         ORDER BY
                             TaskCommentDate DESC LIMIT 1";
-    if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
-        if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
-            if($vTaskCommentRow['TaskCommentText'] != "") {
-                $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
-                $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+        if($vTaskCommentData = sql_query($sSqlQueryTaskComment)){
+            if ($vTaskCommentRow = sql_fetch_assoc($vTaskCommentData)) {
+                if($vTaskCommentRow['TaskCommentText'] != "") {
+                    $dDateTheme = new DateTime($vTaskCommentRow['TaskCommentDate']);
+                    $sTaskV35 = $dDateTheme->format("d.m.Y") ."<br>". $vTaskCommentRow['TaskCommentText'];
+                }
             }
         }
     }
-
     //f11480 Название группы факт f11580 Дата зачисления f11590 Дата отчисления
     $sSqlQueryStudents = "SELECT ClienCards.id as ChildrenId
                         , ClienCards.f9750 as ChildrenFIO
