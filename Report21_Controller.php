@@ -886,7 +886,8 @@ if($iColClass > 0){
 
             $sSqlQueryWhatDidLearn = "SELECT
                            WhatDidLearn.Id AS WhatDidLearnId
-                           , WhatDidLearn.f10680 AS WhatDidLearnName
+                           , IFNULL(WhatDidLearn.f13860, '') AS WhatDidLearnCode
+                           , IFNULL(WhatDidLearn.f10680, '') AS WhatDidLearnName
                         FROM
                             " . DATA_TABLE . get_table_id(640) . " AS WhatDidLearn
                         WHERE
@@ -897,16 +898,16 @@ if($iColClass > 0){
                     switch ($i)
                     {
                         case 1:
-                            $vWhatDidLearnJ28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            $vWhatDidLearnJ28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnCode" => $vWhatDidLearnRow["WhatDidLearnCode"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
                             break;
                         case 2:
-                            $vWhatDidLearnN28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            $vWhatDidLearnN28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnCode" => $vWhatDidLearnRow["WhatDidLearnCode"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
                             break;
                         case 3:
-                            $vWhatDidLearnR28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            $vWhatDidLearnR28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnCode" => $vWhatDidLearnRow["WhatDidLearnCode"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
                             break;
                         case 4:
-                            $vWhatDidLearnV28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
+                            $vWhatDidLearnV28[] = array("WhatDidLearnId" => $vWhatDidLearnRow["WhatDidLearnId"], "WhatDidLearnCode" => $vWhatDidLearnRow["WhatDidLearnCode"], "WhatDidLearnName" => $vWhatDidLearnRow["WhatDidLearnName"]);
                             break;
                     }
                 }

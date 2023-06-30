@@ -1,16 +1,6 @@
 {literal}
     <script type="text/javascript">
-  //      $(function () {
-  //          var $start = $('#sDateT1');
-
-  //          $start.datepicker({
-  //              maxDate: '+ 1 month',
-  //              onSelect: function (selectedDate) {
-		//			return SubmitData();
-  //              }
-  //          });
-		//});
-		//iAction 1 - установка рекомендации, 2-убрать рекомендацию
+ 		//iAction 1 - установка рекомендации, 2-убрать рекомендацию
 		function ChangeRecomendation(sRecId, iRecCount, iPos, iAction) {
 			var vRecom = document.getElementById(sRecId + iPos);
 			if (iAction == 1) {
@@ -123,7 +113,7 @@
 			//debugger;
 			var vRecom = document.getElementById(sRecomendation);
 			var vRecomText = document.getElementById(sRecomendation + '_Text');
-			vRecomText.value = vRecom.options[vRecom.selectedIndex].text
+			vRecomText.value = (vRecom.value > 0) ? vRecom.options[vRecom.selectedIndex].dataset.reccode : '';
 			switch (vRecom.value) {
 				case '0':
 				case '-1':
@@ -2249,16 +2239,16 @@
 						    colspan="4">
 								<input type=hidden name="iJ28_Text" id="iJ28_Text" value=""/>
 								<select class="fullproc" id="iJ28" name="iJ28" onchange="ChangeWhatDidLearnColor('iJ28')">
-									<option value="0"></option>
+									<option data-reccode="" value="0"></option>
 									{if $iWhatDidLearnJ28Count > 0}
 										{if $iWhatDidLearnJ28Count > 1}
-											<option value="-2" style="background-color:yellow">Выберите текст</option>
+											<option data-reccode="" value="-2" style="background-color:yellow">Выберите текст</option>
 										{/if}
 										{foreach from=$vWhatDidLearnJ28 item=data name="rows"}
-											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+											<option data-reccode="{$data.WhatDidLearnCode}" value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
 										{/foreach}
 									{else}
-										<option value="-1">Нет данных в базе</option>
+										<option data-reccode="" value="-1">Нет данных в базе</option>
 									{/if}
 								</select>
 						</td>
@@ -2267,16 +2257,16 @@
 						    colspan="4">
 								<input type=hidden name="iN28_Text" id="iN28_Text" value=""/>
 								<select class="fullproc" id="iN28" name="iN28" onchange="ChangeWhatDidLearnColor('iN28')">
-									<option value="0"></option>
+									<option data-reccode="" value="0"></option>
 									{if $iWhatDidLearnN28Count > 0}
 										{if $iWhatDidLearnN28Count > 1}
-											<option value="-2" style="background-color:yellow">Выберите текст</option>
+											<option data-reccode="" value="-2" style="background-color:yellow">Выберите текст</option>
 										{/if}
 										{foreach from=$vWhatDidLearnN28 item=data name="rows"}
-											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+											<option data-reccode="{$data.WhatDidLearnCode}" value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
 										{/foreach}
 									{else}
-										<option value="-1">Нет данных в базе</option>
+										<option data-reccode="" value="-1">Нет данных в базе</option>
 									{/if}
 								</select>
 						</td>
@@ -2285,16 +2275,16 @@
 						    colspan="4">
 								<input type=hidden name="iR28_Text" id="iR28_Text" value=""/>
 								<select class="fullproc" id="iR28" name="iR28" onchange="ChangeWhatDidLearnColor('iR28')">
-									<option value="0"></option>
+									<option data-reccode="" value="0"></option>
 									{if $iWhatDidLearnR28Count > 0}
 										{if $iWhatDidLearnR28Count > 1}
-											<option value="-2" style="background-color:yellow">Выберите текст</option>
+											<option data-reccode="" value="-2" style="background-color:yellow">Выберите текст</option>
 										{/if}
 										{foreach from=$vWhatDidLearnR28 item=data name="rows"}
-											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+											<option data-reccode="{$data.WhatDidLearnCode}" value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
 										{/foreach}
 									{else}
-										<option value="-1">Нет данных в базе</option>
+										<option data-reccode="" value="-1">Нет данных в базе</option>
 									{/if}
 								</select>
 						</td>
@@ -2303,16 +2293,16 @@
 						    colspan="4">
 								<input type=hidden name="iV28_Text" id="iV28_Text" value=""/>
 								<select class="fullproc" id="iV28" name="iV28" onchange="ChangeWhatDidLearnColor('iV28')">
-									<option value="0"></option>
+									<option data-reccode="" value="0"></option>
 									{if $iWhatDidLearnV28Count > 0}
 										{if $iWhatDidLearnV28Count > 1}
-											<option value="-2" style="background-color:yellow">Выберите текст</option>
+											<option data-reccode="" value="-2" style="background-color:yellow">Выберите текст</option>
 										{/if}
 										{foreach from=$vWhatDidLearnV28 item=data name="rows"}
-											<option value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
+											<option data-reccode="{$data.WhatDidLearnCode}" value="{$data.WhatDidLearnId}">{$data.WhatDidLearnName}</option>
 										{/foreach}
 									{else}
-										<option value="-1">Нет данных в базе</option>
+										<option data-reccode="" value="-1">Нет данных в базе</option>
 									{/if}
 								</select>
 						</td>
@@ -2751,16 +2741,16 @@
 									    colspan="3">
 										<input type=hidden name="iJ44_{$data.iPos}_Text" id="iJ44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iJ44_{$data.iPos}" name="iJ44_{$data.iPos}" onchange="ChangeFactRecomendation('iJ44_{$data.iPos}')">
-											<option value="0"></option>
+											<option data-reccode="" value="0"></option>
 											{if $iRecomendationJ44Count > 0}
 												{if $iRecomendationJ44Count > 1}
-													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
+													<option data-reccode="" value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationJ44 item=data name="rows"}
 													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
-												<option value="-1">Нет рекомендации в базе</option>
+												<option data-reccode="" value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
@@ -2772,16 +2762,16 @@
 									    colspan="3">
 										<input type=hidden name="iN44_{$data.iPos}_Text" id="iN44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iN44_{$data.iPos}" name="iN44_{$data.iPos}" onchange="ChangeFactRecomendation('iN44_{$data.iPos}')">
-											<option value="0"></option>
+											<option data-reccode="" value="0"></option>
 											{if $iRecomendationN44Count > 0}
 												{if $iRecomendationN44Count > 1}
-													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
+													<option data-reccode="" value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationN44 item=data name="rows"}
 													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
-												<option value="-1">Нет рекомендации в базе</option>
+												<option data-reccode="" value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
@@ -2793,16 +2783,16 @@
 									    colspan="3">
 										<input type=hidden name="iR44_{$data.iPos}_Text" id="iR44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iR44_{$data.iPos}" name="iR44_{$data.iPos}" onchange="ChangeFactRecomendation('iR44_{$data.iPos}')">
-											<option value="0"></option>
+											<option data-reccode="" value="0"></option>
 											{if $iRecomendationR44Count > 0}
 												{if $iRecomendationR44Count > 1}
-													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
+													<option data-reccode="" value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationR44 item=data name="rows"}
 													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
-												<option value="-1">Нет рекомендации в базе</option>
+												<option data-reccode="" value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
@@ -2814,16 +2804,16 @@
 									    colspan="3">
 										<input type=hidden name="iV44_{$data.iPos}_Text" id="iV44_{$data.iPos}_Text" value=""/>
 										<select class="fullproc" id="iV44_{$data.iPos}" name="iV44_{$data.iPos}" onchange="ChangeFactRecomendation('iV44_{$data.iPos}')">
-											<option value="0"></option>
+											<option data-reccode="" value="0"></option>
 											{if $iRecomendationV44Count > 0}
 												{if $iRecomendationV44Count > 1}
-													<option value="-2" style="background-color:yellow">Выберите рекомендацию</option>
+													<option data-reccode="" value="-2" style="background-color:yellow">Выберите рекомендацию</option>
 												{/if}
 												{foreach from=$vRecomendationV44 item=data name="rows"}
 													<option data-reclink="{$data.RecomendationLink}" data-reccode="{$data.RecomendationCode}" value="{$data.RecomendationId}">{$data.RecomendationText}</option>
 												{/foreach}
 											{else}
-												<option value="-1">Нет рекомендации в базе</option>
+												<option data-reccode="" value="-1">Нет рекомендации в базе</option>
 											{/if}
 										</select>
 									</td>
